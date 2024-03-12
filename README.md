@@ -28,10 +28,11 @@ $ sudo ln -s $(pwd)/nginx.conf /etc/nginx/sites-enabled/
 
 ## Now we're ready to run Huly
 
-Finally, let's run Huly with `docker compose`.
+Finally, let's restart `nginx` and run Huly with `docker compose`.
 
 ```bash
-$ docker compose up
+$ sudo systemctl restart nginx
+$ sudo docker compose up
 ```
 
 Now, launch your web browser and enjoy Huly!
