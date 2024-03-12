@@ -1,4 +1,6 @@
 version: "3"
+env_file:
+  - path: default.env
 services:
   mongodb:
     image: 'mongo:7-jammy'
@@ -60,7 +62,7 @@ services:
       - FRONT_URL=http://front:8080
       - INIT_WORKSPACE=demo-tracker
       - MODEL_ENABLED=*
-      - ACCOUNTS_URL=http://localhost:3000
+      - ACCOUNTS_URL=http://${SERVER_ADDRESS}:3000
     restart: unless-stopped
   front:
     image: hardcoreeng/front
