@@ -1,6 +1,4 @@
 version: "3"
-env_file:
-  - path: default.env
 services:
   mongodb:
     image: 'mongo:7-jammy'
