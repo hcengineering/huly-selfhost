@@ -60,7 +60,7 @@ services:
       - FRONT_URL=http://front:8080
       - INIT_WORKSPACE=demo-tracker
       - MODEL_ENABLED=*
-      - ACCOUNTS_URL=http://${SERVER_ADDRESS}:3000
+      - ACCOUNTS_URL=http://localhost:3000
     restart: unless-stopped
   front:
     image: hardcoreeng/front
@@ -75,21 +75,21 @@ services:
     environment:
       - SERVER_PORT=8080
       - SERVER_SECRET=secret
-      - ACCOUNTS_URL=http://localhost:3000
-      - REKONI_URL=http://localhost:4004
-      - CALENDAR_URL=http://localhost:8095
-      - GMAIL_URL=http://localhost:8088
-      - TELEGRAM_URL=http://localhost:8086
+      - ACCOUNTS_URL=http://${SERVER_ADDRESS}:3000
+      - REKONI_URL=http://${SERVER_ADDRESS}:4004
+      - CALENDAR_URL=http://${SERVER_ADDRESS}:8095
+      - GMAIL_URL=http://${SERVER_ADDRESS}:8088
+      - TELEGRAM_URL=http://${SERVER_ADDRESS}:8086
       - UPLOAD_URL=/files
-      - TRANSACTOR_URL=ws://localhost:3333
+      - TRANSACTOR_URL=ws://${SERVER_ADDRESS}:3333
       - ELASTIC_URL=http://elastic:9200
       - COLLABORATOR_URL=ws://localhost:3078
       - COLLABORATOR_API_URL=http://localhost:3078
       - MINIO_ENDPOINT=minio
       - MINIO_ACCESS_KEY=minioadmin
       - MINIO_SECRET_KEY=minioadmin
-      - TITLE=DevPlatform
-      - DEFAULT_LANGUAGE=ru
+      - TITLE=Huly Self Hosted
+      - DEFAULT_LANGUAGE=en
       - LAST_NAME_FIRST=true
     restart: unless-stopped
   collaborator:
