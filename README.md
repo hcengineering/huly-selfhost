@@ -1,27 +1,37 @@
-# Huly Self Hosted
+# Huly Self-Hosted
 
-Please use this Readme if you want to deploy Huly on your server with `docker compose`. I'm using Basic droplet on Digital Ocean with Ubuntu 23.10, but this instructions can be easily tweaked for any Linux distro.
+Please use this README if you want to deploy Huly on your server with `docker compose`. I'm using a Basic Droplet on Digital Ocean with Ubuntu 23.10, but these instructions can be easily adapted for any Linux distribution.
 
 > [!NOTE]  
-> Huly is quite resource heavy, so I use 2 vCPU droplet with 4GB of RAM. Droplet with less RAM can stop responding or die.
+> Huly is quite resource-heavy, so I recommend using a Droplet with 2 vCPUs and 4GB of RAM. Droplets with less RAM may stop responding or fail.
 
 ## Installing `nginx` and `docker`
 
-Let's install `nginx` and `docker` first using commands below, if you do not have them installed on your machine.
+First, let's install `nginx` and `docker` using the commands below if you have not already installed them on your machine.
 
-```
+```bash
 $ sudo apt update
 $ sudo apt install nginx
-$ sudo apt install docker.io
+$ sudo snap install docker
 ```
 
-## Clone `huly-seflhost` repository
+## Clone the `huly-selfhost` repository and configure `nginx`
 
-Let's clone `huly-seflhost` repository and configure server address, I will use `1.1.1.1` as server address for this example.
+Next, let's clone the `huly-selfhost` repository and configure the server address. I will use `1.1.1.1` as the server address for this example.
 
-```
+```bash
 $ git clone https://github.com/hcengineering/huly-selfhost.git
-cd huly-selfhost
-./setup.sh 1.1.1.1
+$ cd huly-selfhost
+$ ./setup.sh 1.1.1.1
+$ sudo ln -s $(pwd)/nginx.conf /etc/nginx/sites-enabled/
 ```
 
+## Now we're ready to run Huly
+
+Finally, let's run Huly with `docker compose`.
+
+```bash
+$ docker compose up
+```
+
+Now, launch your web browser and enjoy Huly!
