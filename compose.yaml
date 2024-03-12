@@ -53,7 +53,7 @@ services:
       - SERVER_SECRET=secret
       - MONGO_URL=mongodb://mongodb:27017
       - TRANSACTOR_URL=ws://transactor:3333
-      - ENDPOINT_URL=ws://localhost:3333
+      - ENDPOINT_URL=ws://${SERVER_ADDRESS}:3333
       - MINIO_ENDPOINT=minio
       - MINIO_ACCESS_KEY=minioadmin
       - MINIO_SECRET_KEY=minioadmin
