@@ -1,7 +1,7 @@
 version: "3"
 services:
   mongodb:
-    image: 'mongo:7-jammy'
+    image: "mongo:7-jammy"
     container_name: mongodb
     environment:
       - PUID=1000
@@ -12,7 +12,7 @@ services:
       - 27017:27017
     restart: unless-stopped
   minio:
-    image: 'minio/minio'
+    image: "minio/minio"
     command: server /data --address ":9000" --console-address ":9001"
     ports:
       - 9000:9000
@@ -21,9 +21,9 @@ services:
       - files:/data
     restart: unless-stopped
   elastic:
-    image: 'elasticsearch:7.14.2'
+    image: "elasticsearch:7.14.2"
     command: |
-      /bin/sh -c "./bin/elasticsearch-plugin list | grep -q ingest-attachment || yes | ./bin/elasticsearch-plugin install --silent ingest-attachment;      
+      /bin/sh -c "./bin/elasticsearch-plugin list | grep -q ingest-attachment || yes | ./bin/elasticsearch-plugin install --silent ingest-attachment;
       /usr/local/bin/docker-entrypoint.sh eswrapper"
     volumes:
       - elastic:/usr/share/elasticsearch/data
@@ -35,14 +35,14 @@ services:
       - discovery.type=single-node
       - ES_JAVA_OPTS=-Xms1024m -Xmx1024m
       - http.cors.enabled=true
-      - http.cors.allow-origin=http://localhost:8082      
+      - http.cors.allow-origin=http://localhost:8082
     healthcheck:
       interval: 20s
       retries: 10
       test: curl -s http://localhost:9200/_cluster/health | grep -vq '"status":"red"'
     restart: unless-stopped
   account:
-    image: hardcoreeng/account
+    image: hardcoreeng/account:${HULY_VERSION}
     links:
       - mongodb
       - minio
@@ -63,7 +63,7 @@ services:
       - ACCOUNTS_URL=http://localhost:3000
     restart: unless-stopped
   front:
-    image: hardcoreeng/front
+    image: hardcoreeng/front:${HULY_VERSION}
     links:
       - mongodb
       - minio
@@ -93,7 +93,7 @@ services:
       - LAST_NAME_FIRST=true
     restart: unless-stopped
   collaborator:
-    image: hardcoreeng/collaborator
+    image: hardcoreeng/collaborator:${HULY_VERSION}
     links:
       - mongodb
       - minio
@@ -112,7 +112,7 @@ services:
       - MINIO_SECRET_KEY=minioadmin
     restart: unless-stopped
   transactor:
-    image: hardcoreeng/transactor
+    image: hardcoreeng/transactor:${HULY_VERSION}
     links:
       - mongodb
       - elastic
@@ -139,7 +139,7 @@ services:
       - LAST_NAME_FIRST=true
     restart: unless-stopped
   rekoni:
-    image: hardcoreeng/rekoni-service
+    image: hardcoreeng/rekoni-service:${HULY_VERSION}
     ports:
       - 4004:4004
     deploy:
