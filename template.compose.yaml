@@ -139,7 +139,7 @@ services:
       - LAST_NAME_FIRST=true
     restart: unless-stopped
   rekoni:
-    image: hardcoreeng/rekoni-service:${HULY_VERSION}
+    image: hardcoreeng/rekoni-service:latest
     ports:
       - 4004:4004
     deploy:
