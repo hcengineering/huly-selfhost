@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: front
+  name: front
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: front
+  template:
+    metadata:
+      labels:
+        app: front
+    spec:
+      containers:
+        - env:
+            - name: ACCOUNTS_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: huly-config
+                  key: ACCOUNTS_URL
+            - name: CALENDAR_URL
+              value: http://calendar
+            - name: COLLABORATOR_API_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: huly-config
+                  key: COLLABORATOR_API_URL
+            - name: COLLABORATOR_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: huly-config
+                  key: COLLABORATOR_URL
+            - name: DEFAULT_LANGUAGE
+              value: en
+            - name: ELASTIC_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: huly-config
+                  key: ELASTIC_URL
+            - name: GMAIL_URL
+              value: http://gmail:8088
+            - name: MINIO_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: huly-secret
+                  key: MINIO_ACCESS_KEY
+            - name: MINIO_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: huly-config
+                  key: MINIO_ENDPOINT
+            - name: MINIO_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: huly-secret
+                  key: MINIO_SECRET_KEY
+            - name: MONGO_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: huly-config
+                  key: MONGO_URL
+            - name: REKONI_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: huly-config
+                  key: REKONI_URL
+            - name: SERVER_PORT
+              value: "8080"
+            - name: SERVER_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: huly-secret
+                  key: SERVER_SECRET
+            - name: TELEGRAM_URL
+              value: http://telegram:8086
+            - name: TITLE
+              value: Huly Self Hosted
+            - name: TRANSACTOR_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: huly-config
+                  key: TRANSACTOR_URL
+            - name: UPLOAD_URL
+              value: /files
+          image: hardcoreeng/front:latest
+          name: front
+          ports:
+            - containerPort: 8080
+      restartPolicy: Always

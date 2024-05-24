@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: account
+  name: account
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: account
+  template:
+    metadata:
+      labels:
+        app: account
+    spec:
+      containers:
+        - env:
+            - name: ACCOUNTS_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: huly-config
+                  key: ACCOUNTS_URL
+            - name: ACCOUNT_PORT
+              value: '3000'
+            - name: FRONT_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: huly-config
+                  key: FRONT_URL
+            - name: MINIO_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: huly-secret
+                  key: MINIO_ACCESS_KEY
+            - name: MINIO_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: huly-config
+                  key: MINIO_ENDPOINT
+            - name: MINIO_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: huly-secret
+                  key: MINIO_SECRET_KEY
+            - name: MODEL_ENABLED
+              value: '*'
+            - name: MONGO_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: huly-config
+                  key: MONGO_URL
+            - name: SERVER_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: huly-secret
+                  key: SERVER_SECRET
+            - name: TRANSACTOR_URL
+              value: ws://transactor/
+            - name: ENDPOINT_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: huly-config
+                  key: TRANSACTOR_URL
+          image: hardcoreeng/account:latest
+          name: account
+          ports:
+            - containerPort: 3000
+          resources:
+            limits:
+              memory: "512M"
+      restartPolicy: Always

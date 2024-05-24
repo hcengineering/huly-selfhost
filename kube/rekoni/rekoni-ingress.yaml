@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+  labels:
+    app: rekoni
+  name: rekoni
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: rekoni.huly.example
+      http:
+        paths:
+          - backend:
+              service:
+                name: rekoni
+                port:
+                  number: 80
+            path: /
+            pathType: Prefix

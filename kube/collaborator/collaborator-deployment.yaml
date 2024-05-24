@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: collaborator
+  name: collaborator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: collaborator
+  template:
+    metadata:
+      labels:
+        app: collaborator
+    spec:
+      containers:
+        - env:
+            - name: ACCOUNTS_URL
+              value: http://account
+            - name: COLLABORATOR_PORT
+              value: "3078"
+            - name: MINIO_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: huly-secret
+                  key: MINIO_ACCESS_KEY
+            - name: MINIO_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: huly-config
+                  key: MINIO_ENDPOINT
+            - name: MINIO_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: huly-secret
+                  key: MINIO_SECRET_KEY
+            - name: MONGO_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: huly-config
+                  key: MONGO_URL
+            - name: SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: huly-secret
+                  key: SERVER_SECRET
+            - name: TRANSACTOR_URL
+              value: ws://transactor/
+            - name: UPLOAD_URL
+              value: /files
+          image: hardcoreeng/collaborator:latest
+          name: collaborator
+          ports:
+            - containerPort: 3078
+          resources:
+            limits:
+              memory: '512M'
+      restartPolicy: Always
