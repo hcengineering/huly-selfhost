@@ -5,6 +5,8 @@ Please use this README if you want to deploy Huly on your server with `docker co
 > [!NOTE]
 > Huly is quite resource-heavy, so I recommend using a Droplet with 2 vCPUs and 4GB of RAM. Droplets with less RAM may stop responding or fail.
 
+If you prefer Kubernetes deployment, there is a sample Kubernetes configuration under [kube](kube) directory.
+
 ## Installing `nginx` and `docker`
 
 First, let's install `nginx` and `docker` using the commands below if you have not already installed them on your machine.

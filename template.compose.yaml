@@ -61,6 +61,7 @@ services:
       - INIT_WORKSPACE=demo-tracker
       - MODEL_ENABLED=*
       - ACCOUNTS_URL=http://localhost:3000
+      - ACCOUNT_PORT=3000
     restart: unless-stopped
   front:
     image: hardcoreeng/front:${HULY_VERSION}
@@ -88,6 +89,7 @@ services:
       - MINIO_ENDPOINT=minio
       - MINIO_ACCESS_KEY=minioadmin
       - MINIO_SECRET_KEY=minioadmin
+      - MONGO_URL=mongodb://mongodb:27017
       - TITLE=Huly Self Hosted
       - DEFAULT_LANGUAGE=en
       - LAST_NAME_FIRST=true
@@ -126,6 +128,7 @@ services:
       - SERVER_SECRET=secret
       - SERVER_CURSOR_MAXTIMEMS=30000
       - ELASTIC_URL=http://elastic:9200
+      - ELASTIC_INDEX_NAME=huly_storage_index
       - MONGO_URL=mongodb://mongodb:27017
       - METRICS_CONSOLE=false
       - METRICS_FILE=metrics.txt
@@ -137,11 +140,14 @@ services:
       - SERVER_PROVIDER=ws
       - ACCOUNTS_URL=http://account:3000
       - LAST_NAME_FIRST=true
+      - UPLOAD_URL=http://${SERVER_ADDRESS}/files
     restart: unless-stopped
   rekoni:
-    image: hardcoreeng/rekoni-service:latest
+    image: hardcoreeng/rekoni-service:${HULY_VERSION}
     ports:
       - 4004:4004
+    environment:
+      - SECRET=secret
     deploy:
       resources:
         limits:

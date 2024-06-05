@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+  labels:
+    app: front
+  name: front
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: huly.example
+      http:
+        paths:
+          - backend:
+              service:
+                name: front
+                port:
+                  number: 80
+            path: /
+            pathType: Prefix

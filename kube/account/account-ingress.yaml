@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+  labels:
+    app: account
+  name: account
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: account.huly.example
+      http:
+        paths:
+          - backend:
+              service:
+                name: account
+                port:
+                  number: 80
+            path: /
+            pathType: Prefix
