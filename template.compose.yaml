@@ -59,7 +59,7 @@ services:
       - FRONT_URL=http://front:8080
       - INIT_WORKSPACE=demo-tracker
       - MODEL_ENABLED=*
-      - ACCOUNTS_URL=http://localhost:3000
+      - ACCOUNTS_URL=http://${SERVER_ADDRESS}:3000
       - ACCOUNT_PORT=3000
     restart: unless-stopped
   front:
@@ -133,7 +133,7 @@ services:
       - MINIO_ACCESS_KEY=minioadmin
       - MINIO_SECRET_KEY=minioadmin
       - REKONI_URL=http://rekoni:4004
-      - FRONT_URL=http://localhost:8087
+      - FRONT_URL=http://${SERVER_ADDRESS}:8087
       - SERVER_PROVIDER=ws
       - ACCOUNTS_URL=http://account:3000
       - LAST_NAME_FIRST=true
