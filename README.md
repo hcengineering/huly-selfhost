@@ -38,3 +38,10 @@ $ sudo docker compose up
 ```
 
 Now, launch your web browser and enjoy Huly!
+
+## Security
+
+When exposing your self-hosted Huly deployment to the internet, it's crucial to implement some security measures to protect your server and data.
+
+1. Do not expose MongoDB, MinIO, and Elastic services to the internet. Huly does not require them to be accessible from the internet.
+2. It is highly recommended to change the default credentials. By default the services, mentioned above, require no authentication, or use default well-known credentials.
