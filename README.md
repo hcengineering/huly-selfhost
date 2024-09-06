@@ -45,3 +45,37 @@ When exposing your self-hosted Huly deployment to the internet, it's crucial to 
 
 1. Do not expose MongoDB, MinIO, and Elastic services to the internet. Huly does not require them to be accessible from the internet.
 2. It is highly recommended to change the default credentials. By default the services, mentioned above, require no authentication, or use default well-known credentials.
+
+## Generating Public and Private VAPID keys for front-end
+
+You'll need `Node.js` installed on your machine. Installing `npm` on Debian based distro:
+```
+sudo apt-get install npm
+```
+Install web-push using npm
+```
+sudo npm install -g web-push
+```
+Generate VAPID Keys. Run the following command to generate a VAPID key pair:
+```
+web-push generate-vapid-keys 
+```
+It will generate both keys that looks like this:
+```
+=======================================
+
+Public Key:
+sdfgsdgsdfgsdfggsdf
+
+Private Key:
+asdfsadfasdfsfd
+
+=======================================
+```
+Keep these keys secure, as you will need them to set up your push notification service on the server.
+
+Add these keys into `compose.yaml` in section `services:front:environnement`:
+```
+- PUSH_PUBLIC_KEY=your public key
+- PUSH_PRIVATE_KEY=your private key
+```
