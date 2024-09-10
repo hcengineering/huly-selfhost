@@ -165,6 +165,5 @@ networks:
 
 volumes:
   db:
-  letsencrypt:
   elastic:
   files:
