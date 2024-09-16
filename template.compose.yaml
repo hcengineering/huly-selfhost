@@ -71,6 +71,7 @@ services:
       - STORAGE_CONFIG=minio|minio?accessKey=minioadmin&secretKey=minioadmin
       - MODEL_ENABLED=*
       - ACCOUNTS_URL=http://account:3000
+      - NOTIFY_INBOX_ONLY=true
     restart: unless-stopped
   front:
     image: hardcoreeng/front:${HULY_VERSION}
