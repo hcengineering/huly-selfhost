@@ -78,11 +78,6 @@ spec:
               value: http://telegram:8086
             - name: TITLE
               value: Huly Self Hosted
-            - name: TRANSACTOR_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: huly-config
-                  key: TRANSACTOR_URL
             - name: UPLOAD_URL
               value: /files
           image: hardcoreeng/front:latest

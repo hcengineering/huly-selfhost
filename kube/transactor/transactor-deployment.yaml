@@ -66,8 +66,6 @@ spec:
                 secretKeyRef:
                   name: huly-secret
                   key: SERVER_SECRET
-            - name: UPLOAD_URL
-              value: /files
           image: hardcoreeng/transactor:latest
           name: transactor
           ports:

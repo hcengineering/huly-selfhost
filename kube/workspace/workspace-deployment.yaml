@@ -2,24 +2,22 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: collaborator
-  name: collaborator
+    app: workspace
+  name: workspace
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: collaborator
+      app: workspace
   template:
     metadata:
       labels:
-        app: collaborator
+        app: workspace
     spec:
       containers:
         - env:
             - name: ACCOUNTS_URL
               value: http://account
-            - name: COLLABORATOR_PORT
-              value: "3078"
             - name: MINIO_ACCESS_KEY
               valueFrom:
                 secretKeyRef:
@@ -35,21 +33,25 @@ spec:
                 secretKeyRef:
                   name: huly-secret
                   key: MINIO_SECRET_KEY
+            - name: MODEL_ENABLED
+              value: '*'
             - name: MONGO_URL
               valueFrom:
                 configMapKeyRef:
                   name: huly-config
                   key: MONGO_URL
-            - name: SECRET
+            - name: SERVER_SECRET
               valueFrom:
                 secretKeyRef:
                   name: huly-secret
                   key: SERVER_SECRET
-          image: hardcoreeng/collaborator:latest
-          name: collaborator
-          ports:
-            - containerPort: 3078
+            - name: TRANSACTOR_URL
+              value: ws://transactor:3333;ws://localhost:3333
+            - name: NOTIFY_INBOX_ONLY
+              value: true
+          image: hardcoreeng/workspace:latest
+          name: workspace
           resources:
             limits:
-              memory: '512M'
+              memory: "512M"
       restartPolicy: Always
