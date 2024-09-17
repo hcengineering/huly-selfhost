@@ -1,4 +1,4 @@
-name: huly-selfhost
+version: "3"
 services:
   mongodb:
     image: "mongo:7-jammy"
@@ -53,7 +53,7 @@ services:
       - SERVER_SECRET=secret
       - MONGO_URL=mongodb://mongodb:27017
       - TRANSACTOR_URL=ws://transactor:3333;ws://${SERVER_ADDRESS}:3333
-      - STORAGE_CONFIG=minio|localhost?accessKey=minioadmin&secretKey=minioadmin
+      - STORAGE_CONFIG=minio|minio?accessKey=minioadmin&secretKey=minioadmin
       - FRONT_URL=http://front:8080
       - MODEL_ENABLED=*
       - ACCOUNTS_URL=http://${SERVER_ADDRESS}:3000
