@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Ask for the domain name
 read -p "Enter the domain name: " DOMAIN_NAME
 if [ -z "$DOMAIN_NAME" ]; then
   echo "DOMAIN_NAME is required"
@@ -42,5 +41,18 @@ export HULY_SECRET="c37fef1f157efe09785844215225ee3d1ab8086eb822055d5aa1bdedc729
 # replace the domain name and email address in the docker-compose file
 envsubst < template-compose.yml > docker-compose.yml
 
-echo -e "\033[1;32mSetup is complete. Run 'docker compose up -d' to start the services.\033[0m"
+echo -e "\033[1;32mSetup is complete!\033[0m"
 
+read -p "Do you want to run 'docker compose up -d' now to spin up Huly? ([Y]es/[n]o): " RUN_DOCKER
+case "${RUN_DOCKER,,}" in  
+    y|yes|"" )  
+         echo -e "\033[1;32mRunning 'docker compose up -d' now...\033[0m"
+        docker compose up -d
+        ;;
+    n|no )
+        echo "You can run 'docker compose up -d' later to start the services."
+        ;;
+    * )
+        echo "Invalid input. You can run 'docker compose up -d' later to start the services."
+        ;;
+esac
