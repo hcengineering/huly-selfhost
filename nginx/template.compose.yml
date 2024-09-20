@@ -13,7 +13,6 @@ services:
 
   mongodb:
     image: "mongo:7-jammy"
-    container_name: mongodb
     environment:
       - PUID=1000
       - PGID=1000
