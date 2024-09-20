@@ -30,7 +30,7 @@
    Setup is complete. Run 'docker compose up -d' to start the services.
    ```
 
-4. Modify the `docker-compose.yml` file to customize any settings
+4. Modify the `docker-compose.yaml` file to customize any settings
 
 5. Start the services
 
