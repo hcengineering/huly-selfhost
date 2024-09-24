@@ -64,6 +64,7 @@ else
   echo "Run this script with --secret to generate a new secret."
 fi
 
+export HTTP_BIND=$HTTP_BIND
 export SECURE=$_SECURE
 export HOST_ADDRESS=$_HOST_ADDRESS
 export HTTP_PORT=$_HTTP_PORT
