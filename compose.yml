@@ -109,6 +109,8 @@ services:
       - NOTIFY_INBOX_ONLY=true
     restart: unless-stopped
 
+  # THIS REQUIRES MANUAL SETUP
+  # https://docs.livekit.io/home/self-hosting/vm/
   #love:
   # image: hardcoreeng/love:${HULY_VERSION}
   # restart: unless-stopped
