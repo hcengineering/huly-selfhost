@@ -79,3 +79,34 @@ Add these keys into `compose.yaml` in section `services:front:environnement`:
 - PUSH_PUBLIC_KEY=your public key
 - PUSH_PRIVATE_KEY=your private key
 ```
+
+## AWS SES email notifications
+
+1. Setup Amazon Simple Email Service in AWS: https://docs.aws.amazon.com/ses/latest/dg/setting-up.html
+
+2. Add email address you'll use to send notifications into "SOURCE", SES access such as ACCESS_KEY, SECRET_KEY, REGION
+
+```
+  ses:
+    image: hardcoreeng/ses:v0.6.295
+    container_name: ses
+    ports:
+      - 3335:3335
+    environment:
+      - SOURCE=<EMAIL_FROM>
+      - ACCESS_KEY=<SES_ACCESS_KEY>
+      - SECRET_KEY=<SES_SECRET_KEY>
+      - REGION=<SES_REGION>
+      - PORT=3335
+    restart: unless-stopped
+```
+
+3. Add SES container URL into transactor and account containers
+
+`transactor:environment` AND `account:environment`:
+
+```
+- SES_URL=http://ses:3335
+```
+
+4. In `Settings -> Notifications` setup email notifications for events you need to be notified for. It's a user's setting not a company wide, meaning each user has to setup their own notification rules.
