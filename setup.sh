@@ -56,11 +56,11 @@ if [ "$1" == "--secret" ]; then
   SECRET=true
 fi
 
-if [ ! -f huly.secret ] || [ "$SECRET" == true ]; then
-  openssl rand -hex 32 > huly.secret
-  echo "Secret generated and stored in huly.secret"
+if [ ! -f .huly.secret ] || [ "$SECRET" == true ]; then
+  openssl rand -hex 32 > .huly.secret
+  echo "Secret generated and stored in .huly.secret"
 else
-  echo -e "\033[33mhuly.secret already exists, not overwriting."
+  echo -e "\033[33m.huly.secret already exists, not overwriting."
   echo "Run this script with --secret to generate a new secret."
 fi
 
@@ -68,9 +68,9 @@ export HTTP_BIND=$HTTP_BIND
 export SECURE=$_SECURE
 export HOST_ADDRESS=$_HOST_ADDRESS
 export HTTP_PORT=$_HTTP_PORT
-export HULY_SECRET=$(cat huly.secret)
+export HULY_SECRET=$(cat .huly.secret)
 
-envsubst < template.huly.conf > $CONFIG_FILE
+envsubst < .template.huly.conf > $CONFIG_FILE
 
 echo -e "\n\033[1;34mConfiguration Summary:\033[0m"
 echo -e "Host Address: \033[1;32m$_HOST_ADDRESS\033[0m"

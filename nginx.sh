@@ -10,12 +10,12 @@ fi
 
 # Handle nginx.conf recreation or updating
 if [ "$RECREATE" == true ]; then
-    cp template.nginx.conf nginx.conf
+    cp .template.nginx.conf nginx.conf
     echo "nginx.conf has been recreated from the template."
 else
     if [ ! -f "nginx.conf" ]; then
         echo "nginx.conf not found, creating from template."
-        cp template.nginx.conf nginx.conf
+        cp .template.nginx.conf nginx.conf
     else
         echo "nginx.conf already exists. Only updating server_name and proxy_pass."
         echo "Run with --recreate to fully overwrite nginx.conf."
