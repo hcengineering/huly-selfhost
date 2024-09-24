@@ -35,7 +35,7 @@ if [[ "$_HOST_ADDRESS" == "localhost" || "$_HOST_ADDRESS" =~ ^([0-9]{1,3}\.){3}[
     SECURE=""
 else
     while true; do
-        read -p "Will you serve Huly over SSL? (y/N) [default: ${SECURE}]: " input
+        read -p "Will you serve Huly over SSL? (y/n) [default: ${SECURE}]: " input
         case "${input}" in
             [Yy]* )
                 _SECURE="true"; break;;
@@ -90,4 +90,5 @@ case "${RUN_DOCKER:-Y}" in
         ;;
 esac
 
-echo -e "\033[1;32mSetup is complete!\033[0m"
+echo -e "\033[1;32mSetup is complete!\n Generating nginx.conf...\033[0m"
+./nginx
