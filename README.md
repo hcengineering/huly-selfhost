@@ -33,7 +33,7 @@ To add the generated configuration to your Nginx setup, run the following:
 sudo ln -s $(pwd)/nginx.conf /etc/nginx/sites-enabled/huly.conf
 ```
 > [!NOTE]
-> If you change `HOST_ADDRESS`, `HTTP_PORT`, `HTTP_BIND` be sure to update your [nginx.conf](./nginx.conf) by running:
+> If you change `HOST_ADDRESS`, `SECURE`, `HTTP_PORT` or `HTTP_BIND` be sure to update your [nginx.conf](./nginx.conf) by running:
 > ```bash
 > ./nginx.sh
 > ```
