@@ -30,7 +30,7 @@ This will generate a [huly.conf](./huly.conf) file with your chosen values and c
 
 To add the generated configuration to your Nginx setup, run the following:
 ```bash
-sudo ln -s $(pwd)/nginx.conf /etc/nginx/sites-enabled/
+sudo ln -s $(pwd)/nginx.conf /etc/nginx/sites-enabled/huly.conf
 ```
 > [!NOTE]
 > If you change `HOST_ADDRESS`, `HTTP_PORT`, `HTTP_BIND` be sure to update your [nginx.conf](./nginx.conf) by running:
