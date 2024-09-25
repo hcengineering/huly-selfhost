@@ -17,7 +17,7 @@ else
         echo "nginx.conf not found, creating from template."
         cp .template.nginx.conf nginx.conf
     else
-        echo "nginx.conf already exists. Only updating server_name and proxy_pass."
+        echo "nginx.conf already exists. Only updating server_name, listen and proxy_pass."
         echo "Run with --recreate to fully overwrite nginx.conf."
     fi
 fi
@@ -62,3 +62,14 @@ server {
 }
 # DO NOT REMOVE COMMENT !" >> ./nginx.conf
 fi
+
+read -p "Do you want to run 'nginx -s reload' now to load your updated Huly config? (Y/n): " RUN_NGINX
+case "${RUN_NGINX:-Y}" in  
+    [Yy]* )  
+         echo -e "\033[1;32mRunning 'nginx -s reload' now...\033[0m"
+         sudo nginx -s reload
+         ;;
+    [Nn]* )
+        echo "You can run 'nginx -s reload' later to load your updated Huly config."
+        ;;
+esac
