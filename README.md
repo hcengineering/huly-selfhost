@@ -12,9 +12,9 @@ If you prefer Kubernetes deployment, there is a sample Kubernetes configuration 
 First, let's install `nginx` and `docker` using the commands below if you have not already installed them on your machine.
 
 ```bash
-$ sudo apt update
-$ sudo apt install nginx
-$ sudo snap install docker
+sudo apt update
+sudo apt install nginx
+sudo snap install docker
 ```
 
 ## Clone the `huly-selfhost` repository and configure `nginx`
@@ -22,9 +22,9 @@ $ sudo snap install docker
 Next, let's clone the `huly-selfhost` repository and configure Huly.
 
 ```bash
-$ git clone https://github.com/hcengineering/huly-selfhost.git
-$ cd huly-selfhost
-$ ./setup.sh
+git clone https://github.com/hcengineering/huly-selfhost.git
+cd huly-selfhost
+./setup.sh
 ```
 This will generate a [huly.conf](./huly.conf) file with your chosen values and create your nginx config.
 
@@ -42,8 +42,8 @@ sudo ln -s $(pwd)/nginx.conf /etc/nginx/sites-enabled/huly.conf
 Finally, let's reload `nginx` and start Huly with `docker compose`.
 
 ```bash
-$ sudo nginx -s reload
-$ sudo docker compose up -d
+sudo nginx -s reload
+sudo docker compose up -d
 ```
 
 Now, launch your web browser and enjoy Huly!
