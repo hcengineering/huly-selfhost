@@ -79,10 +79,13 @@ else
   echo "Run this script with --secret to generate a new secret."
 fi
 
-export HTTP_BIND=$HTTP_BIND
-export SECURE=$_SECURE
 export HOST_ADDRESS=$_HOST_ADDRESS
+export SECURE=$_SECURE
 export HTTP_PORT=$_HTTP_PORT
+export HTTP_BIND=$HTTP_BIND
+export TITLE=${TITLE:-Huly}
+export DEFAULT_LANGUAGE=${DEFAULT_LANGUAGE:-en}
+export LAST_NAME_FIRST=${LAST_NAME_FIRST:-true}
 export HULY_SECRET=$(cat .huly.secret)
 
 envsubst < .template.huly.conf > $CONFIG_FILE
