@@ -9,19 +9,27 @@ if [ -f "$CONFIG_FILE" ]; then
 fi
 
 while true; do
-    read -p "Enter the host address (domain name or IP) [default: ${HOST_ADDRESS:-<IP>}]: " input
-    _HOST_ADDRESS="${input:-${HOST_ADDRESS:-$(hostname -I | awk '{print $1}')}}"
-    # TODO: proper validation
-    # if [[ "$_HOST_ADDRESS" =~ ^[a-zA-Z0-9.-]+$ || "$_HOST_ADDRESS" =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ ]]; then
-        break
-    # else
-    #    echo "Invalid host address. Please enter a valid domain name or IP."
-    # fi
+    if [[ -n "$HOST_ADDRESS" ]]; then
+        prompt_type="current"
+        prompt_value="${HOST_ADDRESS}"
+    else
+        prompt_type="default"
+        prompt_value="<IP>"
+    fi
+    read -p "Enter the host address (domain name or IP) [${prompt_type}: ${prompt_value}]: " input
+    _HOST_ADDRESS="${input:-${HOST_ADDRESS:-$(hostname -i)}}"
+    break
 done
 
-
 while true; do
-    read -p "Enter the port for HTTP [default: ${HTTP_PORT:-80}]: " input
+    if [[ -n "$HTTP_PORT" ]]; then
+        prompt_type="current"
+        prompt_value="${HTTP_PORT}" 
+    else
+        prompt_type="default"
+        prompt_value="80"
+    fi
+    read -p "Enter the port for HTTP [${prompt_type}: ${prompt_value}]: " input
     _HTTP_PORT="${input:-${HTTP_PORT:-80}}"
     if [[ "$_HTTP_PORT" =~ ^[0-9]+$ && "$_HTTP_PORT" -ge 1 && "$_HTTP_PORT" -le 65535 ]]; then
         break
@@ -35,7 +43,14 @@ if [[ "$_HOST_ADDRESS" == "localhost" || "$_HOST_ADDRESS" =~ ^([0-9]{1,3}\.){3}[
     SECURE=""
 else
     while true; do
-        read -p "Will you serve Huly over SSL? (y/n) [default: ${SECURE:-false}]: " input
+        if [[ -n "$SECURE" ]]; then
+            prompt_type="current"
+            prompt_value="Yes"
+        else
+            prompt_type="default"
+            prompt_value="No" 
+        fi
+        read -p "Will you serve Huly over SSL? (y/n) [${prompt_type}: ${prompt_value}]: " input
         case "${input}" in
             [Yy]* )
                 _SECURE="true"; break;;
@@ -84,7 +99,7 @@ read -p "Do you want to run 'docker compose up -d' now to start Huly? (Y/n): " R
 case "${RUN_DOCKER:-Y}" in  
     [Yy]* )  
          echo -e "\033[1;32mRunning 'docker compose up -d' now...\033[0m"
-         docker compose up -d
+         sudo docker compose up -d
          ;;
     [Nn]* )
         echo "You can run 'docker compose up -d' later to start Huly."
