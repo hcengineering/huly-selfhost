@@ -38,7 +38,6 @@ else
 fi
 
 IP_ADDRESS=$(grep -oP 'listen \K[^:]+(?=:[0-9]+ ssl;)' nginx.conf)
-echo $IP_ADDRESS
 
 # Remove HTTP to HTTPS redirect server block if SSL is enabled
 if [[ -z "$SECURE" ]]; then
