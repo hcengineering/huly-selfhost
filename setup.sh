@@ -17,7 +17,7 @@ while true; do
         prompt_value="<IP>"
     fi
     read -p "Enter the host address (domain name or IP) [${prompt_type}: ${prompt_value}]: " input
-    _HOST_ADDRESS="${input:-${HOST_ADDRESS:-$(hostname -i)}}"
+    _HOST_ADDRESS="${input:-${HOST_ADDRESS:-$(curl -s https://checkip.amazonaws.com)}}"
     break
 done
 
