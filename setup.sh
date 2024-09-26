@@ -14,10 +14,10 @@ while true; do
         prompt_value="${HOST_ADDRESS}"
     else
         prompt_type="default"
-        prompt_value="<IP>"
+        prompt_value="localhost"
     fi
     read -p "Enter the host address (domain name or IP) [${prompt_type}: ${prompt_value}]: " input
-    _HOST_ADDRESS="${input:-${HOST_ADDRESS:-$(curl -s https://checkip.amazonaws.com)}}"
+    _HOST_ADDRESS="${input:-${HOST_ADDRESS:-localhost}}"
     break
 done
 
@@ -38,8 +38,8 @@ while true; do
     fi
 done
 
-if [[ "$_HOST_ADDRESS" == "localhost" || "$_HOST_ADDRESS" =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ ]]; then
-    _HOST_ADDRESS="${_HOST_ADDRESS}:\${HTTP_PORT}"
+if [[ "$_HOST_ADDRESS" == "localhost" || "$_HOST_ADDRESS" =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}:?$ ]]; then
+    _HOST_ADDRESS="${_HOST_ADDRESS%:}:\${HTTP_PORT}"
     SECURE=""
 else
     while true; do
