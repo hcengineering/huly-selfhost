@@ -1,5 +1,6 @@
 letsencrypt/
-nginx/docker-compose.yaml
 traefik/docker-compose.yaml
-compose.yaml
 nginx.conf
+nginx.conf.bak
+huly.conf
+.huly.secret
