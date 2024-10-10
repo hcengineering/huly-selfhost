@@ -74,7 +74,7 @@ asdfsadfasdfsfd
 ```
 Keep these keys secure, as you will need them to set up your push notification service on the server.
 
-Add these keys into `compose.yaml` in section `services:front:environnement`:
+Add these keys into `compose.yaml` in section `services:front:environment`:
 ```
 - PUSH_PUBLIC_KEY=your public key
 - PUSH_PRIVATE_KEY=your private key
