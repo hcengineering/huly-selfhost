@@ -14,13 +14,12 @@ if [ -z "$LETSENCRYPT_EMAIL" ]; then
   exit 1
 fi
 
-
-export HULY_VERSION="v0.6.245"
+export HULY_VERSION="v0.6.313"
 export SERVER_ADDRESS=$DOMAIN_NAME
 export LETSENCRYPT_EMAIL=$LETSENCRYPT_EMAIL
 
 # replace the domain name and email address in the docker-compose file
-envsubst < template-compose.yml > docker-compose.yml
+envsubst < template-compose.yaml > docker-compose.yaml
 
 echo -e "\033[1;32mSetup is complete. Run 'docker compose up -d' to start the services.\033[0m"
 
