@@ -45,7 +45,7 @@ spec:
                   key: MINIO_SECRET_KEY
             - name: MODEL_ENABLED
               value: '*'
-            - name: MONGO_URL
+            - name: DB_URL
               valueFrom:
                 configMapKeyRef:
                   name: huly-config
