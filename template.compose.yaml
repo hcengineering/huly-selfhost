@@ -43,9 +43,6 @@ services:
     restart: unless-stopped
   account:
     image: hardcoreeng/account:${HULY_VERSION}
-    links:
-      - mongodb
-      - minio
     ports:
       - 3000:3000
     environment:
@@ -61,9 +58,6 @@ services:
     restart: unless-stopped
   workspace:
     image: hardcoreeng/workspace:${HULY_VERSION}
-    links:
-      - mongodb
-      - minio
     environment:
       - SERVER_SECRET=${HULY_SECRET}
       - DB_URL=mongodb://mongodb:27017
@@ -76,12 +70,6 @@ services:
     restart: unless-stopped
   front:
     image: hardcoreeng/front:${HULY_VERSION}
-    links:
-      - mongodb
-      - minio
-      - elastic
-      - collaborator
-      - transactor
     ports:
       - 8087:8080
     environment:
@@ -103,10 +91,6 @@ services:
     restart: unless-stopped
   collaborator:
     image: hardcoreeng/collaborator:${HULY_VERSION}
-    links:
-      - mongodb
-      - minio
-      - transactor
     ports:
       - 3078:3078
     environment:
@@ -118,11 +102,6 @@ services:
     restart: unless-stopped
   transactor:
     image: hardcoreeng/transactor:${HULY_VERSION}
-    links:
-      - mongodb
-      - elastic
-      - minio
-      - account
     ports:
       - 3333:3333
     environment:
