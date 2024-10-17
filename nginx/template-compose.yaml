@@ -74,6 +74,7 @@ services:
       - SERVER_CURSOR_MAXTIMEMS=30000
       - ELASTIC_URL=http://elastic:9200
       - ELASTIC_INDEX_NAME=huly_storage_index
+      - DB_URL=mongodb://mongodb:27017
       - MONGO_URL=mongodb://mongodb:27017
       - METRICS_CONSOLE=false
       - METRICS_FILE=metrics.txt
@@ -107,7 +108,7 @@ services:
     environment:
       - SERVER_PORT=3000
       - SERVER_SECRET=${HULY_SECRET}
-      - MONGO_URL=mongodb://mongodb:27017
+      - DB_URL=mongodb://mongodb:27017
       - TRANSACTOR_URL=ws://transactor:3333;${NGINX_WS_SCHEME}://${SERVER_ADDRESS}/_transactor
       - STORAGE_CONFIG=minio|minio?accessKey=minioadmin&secretKey=minioadmin
       - FRONT_URL=http://front:8080
@@ -123,6 +124,7 @@ services:
     image: hardcoreeng/workspace:${HULY_VERSION}
     environment:
       - SERVER_SECRET=${HULY_SECRET}
+      - DB_URL=mongodb://mongodb:27017
       - MONGO_URL=mongodb://mongodb:27017
       - TRANSACTOR_URL=ws://transactor:3333;${NGINX_WS_SCHEME}://${SERVER_ADDRESS}/_transactor
       - STORAGE_CONFIG=minio|minio?accessKey=minioadmin&secretKey=minioadmin
