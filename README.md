@@ -80,6 +80,38 @@ Add these keys into `compose.yaml` in section `services:front:environment`:
 - PUSH_PRIVATE_KEY=your private key
 ```
 
+## AWS SES email notifications
+
+1. Setup Amazon Simple Email Service in AWS: https://docs.aws.amazon.com/ses/latest/dg/setting-up.html
+
+2. Add email address you'll use to send notifications into "SOURCE", SES access such as ACCESS_KEY, SECRET_KEY, REGION
+
+```
+  ses:
+    image: hardcoreeng/ses:v0.6.295
+    container_name: ses
+    ports:
+      - 3335:3335
+    environment:
+      - SOURCE=<EMAIL_FROM>
+      - ACCESS_KEY=<SES_ACCESS_KEY>
+      - SECRET_KEY=<SES_SECRET_KEY>
+      - REGION=<SES_REGION>
+      - PORT=3335
+    restart: unless-stopped
+```
+
+3. Add SES container URL into transactor and account containers
+
+`transactor:environment` AND `account:environment`:
+
+```
+- SES_URL=http://ses:3335
+```
+
+4. In `Settings -> Notifications` setup email notifications for events you need to be notified for. It's a user's setting not a company wide, meaning each user has to setup their own notification rules.
+
+
 ## Configure OpenId Connect
 
 You can configure a Huly instance to authorize users (sign-in/sign-up) using an OpenID Connect identity provider (IdP).
@@ -103,3 +135,4 @@ Ensure you have configured or add the following environment variable to the fron
 * ACCOUNTS_URL (This should contain the URL of the account service, accessible from the client side.)
 
 Note: Once all the required environment variables are configured, you will see an additional button on the sign-in/sign-up pages.
+
