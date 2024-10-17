@@ -2,37 +2,22 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: transactor
-  name: transactor
+    app: workspace
+  name: workspace
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: transactor
+      app: workspace
   template:
     metadata:
       labels:
-        app: transactor
+        app: workspace
     spec:
       containers:
         - env:
             - name: ACCOUNTS_URL
               value: http://account
-            - name: ELASTIC_INDEX_NAME
-              valueFrom:
-                configMapKeyRef:
-                  name: huly-config
-                  key: ELASTIC_INDEX_NAME
-            - name: ELASTIC_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: huly-config
-                  key: ELASTIC_URL
-            - name: FRONT_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: huly-config
-                  key: FRONT_URL
             - name: MINIO_ACCESS_KEY
               valueFrom:
                 secretKeyRef:
@@ -48,33 +33,30 @@ spec:
                 secretKeyRef:
                   name: huly-secret
                   key: MINIO_SECRET_KEY
-            - name: MONGO_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: huly-config
-                  key: MONGO_URL
+            - name: MODEL_ENABLED
+              value: '*'
             - name: DB_URL
               valueFrom:
                 configMapKeyRef:
                   name: huly-config
                   key: MONGO_URL
-            - name: REKONI_URL
-              value: http://rekoni
-            - name: SERVER_CURSOR_MAXTIMEMS
-              value: "30000"
-            - name: SERVER_PORT
-              value: "3333"
-            - name: SERVER_PROVIDER
-              value: ws
+            - name: MONGO_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: huly-config
+                  key: MONGO_URL
             - name: SERVER_SECRET
               valueFrom:
                 secretKeyRef:
                   name: huly-secret
                   key: SERVER_SECRET
-          image: hardcoreeng/transactor:latest
-          name: transactor
-          ports:
-            - containerPort: 3333
-              hostPort: 3333
-              protocol: TCP
+            - name: TRANSACTOR_URL
+              value: ws://transactor:3333;ws://localhost:3333
+            - name: NOTIFY_INBOX_ONLY
+              value: true
+          image: hardcoreeng/workspace:latest
+          name: workspace
+          resources:
+            limits:
+              memory: "512M"
       restartPolicy: Always

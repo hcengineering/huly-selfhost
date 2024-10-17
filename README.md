@@ -74,7 +74,7 @@ asdfsadfasdfsfd
 ```
 Keep these keys secure, as you will need them to set up your push notification service on the server.
 
-Add these keys into `compose.yaml` in section `services:front:environnement`:
+Add these keys into `compose.yaml` in section `services:front:environment`:
 ```
 - PUSH_PUBLIC_KEY=your public key
 - PUSH_PRIVATE_KEY=your private key
@@ -110,3 +110,29 @@ Add these keys into `compose.yaml` in section `services:front:environnement`:
 ```
 
 4. In `Settings -> Notifications` setup email notifications for events you need to be notified for. It's a user's setting not a company wide, meaning each user has to setup their own notification rules.
+
+
+## Configure OpenId Connect
+
+You can configure a Huly instance to authorize users (sign-in/sign-up) using an OpenID Connect identity provider (IdP).
+
+### On the IdP side
+
+* Create a new OpenID application.
+* Configure user access to the application as needed.
+
+### On the Huly side
+
+Specify the following environment variables (provided by the IdP) for the account service:
+
+* OPENID_CLIENT_ID
+* OPENID_CLIENT_SECRET
+* OPENID_ISSUER
+
+
+Ensure you have configured or add the following environment variable to the front service:
+
+* ACCOUNTS_URL (This should contain the URL of the account service, accessible from the client side.)
+
+Note: Once all the required environment variables are configured, you will see an additional button on the sign-in/sign-up pages.
+
