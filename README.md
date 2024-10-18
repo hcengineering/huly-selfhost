@@ -86,31 +86,75 @@ Add these keys into `compose.yaml` in section `services:front:environment`:
 
 2. Add email address you'll use to send notifications into "SOURCE", SES access such as ACCESS_KEY, SECRET_KEY, REGION
 
-```
-  ses:
-    image: hardcoreeng/ses:v0.6.295
-    container_name: ses
-    ports:
-      - 3335:3335
-    environment:
-      - SOURCE=<EMAIL_FROM>
-      - ACCESS_KEY=<SES_ACCESS_KEY>
-      - SECRET_KEY=<SES_SECRET_KEY>
-      - REGION=<SES_REGION>
-      - PORT=3335
-    restart: unless-stopped
-```
+    ```yaml
+      ses:
+        image: hardcoreeng/ses:v0.6.295
+        container_name: ses
+        ports:
+          - 3335:3335
+        environment:
+          - SOURCE=<EMAIL_FROM>
+          - ACCESS_KEY=<SES_ACCESS_KEY>
+          - SECRET_KEY=<SES_SECRET_KEY>
+          - REGION=<SES_REGION>
+          - PORT=3335
+        restart: unless-stopped
+    ```
 
-3. Add SES container URL into transactor and account containers
+3. Add SES container URL into `transactor` and `account` containers:
 
-`transactor:environment` AND `account:environment`:
-
-```
-- SES_URL=http://ses:3335
-```
+    ```yaml
+    account:
+      ...
+      environment:
+        - SES_URL=http://ses:3335
+      ...
+    transactor:
+      ...
+      environment:
+        - SES_URL=http://ses:3335
+      ...
+    ```
 
 4. In `Settings -> Notifications` setup email notifications for events you need to be notified for. It's a user's setting not a company wide, meaning each user has to setup their own notification rules.
 
+## Love Service (Audio & Video calls)
+
+Huly audio and video calls are created on top of LiveKit insfrastructure. In order to use Love service in your self-hosted Huly, perform the following steps:
+
+1. Set up [LiveKit Cloud](https://cloud.livekit.io) account
+2. Add `love` container to the docker-compose.yaml
+
+    ```yaml
+      love:
+        image: hardcoreeng/love:v0.6.295
+        container_name: love
+        ports:
+          - 8096:8096
+        environment:
+          - STORAGE_CONFIG=minio|minio?accessKey=minioadmin&secretKey=minioadmin
+          - SECRET=secret
+          - ACCOUNTS_URL=http://account:3000
+          - DB_URL=mongodb://mongodb:27017
+          - MONGO_URL=mongodb://mongodb:27017
+          - STORAGE_PROVIDER_NAME=minio
+          - PORT=8096
+          - LIVEKIT_HOST=<LIVEKIT_HOST>
+          - LIVEKIT_API_KEY=<LIVEKIT_API_KEY>
+          - LIVEKIT_API_SECRET=<LIVEKIT_API_SECRET>
+        restart: unless-stopped
+    ```
+
+3. Configure `front` service:
+
+    ```yaml
+      front:
+        ...
+        environment:
+          - LIVEKIT_WS=<LIVEKIT_HOST>
+          - LOVE_ENDPOINT=http://love:8096
+        ...
+    ```
 
 ## Configure OpenId Connect
 
