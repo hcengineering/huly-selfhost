@@ -180,3 +180,23 @@ Ensure you have configured or add the following environment variable to the fron
 
 Note: Once all the required environment variables are configured, you will see an additional button on the sign-in/sign-up pages.
 
+## Disable Sign-Up
+
+You can disable public sign-ups for a deployment. When configured, sign-ups will only be permitted through an invite link to a specific workspace.
+
+To implement this, set the following environment variable for both the front and account services:
+
+```yaml
+  account:
+    ...
+    environment:
+      - DISABLE_SIGNUP=true
+    ...  
+  front:    
+    ...
+    environment:
+      - DISABLE_SIGNUP=true
+    ...
+```
+
+_Note: When setting up a new deployment, either create the initial account before disabling sign-ups or use the development tool to create the first account._
