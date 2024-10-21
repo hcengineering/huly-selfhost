@@ -50,10 +50,6 @@ spec:
                 secretKeyRef:
                   name: huly-secret
                   key: SERVER_SECRET
-            - name: TRANSACTOR_URL
-              value: ws://transactor:3333;ws://localhost:3333
-            - name: NOTIFY_INBOX_ONLY
-              value: true
           image: hardcoreeng/workspace:latest
           name: workspace
           resources:
