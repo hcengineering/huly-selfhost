@@ -34,7 +34,7 @@ Finally, let's restart `nginx` and run Huly with `docker compose`.
 
 ```bash
 sudo systemctl restart nginx
-sudo docker compose up
+sudo docker compose up &
 ```
 
 Now, launch your web browser and enjoy Huly!
