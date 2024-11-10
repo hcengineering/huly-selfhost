@@ -56,7 +56,10 @@ spec:
                   name: huly-secret
                   key: SERVER_SECRET
             - name: TRANSACTOR_URL
-              value: ws://transactor:3333;ws://localhost:3333
+              valueFrom:
+                configMapKeyRef:
+                  name: huly-config
+                  key: TRANSACTOR_URL
             - name: ENDPOINT_URL
               valueFrom:
                 configMapKeyRef:
