@@ -168,13 +168,15 @@ You can configure a Huly instance to authorize users (sign-in/sign-up) using an 
 
 ### On the Huly side
 
-Specify the following environment variables (provided by the IdP) for the account service:
-
+For the account service, set the following environment variables as provided by the IdP:
 * OPENID_CLIENT_ID
 * OPENID_CLIENT_SECRET
 * OPENID_ISSUER
 
-
+To use GitHub OAuth instead, specify:
+* GITHUB_CLIENT_ID
+* GITHUB_CLIENT_SECRET
+ 
 Ensure you have configured or add the following environment variable to the front service:
 
 * ACCOUNTS_URL (This should contain the URL of the account service, accessible from the client side.)
