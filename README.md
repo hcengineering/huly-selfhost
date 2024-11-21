@@ -156,32 +156,60 @@ Huly audio and video calls are created on top of LiveKit insfrastructure. In ord
         ...
     ```
 
-## Configure OpenId Connect
+## Configure OpenID Connect (OIDC)
 
 You can configure a Huly instance to authorize users (sign-in/sign-up) using an OpenID Connect identity provider (IdP).
 
 ### On the IdP side
+1. Create a new OpenID application.  
+   * Use `{huly_account_svc}/auth/openid/callback` as the sign-in redirect URI. The `huly_account_svc` is the hostname for the account service of the deployment, which should be accessible externally from the client/browser side. In the provided example setup, the account service runs on port 3000.  
 
-* Create a new OpenID application.
-  * Use `{huly_account_svc}/auth/openid/callback` as the sign-in redirect URI. The `huly_account_svc` is the hostname for the account service of the deployment, which should be accessible externally from the client/browser side. In the provided example setup, the account service runs on port 3000.
-* Configure user access to the application as needed.
+   **URI Example:**  
+   - `http://huly.mydomain.com:3000/auth/openid/callback`  
+
+2. Configure user access to the application as needed.  
 
 ### On the Huly side
-
 For the account service, set the following environment variables as provided by the IdP:
+
 * OPENID_CLIENT_ID
 * OPENID_CLIENT_SECRET
 * OPENID_ISSUER
 
-To use GitHub OAuth instead, specify:
-* GITHUB_CLIENT_ID
-* GITHUB_CLIENT_SECRET
- 
 Ensure you have configured or add the following environment variable to the front service:
 
 * ACCOUNTS_URL (This should contain the URL of the account service, accessible from the client side.)
 
+You will need to expose your account service port (e.g. 3000) in your nginx.conf.
+
 Note: Once all the required environment variables are configured, you will see an additional button on the sign-in/sign-up pages.
+
+## Configure GitHub OAuth
+
+You can also configure a Huly instance to use GitHub OAuth for user authorization (sign-in/sign-up).
+
+### On the GitHub side
+1. Create a new GitHub OAuth application.  
+   * Use `{huly_account_svc}/auth/github/callback` as the sign-in redirect URI. The `huly_account_svc` is the hostname for the account service of the deployment, which should be accessible externally from the client/browser side. In the provided example setup, the account service runs on port 3000.  
+
+   **URI Example:**  
+   - `http://huly.mydomain.com:3000/auth/github/callback`  
+
+### On the Huly side
+Specify the following environment variables for the account service:
+
+* `GITHUB_CLIENT_ID`  
+* `GITHUB_CLIENT_SECRET`  
+
+Ensure you have configured or add the following environment variable to the front service:
+
+* `ACCOUNTS_URL` (The URL of the account service, accessible from the client side.)  
+
+You will need to expose your account service port (e.g. 3000) in your nginx.conf.
+
+Notes:
+* The `ISSUER` environment variable is not required for GitHub OAuth.
+* Once all the required environment variables are configured, you will see an additional button on the sign-in/sign-up pages.
 
 ## Disable Sign-Up
 
