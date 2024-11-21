@@ -37,9 +37,9 @@ while true; do
         echo "Invalid port. Please enter a number between 1 and 65535."
     fi
 done
-
-if [[ "$_HOST_ADDRESS" == "localhost" || "$_HOST_ADDRESS" =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}:?$ ]]; then
-    _HOST_ADDRESS="${_HOST_ADDRESS%:}:\${HTTP_PORT}"
+echo $_HOST_ADDRESS $HOST_ADDRESS $_HTTP_PORT $HTTP_PORT
+if [[ "$_HOST_ADDRESS" == "localhost" || "$_HOST_ADDRESS" == "127.0.0.1" || "$_HOST_ADDRESS" =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}:?$ ]]; then
+    _HOST_ADDRESS="${_HOST_ADDRESS%:}:${_HTTP_PORT}"
     SECURE=""
 else
     while true; do
