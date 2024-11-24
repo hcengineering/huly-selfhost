@@ -30,12 +30,25 @@ case "$NGINX_BEHIND_SSL" in
         ;;
 esac
 
+read -p "Do you tunnel inbound public traffic directly to localhost:port? (y/N): " NGINX_LOCALHOST_BEHIND_TUNNEL
+case "$NGINX_LOCALHOST_BEHIND_TUNNEL" in
+    [Yy]* )
+        SERVER_ADDRESS="${DOMAIN_NAME}"
+        ;;
+    [Nn]* )
+        SERVER_ADDRESS="${DOMAIN_NAME}:${NGINX_SERVICE_PORT}"
+        ;;
+    * )
+        echo "Proceeding without localhost tunnel configuration"
+        SERVER_ADDRESS="${DOMAIN_NAME}:${NGINX_SERVICE_PORT}"
+        ;;
+esac
 
 export HULY_VERSION="v0.6.333"
 export NGINX_SERVICE_PORT=$NGINX_SERVICE_PORT
 export NGINX_HTTP_SCHEME=$NGINX_HTTP_SCHEME
 export NGINX_WS_SCHEME=$NGINX_WS_SCHEME
-export SERVER_ADDRESS="${DOMAIN_NAME}:${NGINX_SERVICE_PORT}"
+export SERVER_ADDRESS="${SERVER_ADDRESS}"
 
 # $(openssl rand -hex 32)
 export HULY_SECRET="secret"

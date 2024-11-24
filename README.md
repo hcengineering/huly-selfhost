@@ -5,6 +5,7 @@ Please use this README if you want to deploy Huly on your server with `docker co
 > [!NOTE]
 > Huly is quite resource-heavy, so I recommend using a Droplet with 2 vCPUs and 4GB of RAM. Droplets with less RAM may stop responding or fail.
 
+If you prefer running nginx inside a docker container instead of installing nginx on your server, skip ahead to [Alternative: Run Huly with public HTTPS using an nginx container](#alternative-run-huly-with-public-https-using-an-nginx-container).\
 If you prefer Kubernetes deployment, there is a sample Kubernetes configuration under [kube](kube) directory.
 
 ## Installing `nginx` and `docker`
@@ -38,6 +39,49 @@ $ sudo docker compose up
 ```
 
 Now, launch your web browser and enjoy Huly!
+
+## Alternative: Run Huly with public HTTPS using an nginx container
+
+### Clone the repository
+```
+$ git clone https://github.com/hcengineering/huly-selfhost.git
+$ cd huly-selfhost
+```
+
+### Switch into the containerized nginx directory
+```
+$ cd nginx
+```
+
+### Run setup.py and provide your configuration
+This example will configure Huly to be served publicly over SSL at `https://huly.example.com:12345`\
+You need to choose your own hostname and port number.
+```
+~/huly-selfhost/nginx$ ./setup.sh
+Enter the domain name: huly.example.com
+Enter the port you want nginx to expose: 12345
+Do you run behind SSL proxy (did you setup HTTPS)? (Y/n): y
+Do you tunnel inbound public traffic directly to localhost:port? (y/N): n
+Setup is complete. Run 'docker compose up -d' to start the services.
+```
+
+### Option: Tunnel public traffic directly to localhost:port
+If you want to avoid reconfiguring your network to publish your server's ports publicly on the internet, you can use a tunnel to route `https://huly.example.com` directly to nginx at `http://localhost:12345`.\
+Some tunnel service examples are [Cloudflare Zero Trust Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/), [localhost.run](https://localhost.run/), [Tailscale Funnel](https://tailscale.com/kb/1223/funnel), [and more](https://github.com/anderspitman/awesome-tunneling).\
+To use a tunnel, rerun `setup.py` from the prior step and  answer `Y` to the question `Do you tunnel inbound public traffic directly to localhost:port? (y/N): Y`.\
+Then finally configure your tunnel provider with something like:
+```
+subdomain: huly
+domain: example.com
+Service Type: HTTP
+URL: localhost:12345
+```
+This accomplishes an HTTPS connection in the browser to your tunnel entrance at `https://huly.example.com`, then your Tunnel securely routes the traffic to your server where it will reach nginx at `localhost:12345`
+
+### Finally launch the docker service
+```
+~/huly-selfhost/nginx$ docker compose up
+```
 
 ## Security
 
