@@ -80,7 +80,7 @@ services:
       - METRICS_FILE=metrics.txt
       - STORAGE_CONFIG=minio|minio?accessKey=minioadmin&secretKey=minioadmin
       - REKONI_URL=http://rekoni:4004
-      - FRONT_URL=http://localhost:8087
+      - FRONT_URL=${NGINX_HTTP_SCHEME}://${SERVER_ADDRESS}
       - ACCOUNTS_URL=http://account:3000
       - LAST_NAME_FIRST=true
       - UPLOAD_URL=${NGINX_HTTP_SCHEME}://${SERVER_ADDRESS}/files
