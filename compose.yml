@@ -62,6 +62,7 @@ services:
       - SERVER_CURSOR_MAXTIMEMS=30000
       - ELASTIC_URL=http://elastic:9200
       - ELASTIC_INDEX_NAME=huly_storage_index
+      - DB_URL=mongodb://mongodb:27017
       - MONGO_URL=mongodb://mongodb:27017
       - METRICS_CONSOLE=false
       - METRICS_FILE=metrics.txt
@@ -79,6 +80,7 @@ services:
       - COLLABORATOR_PORT=3078
       - SECRET=${SECRET}
       - ACCOUNTS_URL=http://account:3000
+      - DB_URL=mongodb://mongodb:27017
       - MONGO_URL=mongodb://mongodb:27017
       - STORAGE_CONFIG=minio|minio?accessKey=minioadmin&secretKey=minioadmin
     restart: unless-stopped
@@ -88,6 +90,7 @@ services:
     environment:
       - SERVER_PORT=3000
       - SERVER_SECRET=${SECRET}
+      - DB_URL=mongodb://mongodb:27017
       - MONGO_URL=mongodb://mongodb:27017
       - TRANSACTOR_URL=ws://transactor:3333;ws${SECURE:+s}://${HOST_ADDRESS}/_transactor
       - STORAGE_CONFIG=minio|minio?accessKey=minioadmin&secretKey=minioadmin
@@ -100,7 +103,9 @@ services:
   workspace:
     image: hardcoreeng/workspace:${HULY_VERSION}
     environment:
+      - SERVER_SECRET=${HULY_SECRET}
       - SERVER_SECRET=${SECRET}
+      - DB_URL=mongodb://mongodb:27017
       - MONGO_URL=mongodb://mongodb:27017
       - TRANSACTOR_URL=ws://transactor:3333;ws${SECURE:+s}://${HOST_ADDRESS}/_transactor
       - STORAGE_CONFIG=minio|minio?accessKey=minioadmin&secretKey=minioadmin
@@ -129,6 +134,7 @@ services:
       - ELASTIC_URL=http://elastic:9200
       - COLLABORATOR_URL=ws${SECURE:+s}://${HOST_ADDRESS}/_collaborator
       - STORAGE_CONFIG=minio|minio?accessKey=minioadmin&secretKey=minioadmin
+      - DB_URL=mongodb://mongodb:27017
       - MONGO_URL=mongodb://mongodb:27017
       - TITLE=${TITLE:-Huly Self Host}
       - DEFAULT_LANGUAGE=${DEFAULT_LANGUAGE:-en}

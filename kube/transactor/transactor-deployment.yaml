@@ -53,6 +53,11 @@ spec:
                 configMapKeyRef:
                   name: huly-config
                   key: MONGO_URL
+            - name: DB_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: huly-config
+                  key: MONGO_URL
             - name: REKONI_URL
               value: http://rekoni
             - name: SERVER_CURSOR_MAXTIMEMS
