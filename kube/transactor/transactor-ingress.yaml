@@ -3,19 +3,22 @@ kind: Ingress
 metadata:
   annotations:
     kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    nginx.ingress.kubernetes.io/enable-websocket: "true"
   labels:
     app: transactor
   name: transactor
 spec:
   ingressClassName: nginx
   rules:
-    - host: transactor.huly.example
+    - host: transactor.tributor.in
       http:
         paths:
           - backend:
               service:
                 name: transactor
                 port:
-                  number: 80
+                  number: 3333 # Updated port number to match the service port
             path: /
             pathType: Prefix

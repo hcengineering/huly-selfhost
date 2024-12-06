@@ -6,8 +6,9 @@ metadata:
   name: transactor
 spec:
   ports:
-    - port: 80
+    - port: 3333
       protocol: TCP
       targetPort: 3333
   selector:
     app: transactor
+  type: ClusterIP 
