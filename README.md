@@ -12,39 +12,41 @@ If you prefer Kubernetes deployment, there is a sample Kubernetes configuration 
 First, let's install `nginx` and `docker` using the commands below if you have not already installed them on your machine.
 
 ```bash
-$ sudo apt update
-$ sudo apt install nginx
-$ sudo snap install docker
+sudo apt update
+sudo apt install nginx
+sudo snap install docker
 ```
 
 ## Clone the `huly-selfhost` repository and configure `nginx`
 
-Next, let's clone the `huly-selfhost` repository and configure the server address. _Please replace **x.y.z.w** with your server's IP address_.
+Next, let's clone the `huly-selfhost` repository and configure Huly.
 
 ```bash
-$ git clone https://github.com/hcengineering/huly-selfhost.git
-$ cd huly-selfhost
-$ ./setup.sh x.y.z.w # Replace x.y.z.w with your server's IP address
-$ sudo ln -s $(pwd)/nginx.conf /etc/nginx/sites-enabled/
+git clone https://github.com/hcengineering/huly-selfhost.git
+cd huly-selfhost
+./setup.sh
 ```
+This will generate a [huly.conf](./huly.conf) file with your chosen values and create your nginx config.
 
-## Now we're ready to run Huly
+To add the generated configuration to your Nginx setup, run the following:
+```bash
+sudo ln -s $(pwd)/nginx.conf /etc/nginx/sites-enabled/huly.conf
+```
+> [!NOTE]
+> If you change `HOST_ADDRESS`, `SECURE`, `HTTP_PORT` or `HTTP_BIND` be sure to update your [nginx.conf](./nginx.conf) by running:
+> ```bash
+> ./nginx.sh
+> ```
+>You can safely execute this script after adding your custom configurations like ssl. It will only overwrite the necessary settings.
 
-Finally, let's restart `nginx` and run Huly with `docker compose`.
+Finally, let's reload `nginx` and start Huly with `docker compose`.
 
 ```bash
-$ sudo systemctl restart nginx
-$ sudo docker compose up
+sudo nginx -s reload
+sudo docker compose up -d
 ```
 
 Now, launch your web browser and enjoy Huly!
-
-## Security
-
-When exposing your self-hosted Huly deployment to the internet, it's crucial to implement some security measures to protect your server and data.
-
-1. Do not expose MongoDB, MinIO, and Elastic services to the internet. Huly does not require them to be accessible from the internet.
-2. It is highly recommended to change the default credentials. By default the services, mentioned above, require no authentication, or use default well-known credentials.
 
 ## Generating Public and Private VAPID keys for front-end
 
