@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: fulltext
+  name: fulltext
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fulltext
+  template:
+    metadata:
+      labels:
+        app: fulltext
+    spec:
+      containers:
+        - env:
+            - name: SERVER_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: huly-secret
+                  key: SERVER_SECRET
+            - name: DB_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: huly-config
+                  key: MONGO_URL
+            - name: FULLTEXT_DB_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: huly-config
+                  key: ELASTIC_URL
+            - name: ELASTIC_INDEX_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: huly-config
+                  key: ELASTIC_INDEX_NAME
+            - name: STORAGE_CONFIG
+              valueFrom:
+                secretKeyRef:
+                  name: huly-secret
+                  key: STORAGE_CONFIG
+            - name: REKONI_URL
+              value: http://rekoni
+            - name: ACCOUNTS_URL
+              value: http://account
+            - name: STATS_URL
+              value: http://stats
+          image: hardcoreeng/fulltext:v0.6.377
+          name: fulltext
+          ports:
+            - containerPort: 4700
+              hostPort: 4700
+              protocol: TCP
+          resources:
+            limits:
+              memory: "512M"
+      restartPolicy: Always

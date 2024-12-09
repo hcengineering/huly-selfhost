@@ -28,21 +28,13 @@ spec:
                 configMapKeyRef:
                   name: huly-config
                   key: FRONT_URL
-            - name: MINIO_ACCESS_KEY
+            - name: STATS_URL
+              value: http://stats
+            - name: STORAGE_CONFIG
               valueFrom:
                 secretKeyRef:
                   name: huly-secret
-                  key: MINIO_ACCESS_KEY
-            - name: MINIO_ENDPOINT
-              valueFrom:
-                configMapKeyRef:
-                  name: huly-config
-                  key: MINIO_ENDPOINT
-            - name: MINIO_SECRET_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: huly-secret
-                  key: MINIO_SECRET_KEY
+                  key: STORAGE_CONFIG
             - name: MODEL_ENABLED
               value: '*'
             - name: DB_URL
@@ -56,13 +48,11 @@ spec:
                   name: huly-secret
                   key: SERVER_SECRET
             - name: TRANSACTOR_URL
-              value: ws://transactor:3333;ws://localhost:3333
-            - name: ENDPOINT_URL
               valueFrom:
                 configMapKeyRef:
                   name: huly-config
                   key: TRANSACTOR_URL
-          image: hardcoreeng/account:latest
+          image: hardcoreeng/account:v0.6.377
           name: account
           ports:
             - containerPort: 3000

@@ -2,30 +2,32 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: rekoni
-  name: rekoni
+    app: stats
+  name: stats
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: rekoni
+      app: stats
   template:
     metadata:
       labels:
-        app: rekoni
+        app: stats
     spec:
       containers:
-        - image: hardcoreeng/rekoni-service:v0.6.377
-          name: rekoni
+        - image: hardcoreeng/stats:v0.6.377
+          name: stats
           env:
-            - name: SECRET
+            - name: PORT
+              value: "4900"
+            - name: SERVER_SECRET
               valueFrom:
                 secretKeyRef:
                   name: huly-secret
                   key: SERVER_SECRET
           ports:
-            - containerPort: 4004
-              hostPort: 4004
+            - containerPort: 4900
+              hostPort: 4900
               protocol: TCP
           resources:
             limits:

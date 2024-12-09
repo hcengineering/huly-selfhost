@@ -18,34 +18,21 @@ spec:
         - env:
             - name: ACCOUNTS_URL
               value: http://account
+            - name: STATS_URL
+              value: http://stats
             - name: COLLABORATOR_PORT
               value: "3078"
-            - name: MINIO_ACCESS_KEY
+            - name: STORAGE_CONFIG
               valueFrom:
                 secretKeyRef:
                   name: huly-secret
-                  key: MINIO_ACCESS_KEY
-            - name: MINIO_ENDPOINT
-              valueFrom:
-                configMapKeyRef:
-                  name: huly-config
-                  key: MINIO_ENDPOINT
-            - name: MINIO_SECRET_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: huly-secret
-                  key: MINIO_SECRET_KEY
-            - name: MONGO_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: huly-config
-                  key: MONGO_URL
+                  key: STORAGE_CONFIG
             - name: SECRET
               valueFrom:
                 secretKeyRef:
                   name: huly-secret
                   key: SERVER_SECRET
-          image: hardcoreeng/collaborator:latest
+          image: hardcoreeng/collaborator:v0.6.377
           name: collaborator
           ports:
             - containerPort: 3078

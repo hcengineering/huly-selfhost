@@ -18,21 +18,18 @@ spec:
         - env:
             - name: ACCOUNTS_URL
               value: http://account
-            - name: MINIO_ACCESS_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: huly-secret
-                  key: MINIO_ACCESS_KEY
-            - name: MINIO_ENDPOINT
+            - name: STATS_URL
+              value: http://stats
+            - name: TRANSACTOR_URL
               valueFrom:
                 configMapKeyRef:
                   name: huly-config
-                  key: MINIO_ENDPOINT
-            - name: MINIO_SECRET_KEY
+                  key: TRANSACTOR_URL
+            - name: STORAGE_CONFIG
               valueFrom:
                 secretKeyRef:
                   name: huly-secret
-                  key: MINIO_SECRET_KEY
+                  key: STORAGE_CONFIG
             - name: MODEL_ENABLED
               value: '*'
             - name: DB_URL
@@ -50,7 +47,7 @@ spec:
                 secretKeyRef:
                   name: huly-secret
                   key: SERVER_SECRET
-          image: hardcoreeng/workspace:latest
+          image: hardcoreeng/workspace:v0.6.377
           name: workspace
           resources:
             limits:

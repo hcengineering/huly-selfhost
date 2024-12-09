@@ -18,36 +18,20 @@ spec:
         - env:
             - name: ACCOUNTS_URL
               value: http://account
-            - name: ELASTIC_INDEX_NAME
-              valueFrom:
-                configMapKeyRef:
-                  name: huly-config
-                  key: ELASTIC_INDEX_NAME
-            - name: ELASTIC_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: huly-config
-                  key: ELASTIC_URL
+            - name: FULLTEXT_URL
+              value: http://fulltext
             - name: FRONT_URL
               valueFrom:
                 configMapKeyRef:
                   name: huly-config
                   key: FRONT_URL
-            - name: MINIO_ACCESS_KEY
+            - name: STATS_URL
+              value: http://stats
+            - name: STORAGE_CONFIG
               valueFrom:
                 secretKeyRef:
                   name: huly-secret
-                  key: MINIO_ACCESS_KEY
-            - name: MINIO_ENDPOINT
-              valueFrom:
-                configMapKeyRef:
-                  name: huly-config
-                  key: MINIO_ENDPOINT
-            - name: MINIO_SECRET_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: huly-secret
-                  key: MINIO_SECRET_KEY
+                  key: STORAGE_CONFIG
             - name: MONGO_URL
               valueFrom:
                 configMapKeyRef:
@@ -58,20 +42,16 @@ spec:
                 configMapKeyRef:
                   name: huly-config
                   key: MONGO_URL
-            - name: REKONI_URL
-              value: http://rekoni
             - name: SERVER_CURSOR_MAXTIMEMS
               value: "30000"
             - name: SERVER_PORT
               value: "3333"
-            - name: SERVER_PROVIDER
-              value: ws
             - name: SERVER_SECRET
               valueFrom:
                 secretKeyRef:
                   name: huly-secret
                   key: SERVER_SECRET
-          image: hardcoreeng/transactor:latest
+          image: hardcoreeng/transactor:v0.6.377
           name: transactor
           ports:
             - containerPort: 3333
