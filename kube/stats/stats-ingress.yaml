@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+  labels:
+    app: stats
+  name: stats
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: stats.huly.example
+      http:
+        paths:
+          - backend:
+              service:
+                name: stats
+                port:
+                  number: 80
+            path: /
+            pathType: Prefix

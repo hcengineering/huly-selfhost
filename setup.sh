@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-HULY_VERSION="v0.6.333"
+HULY_VERSION="v0.6.377"
 DOCKER_NAME="huly"
 CONFIG_FILE="huly.conf"
 
@@ -37,7 +37,9 @@ while true; do
         echo "Invalid port. Please enter a number between 1 and 65535."
     fi
 done
-echo $_HOST_ADDRESS $HOST_ADDRESS $_HTTP_PORT $HTTP_PORT
+
+echo "$_HOST_ADDRESS $HOST_ADDRESS $_HTTP_PORT $HTTP_PORT"
+
 if [[ "$_HOST_ADDRESS" == "localhost" || "$_HOST_ADDRESS" == "127.0.0.1" || "$_HOST_ADDRESS" =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}:?$ ]]; then
     _HOST_ADDRESS="${_HOST_ADDRESS%:}:${_HTTP_PORT}"
     SECURE=""
@@ -63,8 +65,6 @@ else
         esac
     done
 fi
-
-clear
 
 SECRET=false
 if [ "$1" == "--secret" ]; then
@@ -98,6 +98,7 @@ if [[ -n "$SECURE" ]]; then
 else
     echo -e "SSL Enabled: \033[1;31mNo\033[0m"
 fi
+
 read -p "Do you want to run 'docker compose up -d' now to start Huly? (Y/n): " RUN_DOCKER
 case "${RUN_DOCKER:-Y}" in  
     [Yy]* )  
