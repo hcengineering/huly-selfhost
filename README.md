@@ -12,39 +12,41 @@ If you prefer Kubernetes deployment, there is a sample Kubernetes configuration 
 First, let's install `nginx` and `docker` using the commands below if you have not already installed them on your machine.
 
 ```bash
-$ sudo apt update
-$ sudo apt install nginx
-$ sudo snap install docker
+sudo apt update
+sudo apt install nginx
+sudo snap install docker
 ```
 
 ## Clone the `huly-selfhost` repository and configure `nginx`
 
-Next, let's clone the `huly-selfhost` repository and configure the server address. _Please replace **x.y.z.w** with your server's IP address_.
+Next, let's clone the `huly-selfhost` repository and configure Huly.
 
 ```bash
-$ git clone https://github.com/hcengineering/huly-selfhost.git
-$ cd huly-selfhost
-$ ./setup.sh x.y.z.w # Replace x.y.z.w with your server's IP address
-$ sudo ln -s $(pwd)/nginx.conf /etc/nginx/sites-enabled/
+git clone https://github.com/hcengineering/huly-selfhost.git
+cd huly-selfhost
+./setup.sh
 ```
+This will generate a [huly.conf](./huly.conf) file with your chosen values and create your nginx config.
 
-## Now we're ready to run Huly
+To add the generated configuration to your Nginx setup, run the following:
+```bash
+sudo ln -s $(pwd)/nginx.conf /etc/nginx/sites-enabled/huly.conf
+```
+> [!NOTE]
+> If you change `HOST_ADDRESS`, `SECURE`, `HTTP_PORT` or `HTTP_BIND` be sure to update your [nginx.conf](./nginx.conf) by running:
+> ```bash
+> ./nginx.sh
+> ```
+>You can safely execute this script after adding your custom configurations like ssl. It will only overwrite the necessary settings.
 
-Finally, let's restart `nginx` and run Huly with `docker compose`.
+Finally, let's reload `nginx` and start Huly with `docker compose`.
 
 ```bash
-$ sudo systemctl restart nginx
-$ sudo docker compose up
+sudo nginx -s reload
+sudo docker compose up -d
 ```
 
 Now, launch your web browser and enjoy Huly!
-
-## Security
-
-When exposing your self-hosted Huly deployment to the internet, it's crucial to implement some security measures to protect your server and data.
-
-1. Do not expose MongoDB, MinIO, and Elastic services to the internet. Huly does not require them to be accessible from the internet.
-2. It is highly recommended to change the default credentials. By default the services, mentioned above, require no authentication, or use default well-known credentials.
 
 ## Generating Public and Private VAPID keys for front-end
 
@@ -156,30 +158,60 @@ Huly audio and video calls are created on top of LiveKit insfrastructure. In ord
         ...
     ```
 
-## Configure OpenId Connect
+## Configure OpenID Connect (OIDC)
 
 You can configure a Huly instance to authorize users (sign-in/sign-up) using an OpenID Connect identity provider (IdP).
 
 ### On the IdP side
+1. Create a new OpenID application.  
+   * Use `{huly_account_svc}/auth/openid/callback` as the sign-in redirect URI. The `huly_account_svc` is the hostname for the account service of the deployment, which should be accessible externally from the client/browser side. In the provided example setup, the account service runs on port 3000.  
 
-* Create a new OpenID application.
-  * Use `{huly_account_svc}/auth/openid/callback` as the sign-in redirect URI. The `huly_account_svc` is the hostname for the account service of the deployment, which should be accessible externally from the client/browser side. In the provided example setup, the account service runs on port 3000.
-* Configure user access to the application as needed.
+   **URI Example:**  
+   - `http://huly.mydomain.com:3000/auth/openid/callback`  
+
+2. Configure user access to the application as needed.  
 
 ### On the Huly side
-
-Specify the following environment variables (provided by the IdP) for the account service:
+For the account service, set the following environment variables as provided by the IdP:
 
 * OPENID_CLIENT_ID
 * OPENID_CLIENT_SECRET
 * OPENID_ISSUER
 
-
 Ensure you have configured or add the following environment variable to the front service:
 
 * ACCOUNTS_URL (This should contain the URL of the account service, accessible from the client side.)
 
+You will need to expose your account service port (e.g. 3000) in your nginx.conf.
+
 Note: Once all the required environment variables are configured, you will see an additional button on the sign-in/sign-up pages.
+
+## Configure GitHub OAuth
+
+You can also configure a Huly instance to use GitHub OAuth for user authorization (sign-in/sign-up).
+
+### On the GitHub side
+1. Create a new GitHub OAuth application.  
+   * Use `{huly_account_svc}/auth/github/callback` as the sign-in redirect URI. The `huly_account_svc` is the hostname for the account service of the deployment, which should be accessible externally from the client/browser side. In the provided example setup, the account service runs on port 3000.  
+
+   **URI Example:**  
+   - `http://huly.mydomain.com:3000/auth/github/callback`  
+
+### On the Huly side
+Specify the following environment variables for the account service:
+
+* `GITHUB_CLIENT_ID`  
+* `GITHUB_CLIENT_SECRET`  
+
+Ensure you have configured or add the following environment variable to the front service:
+
+* `ACCOUNTS_URL` (The URL of the account service, accessible from the client side.)  
+
+You will need to expose your account service port (e.g. 3000) in your nginx.conf.
+
+Notes:
+* The `ISSUER` environment variable is not required for GitHub OAuth.
+* Once all the required environment variables are configured, you will see an additional button on the sign-in/sign-up pages.
 
 ## Disable Sign-Up
 
