@@ -1,0 +1,89 @@
+name: ci
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  pull_request:
+
+jobs:
+  kind-selfhost:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+        - name: "Checkout repository"
+          uses: actions/checkout@v4
+          with:
+            path: ${{ github.workspace }}/src/github.com/${{ github.repository }}
+
+        - name: "Install kind"
+          run: |
+            [ $(uname -m) = x86_64 ] && curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.26.0/kind-linux-amd64
+            # For ARM64
+            [ $(uname -m) = aarch64 ] && curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.26.0/kind-linux-arm64
+            chmod +x ./kind
+            sudo mv ./kind /usr/local/bin/kind
+ 
+        - name: "Setup k8s cluster"
+          run: |
+            cat <<EOF | kind create cluster --wait=3m --config=-
+            kind: Cluster
+            apiVersion: kind.x-k8s.io/v1alpha4
+            nodes:
+            - role: control-plane
+              extraPortMappings:
+              - containerPort: 80
+                hostPort: 80
+                protocol: TCP
+              - containerPort: 443
+                hostPort: 443
+                protocol: TCP
+            EOF
+
+        - name: "Print cluster details"
+          run: |
+            kubectl cluster-info
+            kubectl version
+            kubectl get pods -n kube-system
+            echo "current-context:" $(kubectl config current-context)
+            echo "environment-kubeconfig:" ${KUBECONFIG}
+
+
+        - name: "Install nginx ingress controller"
+          run: |
+            kubectl apply -f https://kind.sigs.k8s.io/examples/ingress/deploy-ingress-nginx.yaml
+            kubectl wait --namespace ingress-nginx \
+              --for=condition=ready pod \
+              --selector=app.kubernetes.io/component=controller \
+              --timeout=90s
+
+        - name: "Huly deploy"
+          working-directory: ${{ github.workspace }}/src/github.com/${{ github.repository }}/kube
+          run: |
+            echo 127.0.0.1 huly.example | sudo tee -a /etc/hosts
+            echo 127.0.0.1 account.huly.example | sudo tee -a /etc/hosts
+            kubectl apply -R -f .
+            kubectl wait --for=condition=Available deployment/mongodb --timeout 3m
+            kubectl wait --for=condition=Available deployment/transactor --timeout 3m
+            kubectl delete pod -l app=account
+            kubectl wait --for=condition=Available deployment/account --timeout 3m
+        - name: "Check login"
+          run: |
+            token=$(curl -v -H 'Content-Type: application/json' \
+            -d '{"method":"createAccount","params":["user1","1234","user","1"]}' \
+            -X POST \
+            http://account.huly.example/ | jq -r '.result.token')
+
+            curl -v http://account.huly.example/ \
+              -X POST \
+              -d '{"method":"getUserWorkspaces","params":[]}' \
+              -H 'Content-Type: application/json' \
+              -H 'Accept: */*' \
+              -H "Authorization: Bearer $token"
+
+        - name: Cleanup resources
+          if: ${{ success() || failure() || cancelled() }}
+          run: |
+            kubectl describe pods
+            kind delete cluster
