@@ -6,8 +6,8 @@ metadata:
   name: mongodb
 spec:
   ports:
-    - name: "27017"
-      port: 27017
+    - port: 27017
       targetPort: 27017
+      protocol: TCP
   selector:
     app: mongodb
