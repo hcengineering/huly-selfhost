@@ -42,6 +42,11 @@ spec:
                 configMapKeyRef:
                   name: huly-config
                   key: MONGO_URL
+            - name: MONGO_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: huly-config
+                  key: MONGO_URL
             - name: SERVER_SECRET
               valueFrom:
                 secretKeyRef:
