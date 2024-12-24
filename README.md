@@ -153,8 +153,7 @@ Huly audio and video calls are created on top of LiveKit insfrastructure. In ord
       front:
         ...
         environment:
-          - LIVEKIT_WS=<LIVEKIT_HOST>
-          - LOVE_ENDPOINT=http://love:8096
+          - LIVEKIT_WS=<LIVEKIT_HOST_WITH_WSS>
         ...
     ```
 
