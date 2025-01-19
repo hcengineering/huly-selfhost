@@ -90,7 +90,7 @@ Add these keys into `compose.yaml` in section `services:front:environment`:
 
     ```yaml
       ses:
-        image: hardcoreeng/ses:v0.6.295
+        image: hardcoreeng/ses:v0.6.411
         container_name: ses
         ports:
           - 3335:3335
@@ -129,7 +129,7 @@ Huly audio and video calls are created on top of LiveKit insfrastructure. In ord
 
     ```yaml
       love:
-        image: hardcoreeng/love:v0.6.295
+        image: hardcoreeng/love:v0.6.411
         container_name: love
         ports:
           - 8096:8096

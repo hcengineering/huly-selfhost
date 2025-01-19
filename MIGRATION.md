@@ -1,5 +1,13 @@
 # Huly Migration
 
+## v0.6.411
+
+No changes required.
+
+## v0.6.405
+
+No changes required.
+
 ## v0.6.377
 
 ### Fulltext Service
