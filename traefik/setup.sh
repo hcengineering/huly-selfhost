@@ -14,7 +14,7 @@ if [ -z "$LETSENCRYPT_EMAIL" ]; then
   exit 1
 fi
 
-export HULY_VERSION="v0.6.377"
+export HULY_VERSION="v0.6.411"
 export HULY_SECRET="secret"
 export SERVER_ADDRESS=$DOMAIN_NAME
 export LETSENCRYPT_EMAIL=$LETSENCRYPT_EMAIL
