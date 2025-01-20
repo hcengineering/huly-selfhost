@@ -69,7 +69,7 @@ spec:
               value: http://stats
             - name: DESKTOP_UPDATES_CHANNEL
               value: selfhost
-          image: hardcoreeng/front:v0.6.377
+          image: hardcoreeng/front:v0.6.411
           name: front
           ports:
             - containerPort: 8080

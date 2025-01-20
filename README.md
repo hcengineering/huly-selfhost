@@ -128,7 +128,7 @@ Add these keys into `compose.yaml` in section `services:front:environment`:
 
     ```yaml
       ses:
-        image: hardcoreeng/ses:v0.6.377
+        image: hardcoreeng/ses:v0.6.411
         container_name: ses
         expose:
           - 3335
@@ -169,7 +169,7 @@ self-hosted Huly, perform the following steps:
 
     ```yaml
       love:
-        image: hardcoreeng/love:v0.6.377
+        image: hardcoreeng/love:v0.6.411
         container_name: love
         ports:
           - 8096:8096
