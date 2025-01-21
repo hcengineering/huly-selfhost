@@ -4,3 +4,4 @@ nginx.conf
 nginx.conf.bak
 huly.conf
 .huly.secret
+.idea
