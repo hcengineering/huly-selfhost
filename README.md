@@ -66,19 +66,19 @@ sudo apt-get install npm
 
 Install web-push using npm
 
-```
+```bash
 sudo npm install -g web-push
 ```
 
 Generate VAPID Keys. Run the following command to generate a VAPID key pair:
 
-```
+```bash
 web-push generate-vapid-keys 
 ```
 
 It will generate both keys that looks like this:
 
-```
+```bash
 =======================================
 
 Public Key:
@@ -92,9 +92,9 @@ asdfsadfasdfsfd
 
 Keep these keys secure, as you will need them to set up your push notification service on the server.
 
-Add these keys into `compose.yaml` in section `services:front:environment`:
+Add these keys into `compose.yaml` in section `services:ses:environment`:
 
-```
+```yaml
 - PUSH_PUBLIC_KEY=your public key
 - PUSH_PRIVATE_KEY=your private key
 ```
@@ -105,21 +105,22 @@ Add these keys into `compose.yaml` in section `services:front:environment`:
 
 2. [Create new policy](https://us-east-1.console.aws.amazon.com/iam/home?region=eu-central-1#/policies/create) with
    following permissions:
-   ```
-   {
-     "Version": "2012-10-17",
-     "Statement": [
-       {
-         "Effect": "Allow",
-         "Action": [
-           "ses:SendEmail",
-           "ses:SendRawEmail"
-         ],
-         "Resource": "*"
-       }
-     ]
-   }
-   ```
+
+    ```yaml
+    {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Action": [
+            "ses:SendEmail",
+            "ses:SendRawEmail"
+          ],
+          "Resource": "*"
+        }
+      ]
+    }
+    ```
 
 3. [Create separate IAM user](https://us-east-1.console.aws.amazon.com/iam/home?region=eu-central-1#/users/create) for
    SES API access. Assign previously created policy to this user during creation.
@@ -128,7 +129,7 @@ Add these keys into `compose.yaml` in section `services:front:environment`:
 
     ```yaml
       ses:
-        image: hardcoreeng/ses:v0.6.411
+        image: hardcoreeng/ses:v0.6.424
         container_name: ses
         expose:
           - 3335
@@ -136,6 +137,8 @@ Add these keys into `compose.yaml` in section `services:front:environment`:
           - SOURCE=<EMAIL_FROM>
           - ACCESS_KEY=<SES_ACCESS_KEY>
           - SECRET_KEY=<SES_SECRET_KEY>
+          - PUSH_PUBLIC_KEY=<PUSH_PUBLIC_KEY>
+          - PUSH_PRIVATE_KEY=<PUSH_PRIVATE_KEY>
           - REGION=<SES_REGION>
           - PORT=3335
         restart: unless-stopped
@@ -169,7 +172,7 @@ self-hosted Huly, perform the following steps:
 
     ```yaml
       love:
-        image: hardcoreeng/love:v0.6.411
+        image: hardcoreeng/love:v0.6.424
         container_name: love
         ports:
           - 8096:8096
