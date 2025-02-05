@@ -24,7 +24,7 @@ done
 while true; do
     if [[ -n "$HTTP_PORT" ]]; then
         prompt_type="current"
-        prompt_value="${HTTP_PORT}" 
+        prompt_value="${HTTP_PORT}"
     else
         prompt_type="default"
         prompt_value="80"
@@ -50,7 +50,7 @@ else
             prompt_value="Yes"
         else
             prompt_type="default"
-            prompt_value="No" 
+            prompt_value="No"
         fi
         read -p "Will you serve Huly over SSL? (y/n) [${prompt_type}: ${prompt_value}]: " input
         case "${input}" in
@@ -100,10 +100,10 @@ else
 fi
 
 read -p "Do you want to run 'docker compose up -d' now to start Huly? (Y/n): " RUN_DOCKER
-case "${RUN_DOCKER:-Y}" in  
-    [Yy]* )  
+case "${RUN_DOCKER:-Y}" in
+    [Yy]* )
          echo -e "\033[1;32mRunning 'docker compose up -d' now...\033[0m"
-         sudo docker compose up -d
+         docker compose up -d
          ;;
     [Nn]* )
         echo "You can run 'docker compose up -d' later to start Huly."

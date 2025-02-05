@@ -1,7 +1,6 @@
 # Huly Self-Hosted
 
-Please use this README if you want to deploy Huly on your server with `docker compose`. I'm using a Basic Droplet on
-Digital Ocean with Ubuntu 23.10, but these instructions can be easily adapted for any Linux distribution.
+Please use this README if you want to deploy Huly on your server with `docker compose`. I'm using a Basic Droplet on Digital Ocean with Ubuntu 24.04, but these instructions can be easily adapted for any Linux distribution.
 
 > [!NOTE]
 > Huly is quite resource-heavy, so I recommend using a Droplet with 2 vCPUs and 4GB of RAM. Droplets with less RAM may
@@ -11,14 +10,20 @@ If you prefer Kubernetes deployment, there is a sample Kubernetes configuration 
 
 ## Installing `nginx` and `docker`
 
-First, let's install `nginx` and `docker` using the commands below if you have not already installed them on your
-machine.
+First, update repositories cache:
 
 ```bash
 sudo apt update
-sudo apt install nginx
-sudo snap install docker
 ```
+
+Now, install `nginx`:
+
+```bash
+sudo apt install nginx
+```
+
+Install docker using the [recommended method](https://docs.docker.com/engine/install/ubuntu/) from docker website.
+Afterwards perform [post-installation steps](https://docs.docker.com/engine/install/linux-postinstall/). Pay attention to 3rd step with `newgrp docker` command, it needed for correct execution in setup script.
 
 ## Clone the `huly-selfhost` repository and configure `nginx`
 
@@ -72,8 +77,8 @@ sudo npm install -g web-push
 
 Generate VAPID Keys. Run the following command to generate a VAPID key pair:
 
-```bash
-web-push generate-vapid-keys 
+```
+web-push generate-vapid-keys
 ```
 
 It will generate both keys that looks like this:
@@ -206,14 +211,11 @@ self-hosted Huly, perform the following steps:
 You can configure a Huly instance to authorize users (sign-in/sign-up) using an OpenID Connect identity provider (IdP).
 
 ### On the IdP side
-
 1. Create a new OpenID application.
-    * Use `{huly_account_svc}/auth/openid/callback` as the sign-in redirect URI. The `huly_account_svc` is the hostname
-      for the account service of the deployment, which should be accessible externally from the client/browser side. In
-      the provided example setup, the account service runs on port 3000.
+   * Use `{huly_account_svc}/auth/openid/callback` as the sign-in redirect URI. The `huly_account_svc` is the hostname for the account service of the deployment, which should be accessible externally from the client/browser side. In the provided example setup, the account service runs on port 3000.
 
    **URI Example:**
-    - `http://huly.mydomain.com:3000/auth/openid/callback`
+   - `http://huly.mydomain.com:3000/auth/openid/callback`
 
 2. Configure user access to the application as needed.
 
@@ -239,14 +241,11 @@ sign-in/sign-up pages.
 You can also configure a Huly instance to use GitHub OAuth for user authorization (sign-in/sign-up).
 
 ### On the GitHub side
-
 1. Create a new GitHub OAuth application.
-    * Use `{huly_account_svc}/auth/github/callback` as the sign-in redirect URI. The `huly_account_svc` is the hostname
-      for the account service of the deployment, which should be accessible externally from the client/browser side. In
-      the provided example setup, the account service runs on port 3000.
+   * Use `{huly_account_svc}/auth/github/callback` as the sign-in redirect URI. The `huly_account_svc` is the hostname for the account service of the deployment, which should be accessible externally from the client/browser side. In the provided example setup, the account service runs on port 3000.
 
    **URI Example:**
-    - `http://huly.mydomain.com:3000/auth/github/callback`
+   - `http://huly.mydomain.com:3000/auth/github/callback`
 
 ### On the Huly side
 
