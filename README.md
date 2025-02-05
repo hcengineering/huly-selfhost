@@ -245,7 +245,19 @@ Huly provides AI-powered chatbot that provides several services:
       front:
         ...
         environment:
+          # this should be available outside of the cluster
           - AI_URL=http://aibot:4010
+        ...
+    ```
+
+4. Configure `transactor` service:
+
+    ```yaml
+      transactor:
+        ...
+        environment:
+          # this should be available inside of the cluster
+          - AI_BOT_URL=http://aibot:4010
         ...
     ```
 
