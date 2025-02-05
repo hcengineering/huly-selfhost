@@ -153,15 +153,15 @@ Add these keys into `compose.yaml` in section `services:ses:environment`:
 
     ```yaml
     account:
-      # ...
+      ...
       environment:
         - SES_URL=http://ses:3335
-      # ...
+      ...
     transactor:
-      # ...
+      ...
       environment:
         - SES_URL=http://ses:3335
-      # ...
+      s...
     ```
 
 6. In `Settings -> Notifications` setup email notifications for events you need to be notified for. It's a user's
@@ -199,11 +199,54 @@ self-hosted Huly, perform the following steps:
 
     ```yaml
       front:
-        # ...
+        ...
         environment:
           - LIVEKIT_WS=<LIVEKIT_HOST>
           - LOVE_ENDPOINT=http://love:8096
-        # ...
+        ...
+    ```
+
+## AI Service
+
+Huly provides AI-powered chatbot that provides several services:
+
+- chat with AI
+- text message translations in the chat
+- live translations for virtual office voice and video chats
+
+1. Set up OpenAI account
+2. Add `aibot` container to the docker-compose.yaml
+
+    ```yaml
+      aibot:
+        image: hardcoreeng/ai-bot:v0.6.424
+        ports:
+          - 4010:4010
+        environment:
+          - STORAGE_CONFIG=minio|minio?accessKey=minioadmin&secretKey=minioadmin
+          - SERVER_SECRET=secret
+          - ACCOUNTS_URL=http://account:3000
+          - DB_URL=mongodb://mongodb:27017
+          - MONGO_URL=mongodb://mongodb:27017
+          - STATS_URL=http://stats:4900
+          - FIRST_NAME=Bot
+          - LAST_NAME=Huly AI
+          - PASSWORD=<PASSWORD>
+          - OPENAI_API_KEY=<OPENAI_API_KEY>
+          - OPENAI_BASE_URL=<OPENAI_BASE_URL>
+          # optional if you use love service
+          - LOVE_ENDPOINT=http://love:8096
+        restart: unless-stopped
+    ```
+
+3. Configure `front` service:
+
+    ```yaml
+      front:
+        ...
+        environment:
+          - AI_URL=http://aibot:4010
+        ...
     ```
 
 ## Configure OpenID Connect (OIDC)
