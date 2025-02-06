@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-HULY_VERSION="v0.6.424"
+HULY_VERSION="v0.6.429"
 DOCKER_NAME="huly"
 CONFIG_FILE="huly.conf"
 

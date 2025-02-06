@@ -3,6 +3,10 @@
 This document describes the changes required to update Huly from one version to another. Most of updates require updating Docker containers versions.
 Though, some updates may require updating other configuration options. In this case, you should review the updated configuration options and update them accordingly.
 
+## v0.6.429
+
+No changes required.
+
 ## v0.6.424
 
 Web-push keys have been moved from the `front` service to the `ses` service. If you are using the `ses` service, you will need to update the configuration:
