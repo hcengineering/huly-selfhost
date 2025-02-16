@@ -16,11 +16,17 @@ spec:
       labels:
         app: elastic
     spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
       containers:
         - args:
             - /bin/sh
             - -c
             - |-
+              chown -R 1000:1000 /usr/share/elasticsearch/data;
+              apt-get update && apt-get install -y curl;
               ./bin/elasticsearch-plugin list | grep -q ingest-attachment || yes | ./bin/elasticsearch-plugin install --silent ingest-attachment;
               /usr/local/bin/docker-entrypoint.sh eswrapper
           env:
@@ -40,9 +46,12 @@ spec:
           livenessProbe:
             exec:
               command:
+                - /bin/sh
+                - -c
                 - curl -s http://localhost:9200/_cluster/health | grep -vq '"status":"red"'
-            failureThreshold: 10
+            initialDelaySeconds: 60
             periodSeconds: 20
+            failureThreshold: 10
           name: elastic
           ports:
             - containerPort: 9200
