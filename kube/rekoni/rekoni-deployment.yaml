@@ -15,7 +15,7 @@ spec:
         app: rekoni
     spec:
       containers:
-        - image: hardcoreeng/rekoni-service:v0.6.429
+        - image: hardcoreeng/rekoni-service:v0.6.466
           name: rekoni
           env:
             - name: SECRET

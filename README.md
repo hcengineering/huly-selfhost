@@ -134,7 +134,7 @@ Add these keys into `compose.yaml` in section `services:ses:environment`:
 
     ```yaml
       ses:
-        image: hardcoreeng/ses:v0.6.429
+        image: hardcoreeng/ses:v0.6.466
         container_name: ses
         expose:
           - 3335
@@ -177,7 +177,7 @@ self-hosted Huly, perform the following steps:
 
     ```yaml
       love:
-        image: hardcoreeng/love:v0.6.429
+        image: hardcoreeng/love:v0.6.466
         container_name: love
         ports:
           - 8096:8096
@@ -219,7 +219,7 @@ Huly provides AI-powered chatbot that provides several services:
 
     ```yaml
       aibot:
-        image: hardcoreeng/ai-bot:v0.6.429
+        image: hardcoreeng/ai-bot:v0.6.466
         ports:
           - 4010:4010
         environment:
