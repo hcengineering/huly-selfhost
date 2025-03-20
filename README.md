@@ -104,12 +104,48 @@ Add these keys into `compose.yaml` in section `services:ses:environment`:
 - PUSH_PRIVATE_KEY=your private key
 ```
 
-## AWS SES email notifications
+## Mail Service
 
-1. Setup Amazon Simple Email Service in AWS: https://docs.aws.amazon.com/ses/latest/dg/setting-up.html
+The Mail Service is responsible for sending email notifications and confirmation emails during user login or signup processes. It can be configured to send emails through either an SMTP server or Amazon SES (Simple Email Service), but not both at the same time.
 
-2. [Create new policy](https://us-east-1.console.aws.amazon.com/iam/home?region=eu-central-1#/policies/create) with
-   following permissions:
+### General Configuration
+
+1. Add the `mail` container to the `docker-compose.yaml` file. Specify the email address you will use to send emails as "SOURCE":
+
+    ```yaml
+    mail:
+      image: hardcoreeng/mail:v0.6.471
+      container_name: mail
+      ports:
+        - 8097:8097
+      environment:
+        - PORT=8097
+        - SOURCE=<EMAIL_FROM>
+      restart: unless-stopped
+    ```
+
+2. Add the mail container URL to the `transactor` and `account` containers:
+
+    ```yaml
+    account:
+      ...
+      environment:
+        - MAIL_URL=http://mail:8097
+      ...
+    transactor:
+      ...
+      environment:
+        - MAIL_URL=http://mail:8097
+      ...
+    ```
+
+3. In `Settings -> Notifications`, set up email notifications for the events you want to be notified about. Note that this is a user-specific setting, not company-wide; each user must set up their own notification preferences.
+
+### SMTP Configuration
+
+To integrate with an external SMTP server, update the `docker-compose.yaml` file with the following environment variables:
+
+1. Add SMTP configuration to the environment section:
 
     ```yaml
     {
@@ -177,7 +213,7 @@ self-hosted Huly, perform the following steps:
 
     ```yaml
       love:
-        image: hardcoreeng/love:v0.6.466
+        image: hardcoreeng/love:v0.6.471
         container_name: love
         ports:
           - 8096:8096
@@ -219,7 +255,7 @@ Huly provides AI-powered chatbot that provides several services:
 
     ```yaml
       aibot:
-        image: hardcoreeng/ai-bot:v0.6.466
+        image: hardcoreeng/ai-bot:v0.6.471
         ports:
           - 4010:4010
         environment:
