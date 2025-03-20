@@ -104,7 +104,68 @@ Add these keys into `compose.yaml` in section `services:ses:environment`:
 - PUSH_PRIVATE_KEY=your private key
 ```
 
-## AWS SES email notifications
+## Mail service
+
+The Mail Service is responsible for sending email notifications and confirmation emails during user login or signup processes. 
+This service can be configured to send emails through either an SMTP server or Amazon SES (Simple Email Service).
+The service cannot be configured to use SMTP and Amazon SES at the same time.
+
+### General configuration
+1. Add `mail` container to the docker-compose.yaml.
+   Add email address you'll use to send emails into "SOURCE"
+    ```yaml
+      mail:
+        image: hardcoreeng/mail:v0.6.466
+        container_name: mail
+        ports:
+          - 8097:8097
+        environment:
+          - PORT=8097
+          - SOURCE=<EMAIL_FROM>
+        restart: unless-stopped
+    ```
+
+2. Add mail container URL into `transactor` and `account` containers:
+
+    ```yaml
+    account:
+      ...
+      environment:
+        - MAIL_URL=http://mail:8097
+      ...
+    transactor:
+      ...
+      environment:
+        - MAIL_URL=http://ses:8097
+      s...
+    ```
+
+3. In `Settings -> Notifications` setup email notifications for events you need to be notified for. 
+   It's a user's setting not a company wide, meaning each user has to setup their own notification rules. 
+
+### SMTP configuration
+ **SMTP Server**: Configure the mail service to use an external SMTP server for sending emails. This option is suitable for integrating with existing mail server infrastructure.
+
+ 1. To configure SMTP integration, update your `docker-compose.yaml` file with the following environment variables:
+
+    ```yaml
+    mail:
+      ...
+      environment:
+        ...
+        # SMTP Configuration
+        - SMTP_HOST=<SMTP_SERVER_URL>
+        - SMTP_PORT=<SMTP_SERVER_PORT>
+        - SMTP_USERNAME=<SMTP_USER>
+        - SMTP_PASSWORD=<SMTP_PASSWORD>
+    ```
+  2. Replace `<SMTP_SERVER_URL>`, `<SMTP_SERVER_PORT>` with the hostname and port of your SMTP server.
+  It is recommended to use secured port, such as `587` for `SMTP_SERVER_PORT`.
+
+  3. Replace `<SMTP_USER>`, and `<SMTP_PASSWORD>` with credentials for an account that can send emails on your SMTP server.
+  It's recommended to use an application API key as `<SMTP_USER>` and token as `<SMTP_PASSWORD>` if your email service provider supports generating such credentials
+
+### Amazon SES configuration
 
 1. Setup Amazon Simple Email Service in AWS: https://docs.aws.amazon.com/ses/latest/dg/setting-up.html
 
@@ -130,42 +191,20 @@ Add these keys into `compose.yaml` in section `services:ses:environment`:
 3. [Create separate IAM user](https://us-east-1.console.aws.amazon.com/iam/home?region=eu-central-1#/users/create) for
    SES API access. Assign previously created policy to this user during creation.
 
-4. Add email address you'll use to send notifications into "SOURCE", SES access such as ACCESS_KEY, SECRET_KEY, REGION
-
+4. Add environment variables for SES access such as ACCESS_KEY, SECRET_KEY, REGION into `mail` container:
     ```yaml
-      ses:
-        image: hardcoreeng/ses:v0.6.466
-        container_name: ses
-        expose:
-          - 3335
+      mail:
+        ...
         environment:
-          - SOURCE=<EMAIL_FROM>
+          ...
           - ACCESS_KEY=<SES_ACCESS_KEY>
           - SECRET_KEY=<SES_SECRET_KEY>
           - PUSH_PUBLIC_KEY=<PUSH_PUBLIC_KEY>
           - PUSH_PRIVATE_KEY=<PUSH_PRIVATE_KEY>
           - REGION=<SES_REGION>
-          - PORT=3335
-        restart: unless-stopped
     ```
+### Note: SMTP and SES configurations cannot be used simultaneously.
 
-5. Add SES container URL into `transactor` and `account` containers:
-
-    ```yaml
-    account:
-      ...
-      environment:
-        - SES_URL=http://ses:3335
-      ...
-    transactor:
-      ...
-      environment:
-        - SES_URL=http://ses:3335
-      s...
-    ```
-
-6. In `Settings -> Notifications` setup email notifications for events you need to be notified for. It's a user's
-   setting not a company wide, meaning each user has to setup their own notification rules.
 
 ## Love Service (Audio & Video calls)
 
