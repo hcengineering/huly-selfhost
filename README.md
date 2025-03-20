@@ -104,14 +104,71 @@ Add these keys into `compose.yaml` in section `services:ses:environment`:
 - PUSH_PRIVATE_KEY=your private key
 ```
 
-## AWS SES email notifications
+## Mail Service
 
-1. Setup Amazon Simple Email Service in AWS: https://docs.aws.amazon.com/ses/latest/dg/setting-up.html
+The Mail Service is responsible for sending email notifications and confirmation emails during user login or signup processes. It can be configured to send emails through either an SMTP server or Amazon SES (Simple Email Service), but not both at the same time.
 
-2. [Create new policy](https://us-east-1.console.aws.amazon.com/iam/home?region=eu-central-1#/policies/create) with
-   following permissions:
+### General Configuration
+
+1. Add the `mail` container to the `docker-compose.yaml` file. Specify the email address you will use to send emails as "SOURCE":
 
     ```yaml
+    mail:
+      image: hardcoreeng/mail:v0.6.470
+      container_name: mail
+      ports:
+        - 8097:8097
+      environment:
+        - PORT=8097
+        - SOURCE=<EMAIL_FROM>
+      restart: unless-stopped
+    ```
+
+2. Add the mail container URL to the `transactor` and `account` containers:
+
+    ```yaml
+    account:
+      ...
+      environment:
+        - MAIL_URL=http://mail:8097
+      ...
+    transactor:
+      ...
+      environment:
+        - MAIL_URL=http://mail:8097
+      ...
+    ```
+
+3. In `Settings -> Notifications`, set up email notifications for the events you want to be notified about. Note that this is a user-specific setting, not company-wide; each user must set up their own notification preferences.
+
+### SMTP Configuration
+
+To integrate with an external SMTP server, update the `docker-compose.yaml` file with the following environment variables:
+
+1. Add SMTP configuration to the environment section:
+
+    ```yaml
+    mail:
+      ...
+      environment:
+        ...
+        - SMTP_HOST=<SMTP_SERVER_URL>
+        - SMTP_PORT=<SMTP_SERVER_PORT>
+        - SMTP_USERNAME=<SMTP_USER>
+        - SMTP_PASSWORD=<SMTP_PASSWORD>
+    ```
+
+2. Replace `<SMTP_SERVER_URL>` and `<SMTP_SERVER_PORT>` with your SMTP server's hostname and port. It's recommended to use a secure port, such as `587`.
+
+3. Replace `<SMTP_USER>` and `<SMTP_PASSWORD>` with credentials for an account that can send emails via your SMTP server. If your service provider supports it, consider using an application API key as `<SMTP_USER>` and a token as `<SMTP_PASSWORD>` for enhanced security.
+
+### Amazon SES Configuration
+
+1. Set up Amazon Simple Email Service in AWS: [AWS SES Setup Guide](https://docs.aws.amazon.com/ses/latest/dg/setting-up.html)
+
+2. Create a new IAM policy with the following permissions:
+
+    ```json
     {
       "Version": "2012-10-17",
       "Statement": [
@@ -127,45 +184,25 @@ Add these keys into `compose.yaml` in section `services:ses:environment`:
     }
     ```
 
-3. [Create separate IAM user](https://us-east-1.console.aws.amazon.com/iam/home?region=eu-central-1#/users/create) for
-   SES API access. Assign previously created policy to this user during creation.
+3. Create a separate IAM user for SES API access, assigning the newly created policy to this user.
 
-4. Add email address you'll use to send notifications into "SOURCE", SES access such as ACCESS_KEY, SECRET_KEY, REGION
-
-    ```yaml
-      ses:
-        image: hardcoreeng/ses:v0.6.466
-        container_name: ses
-        expose:
-          - 3335
-        environment:
-          - SOURCE=<EMAIL_FROM>
-          - ACCESS_KEY=<SES_ACCESS_KEY>
-          - SECRET_KEY=<SES_SECRET_KEY>
-          - PUSH_PUBLIC_KEY=<PUSH_PUBLIC_KEY>
-          - PUSH_PRIVATE_KEY=<PUSH_PRIVATE_KEY>
-          - REGION=<SES_REGION>
-          - PORT=3335
-        restart: unless-stopped
-    ```
-
-5. Add SES container URL into `transactor` and `account` containers:
+4. Configure SES environment variables in the `mail` container:
 
     ```yaml
-    account:
+    mail:
       ...
       environment:
-        - SES_URL=http://ses:3335
-      ...
-    transactor:
-      ...
-      environment:
-        - SES_URL=http://ses:3335
-      s...
+        ...
+        - SES_ACCESS_KEY=<SES_ACCESS_KEY>
+        - SES_SECRET_KEY=<SES_SECRET_KEY>
+        - SES_REGION=<SES_REGION>
     ```
 
-6. In `Settings -> Notifications` setup email notifications for events you need to be notified for. It's a user's
-   setting not a company wide, meaning each user has to setup their own notification rules.
+### Notes
+
+1. SMTP and SES configurations cannot be used simultaneously.
+2. `SES_URL` is not supported in version v0.6.470 and later, please use `MAIL_URL` instead.
+
 
 ## Love Service (Audio & Video calls)
 
@@ -177,7 +214,7 @@ self-hosted Huly, perform the following steps:
 
     ```yaml
       love:
-        image: hardcoreeng/love:v0.6.466
+        image: hardcoreeng/love:v0.6.470
         container_name: love
         ports:
           - 8096:8096
@@ -219,7 +256,7 @@ Huly provides AI-powered chatbot that provides several services:
 
     ```yaml
       aibot:
-        image: hardcoreeng/ai-bot:v0.6.466
+        image: hardcoreeng/ai-bot:v0.6.470
         ports:
           - 4010:4010
         environment:
