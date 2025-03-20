@@ -148,6 +148,27 @@ To integrate with an external SMTP server, update the `docker-compose.yaml` file
 1. Add SMTP configuration to the environment section:
 
     ```yaml
+    mail:
+      ...
+      environment:
+        ...
+        - SMTP_HOST=<SMTP_SERVER_URL>
+        - SMTP_PORT=<SMTP_SERVER_PORT>
+        - SMTP_USERNAME=<SMTP_USER>
+        - SMTP_PASSWORD=<SMTP_PASSWORD>
+    ```
+
+2. Replace `<SMTP_SERVER_URL>` and `<SMTP_SERVER_PORT>` with your SMTP server's hostname and port. It's recommended to use a secure port, such as `587`.
+
+3. Replace `<SMTP_USER>` and `<SMTP_PASSWORD>` with credentials for an account that can send emails via your SMTP server. If your service provider supports it, consider using an application API key as `<SMTP_USER>` and a token as `<SMTP_PASSWORD>` for enhanced security.
+
+### Amazon SES Configuration
+
+1. Set up Amazon Simple Email Service in AWS: [AWS SES Setup Guide](https://docs.aws.amazon.com/ses/latest/dg/setting-up.html)
+
+2. Create a new IAM policy with the following permissions:
+
+    ```json
     {
       "Version": "2012-10-17",
       "Statement": [
@@ -163,45 +184,25 @@ To integrate with an external SMTP server, update the `docker-compose.yaml` file
     }
     ```
 
-3. [Create separate IAM user](https://us-east-1.console.aws.amazon.com/iam/home?region=eu-central-1#/users/create) for
-   SES API access. Assign previously created policy to this user during creation.
+3. Create a separate IAM user for SES API access, assigning the newly created policy to this user.
 
-4. Add email address you'll use to send notifications into "SOURCE", SES access such as ACCESS_KEY, SECRET_KEY, REGION
-
-    ```yaml
-      ses:
-        image: hardcoreeng/ses:v0.6.466
-        container_name: ses
-        expose:
-          - 3335
-        environment:
-          - SOURCE=<EMAIL_FROM>
-          - ACCESS_KEY=<SES_ACCESS_KEY>
-          - SECRET_KEY=<SES_SECRET_KEY>
-          - PUSH_PUBLIC_KEY=<PUSH_PUBLIC_KEY>
-          - PUSH_PRIVATE_KEY=<PUSH_PRIVATE_KEY>
-          - REGION=<SES_REGION>
-          - PORT=3335
-        restart: unless-stopped
-    ```
-
-5. Add SES container URL into `transactor` and `account` containers:
+4. Configure SES environment variables in the `mail` container:
 
     ```yaml
-    account:
+    mail:
       ...
       environment:
-        - SES_URL=http://ses:3335
-      ...
-    transactor:
-      ...
-      environment:
-        - SES_URL=http://ses:3335
-      s...
+        ...
+        - SES_ACCESS_KEY=<SES_ACCESS_KEY>
+        - SES_SECRET_KEY=<SES_SECRET_KEY>
+        - SES_REGION=<SES_REGION>
     ```
 
-6. In `Settings -> Notifications` setup email notifications for events you need to be notified for. It's a user's
-   setting not a company wide, meaning each user has to setup their own notification rules.
+### Notes
+
+1. SMTP and SES configurations cannot be used simultaneously.
+2. `SES_URL` is not supported in version v0.6.470 and later, please use `MAIL_URL` instead.
+
 
 ## Love Service (Audio & Video calls)
 
