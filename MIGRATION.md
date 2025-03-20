@@ -3,6 +3,41 @@
 This document describes the changes required to update Huly from one version to another. Most of updates require updating Docker containers versions.
 Though, some updates may require updating other configuration options. In this case, you should review the updated configuration options and update them accordingly.
 
+## v0.6.471
+
+### Overview
+
+The new Mail Service, supporting both SMTP and Amazon SES, has been added. If your setup currently uses the `ses` service, you'll need to migrate to the `mail` service.
+
+### Key Changes
+
+- **Unified Mail Service**: The `mail` service can be configured to send emails via SMTP or Amazon SES, but not both simultaneously.
+- **Migration Requirement**: Transitioning from the `ses` service to the `mail` service requires updating your `docker-compose.yaml` file.
+
+### Migration Steps
+
+1. **Update Configuration**: Replace the `ses` service with the `mail` service in your `docker-compose.yaml` file. Configure the environment variables to match your chosen email service (SMTP or SES).
+
+2. **Rename Environment Variables**: If you're using SES, update your environment variables:
+   - Change `ACCESS_KEY` to `SES_ACCESS_KEY`
+   - Change `SECRET_KEY` to `SES_SECRET_KEY`
+   - Change `REGION` to `SES_REGION`
+
+3. **Integrate the Mail Service**: Use `MAIL_URL` instead of `SES_URL` in `transactor` and `account` containers:
+
+    ```yaml
+    account:
+      ...
+      environment:
+        - MAIL_URL=http://mail:8097
+      ...
+    transactor:
+      ...
+      environment:
+        - MAIL_URL=http://mail:8097
+      ...
+    ```
+
 ## v0.6.466
 
 No changes required.
