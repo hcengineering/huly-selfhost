@@ -104,28 +104,27 @@ Add these keys into `compose.yaml` in section `services:ses:environment`:
 - PUSH_PRIVATE_KEY=your private key
 ```
 
-## Mail service
+## Mail Service
 
-The Mail Service is responsible for sending email notifications and confirmation emails during user login or signup processes. 
-This service can be configured to send emails through either an SMTP server or Amazon SES (Simple Email Service).
-The service cannot be configured to use SMTP and Amazon SES at the same time.
+The Mail Service is responsible for sending email notifications and confirmation emails during user login or signup processes. It can be configured to send emails through either an SMTP server or Amazon SES (Simple Email Service), but not both at the same time.
 
-### General configuration
-1. Add `mail` container to the docker-compose.yaml.
-   Add email address you'll use to send emails into "SOURCE"
+### General Configuration
+
+1. Add the `mail` container to the `docker-compose.yaml` file. Specify the email address you will use to send emails as "SOURCE":
+
     ```yaml
-      mail:
-        image: hardcoreeng/mail:v0.6.466
-        container_name: mail
-        ports:
-          - 8097:8097
-        environment:
-          - PORT=8097
-          - SOURCE=<EMAIL_FROM>
-        restart: unless-stopped
+    mail:
+      image: hardcoreeng/mail:v0.6.466
+      container_name: mail
+      ports:
+        - 8097:8097
+      environment:
+        - PORT=8097
+        - SOURCE=<EMAIL_FROM>
+      restart: unless-stopped
     ```
 
-2. Add mail container URL into `transactor` and `account` containers:
+2. Add the mail container URL to the `transactor` and `account` containers:
 
     ```yaml
     account:
@@ -136,43 +135,40 @@ The service cannot be configured to use SMTP and Amazon SES at the same time.
     transactor:
       ...
       environment:
-        - MAIL_URL=http://ses:8097
-      s...
+        - MAIL_URL=http://mail:8097
+      ...
     ```
 
-3. In `Settings -> Notifications` setup email notifications for events you need to be notified for. 
-   It's a user's setting not a company wide, meaning each user has to setup their own notification rules. 
+3. In `Settings -> Notifications`, set up email notifications for the events you want to be notified about. Note that this is a user-specific setting, not company-wide; each user must set up their own notification preferences.
 
-### SMTP configuration
- **SMTP Server**: Configure the mail service to use an external SMTP server for sending emails. This option is suitable for integrating with existing mail server infrastructure.
+### SMTP Configuration
 
- 1. To configure SMTP integration, update your `docker-compose.yaml` file with the following environment variables:
+To integrate with an external SMTP server, update the `docker-compose.yaml` file with the following environment variables:
+
+1. Add SMTP configuration to the environment section:
 
     ```yaml
     mail:
       ...
       environment:
         ...
-        # SMTP Configuration
         - SMTP_HOST=<SMTP_SERVER_URL>
         - SMTP_PORT=<SMTP_SERVER_PORT>
         - SMTP_USERNAME=<SMTP_USER>
         - SMTP_PASSWORD=<SMTP_PASSWORD>
     ```
-  2. Replace `<SMTP_SERVER_URL>`, `<SMTP_SERVER_PORT>` with the hostname and port of your SMTP server.
-  It is recommended to use secured port, such as `587` for `SMTP_SERVER_PORT`.
 
-  3. Replace `<SMTP_USER>`, and `<SMTP_PASSWORD>` with credentials for an account that can send emails on your SMTP server.
-  It's recommended to use an application API key as `<SMTP_USER>` and token as `<SMTP_PASSWORD>` if your email service provider supports generating such credentials
+2. Replace `<SMTP_SERVER_URL>` and `<SMTP_SERVER_PORT>` with your SMTP server's hostname and port. It's recommended to use a secure port, such as `587`.
 
-### Amazon SES configuration
+3. Replace `<SMTP_USER>` and `<SMTP_PASSWORD>` with credentials for an account that can send emails via your SMTP server. If your service provider supports it, consider using an application API key as `<SMTP_USER>` and a token as `<SMTP_PASSWORD>` for enhanced security.
 
-1. Setup Amazon Simple Email Service in AWS: https://docs.aws.amazon.com/ses/latest/dg/setting-up.html
+### Amazon SES Configuration
 
-2. [Create new policy](https://us-east-1.console.aws.amazon.com/iam/home?region=eu-central-1#/policies/create) with
-   following permissions:
+1. Set up Amazon Simple Email Service in AWS: [AWS SES Setup Guide](https://docs.aws.amazon.com/ses/latest/dg/setting-up.html)
 
-    ```yaml
+2. Create a new IAM policy with the following permissions:
+
+    ```json
     {
       "Version": "2012-10-17",
       "Statement": [
@@ -188,22 +184,23 @@ The service cannot be configured to use SMTP and Amazon SES at the same time.
     }
     ```
 
-3. [Create separate IAM user](https://us-east-1.console.aws.amazon.com/iam/home?region=eu-central-1#/users/create) for
-   SES API access. Assign previously created policy to this user during creation.
+3. Create a separate IAM user for SES API access, assigning the newly created policy to this user.
 
-4. Add environment variables for SES access such as ACCESS_KEY, SECRET_KEY, REGION into `mail` container:
+4. Configure SES environment variables in the `mail` container:
+
     ```yaml
-      mail:
+    mail:
+      ...
+      environment:
         ...
-        environment:
-          ...
-          - ACCESS_KEY=<SES_ACCESS_KEY>
-          - SECRET_KEY=<SES_SECRET_KEY>
-          - PUSH_PUBLIC_KEY=<PUSH_PUBLIC_KEY>
-          - PUSH_PRIVATE_KEY=<PUSH_PRIVATE_KEY>
-          - REGION=<SES_REGION>
+        - SES_ACCESS_KEY=<SES_ACCESS_KEY>
+        - SES_SECRET_KEY=<SES_SECRET_KEY>
+        - SES_REGION=<SES_REGION>
     ```
-### Note: SMTP and SES configurations cannot be used simultaneously.
+
+### Note
+
+SMTP and SES configurations cannot be used simultaneously.
 
 
 ## Love Service (Audio & Video calls)
