@@ -37,6 +37,16 @@ The new Mail Service, supporting both SMTP and Amazon SES, has been added. If yo
         - MAIL_URL=http://mail:8097
       ...
     ```
+4. **Web Push Notifications**: Add `WEB_PUSH_URL` to `front` container if want to use web push notifications:
+    ```yaml
+    transactor:
+      ...
+      environment:
+        - MAIL_URL=http://mail:8097
+        - WEB_PUSH_URL=http://ses:3335
+      ...
+    ```
+
 
 ## v0.6.466
 
