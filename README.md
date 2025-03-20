@@ -114,7 +114,7 @@ The Mail Service is responsible for sending email notifications and confirmation
 
     ```yaml
     mail:
-      image: hardcoreeng/mail:v0.6.466
+      image: hardcoreeng/mail:v0.6.470
       container_name: mail
       ports:
         - 8097:8097
@@ -198,9 +198,10 @@ To integrate with an external SMTP server, update the `docker-compose.yaml` file
         - SES_REGION=<SES_REGION>
     ```
 
-### Note
+### Notes
 
-SMTP and SES configurations cannot be used simultaneously.
+1. SMTP and SES configurations cannot be used simultaneously.
+2. `SES_URL` is not supported in version v0.6.470 and later, please use `MAIL_URL` instead.
 
 
 ## Love Service (Audio & Video calls)
@@ -213,7 +214,7 @@ self-hosted Huly, perform the following steps:
 
     ```yaml
       love:
-        image: hardcoreeng/love:v0.6.466
+        image: hardcoreeng/love:v0.6.470
         container_name: love
         ports:
           - 8096:8096
@@ -255,7 +256,7 @@ Huly provides AI-powered chatbot that provides several services:
 
     ```yaml
       aibot:
-        image: hardcoreeng/ai-bot:v0.6.466
+        image: hardcoreeng/ai-bot:v0.6.470
         ports:
           - 4010:4010
         environment:
