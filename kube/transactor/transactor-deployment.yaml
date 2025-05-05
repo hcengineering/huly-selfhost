@@ -51,7 +51,7 @@ spec:
                 secretKeyRef:
                   name: huly-secret
                   key: SERVER_SECRET
-          image: hardcoreeng/transactor:v0.6.496
+          image: hardcoreeng/transactor:v0.6.499
           name: transactor
           ports:
             - containerPort: 3333
