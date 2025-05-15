@@ -47,7 +47,7 @@ spec:
                 secretKeyRef:
                   name: huly-secret
                   key: SERVER_SECRET
-          image: hardcoreeng/workspace:v0.6.499
+          image: hardcoreeng/workspace:v0.6.501
           name: workspace
           resources:
             limits:

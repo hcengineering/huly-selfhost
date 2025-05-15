@@ -47,7 +47,7 @@ spec:
               value: http://account
             - name: STATS_URL
               value: http://stats
-          image: hardcoreeng/fulltext:v0.6.499
+          image: hardcoreeng/fulltext:v0.6.501
           name: fulltext
           ports:
             - containerPort: 4700

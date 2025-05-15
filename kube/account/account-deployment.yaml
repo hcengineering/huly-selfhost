@@ -57,7 +57,7 @@ spec:
                 configMapKeyRef:
                   name: huly-config
                   key: TRANSACTOR_URL
-          image: hardcoreeng/account:v0.6.499
+          image: hardcoreeng/account:v0.6.501
           name: account
           ports:
             - containerPort: 3000
