@@ -94,7 +94,7 @@ services:
       - FRONT_URL=http://front:8080
       - STATS_URL=http://stats:4900
       - MODEL_ENABLED=*
-      - ACCOUNTS_URL=http://localhost:3000
+      - ACCOUNTS_URL=http${SECURE:+s}://${HOST_ADDRESS}
       - ACCOUNT_PORT=3000
     restart: unless-stopped
 
