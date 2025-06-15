@@ -3,21 +3,16 @@
 This document describes the changes required to update Huly from one version to another. Most of updates require updating Docker containers versions.
 Though, some updates may require updating other configuration options. In this case, you should review the updated configuration options and update them accordingly.
 
-## v0.6.501
+## v0.6.502
+<details>
 
-No changes required.
+<summary>No changes required.</summary>
 
-## v0.6.499
-
-No changes required.
-
-## v0.6.496
-
-No changes required.
-
-## v0.6.482
-
-No changes required.
+- v0.6.501
+- v0.6.499
+- v0.6.496
+- v0.6.482
+</details>
 
 ## v0.6.471
 
