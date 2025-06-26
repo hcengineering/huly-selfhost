@@ -416,14 +416,3 @@ To implement this, set the following environment variable for both the front and
 
 _Note: When setting up a new deployment, either create the initial account before disabling sign-ups or use the
 development tool to create the first account._
-      - DISABLE_SIGNUP=true
-    # ...
-  front:
-    # ...
-    environment:
-      - DISABLE_SIGNUP=true
-    # ...
-```
-
-_Note: When setting up a new deployment, either create the initial account before disabling sign-ups or use the
-development tool to create the first account._
