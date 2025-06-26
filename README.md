@@ -114,7 +114,7 @@ The Mail Service is responsible for sending email notifications and confirmation
 
     ```yaml
     mail:
-      image: hardcoreeng/mail:v0.6.471
+      image: hardcoreeng/mail:v0.6.501
       container_name: mail
       ports:
         - 8097:8097
@@ -214,7 +214,7 @@ self-hosted Huly, perform the following steps:
 
     ```yaml
       love:
-        image: hardcoreeng/love:v0.6.471
+        image: hardcoreeng/love:v0.6.501
         container_name: love
         ports:
           - 8096:8096
@@ -256,7 +256,7 @@ Huly provides AI-powered chatbot that provides several services:
 
     ```yaml
       aibot:
-        image: hardcoreeng/ai-bot:v0.6.471
+        image: hardcoreeng/ai-bot:v0.6.501
         ports:
           - 4010:4010
         environment:

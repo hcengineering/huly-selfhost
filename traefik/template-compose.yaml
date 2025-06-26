@@ -146,7 +146,7 @@ services:
       - "traefik.http.routers.transactor.tls=true"
       - "traefik.http.routers.transactor.tls.certresolver=myresolver"
       - "traefik.http.services.transactor.loadbalancer.server.port=3333"
-
+      - "traefik.http.routers.transactor.service=transactor"
       # Strip HTTP prefix
       - "traefik.http.routers.transactor.middlewares=strip-transactor-prefix"
       - "traefik.http.middlewares.strip-transactor-prefix.stripprefix.prefixes=/transactor"
