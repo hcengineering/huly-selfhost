@@ -104,6 +104,14 @@ Add these keys into `compose.yaml` in section `services:ses:environment`:
 - PUSH_PRIVATE_KEY=your private key
 ```
 
+As the browser must access the public key for web push notifications setup, you also need to provide it to the front-end service.
+
+Add the public key into `compose.yaml` in section `services:front:environment`:
+
+```yaml
+- PUSH_PUBLIC_KEY=your public key
+```
+
 ## Web Push Notifications
 
 > [!NOTE]
