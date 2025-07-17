@@ -1,5 +1,4 @@
 name: ${DOCKER_NAME}
-version: "3"
 services:
   nginx:
     image: "nginx:1.21.3"
@@ -15,14 +14,14 @@ services:
       - PUID=1000
       - PGID=1000
     volumes:
-      - db:/data/db
+      - ${VOLUME_DB_PATH:-db}:/data/db
     restart: unless-stopped
 
   minio:
     image: "minio/minio"
     command: server /data --address ":9000" --console-address ":9001"
     volumes:
-      - files:/data
+      - ${VOLUME_FILES_PATH:-files}:/data
     restart: unless-stopped
 
   elastic:
@@ -31,7 +30,7 @@ services:
       /bin/sh -c "./bin/elasticsearch-plugin list | grep -q ingest-attachment || yes | ./bin/elasticsearch-plugin install --silent ingest-attachment;
       /usr/local/bin/docker-entrypoint.sh eswrapper"
     volumes:
-      - elastic:/usr/share/elasticsearch/data
+      - ${VOLUME_ELASTIC_PATH:-elastic}:/usr/share/elasticsearch/data
     environment:
       - ELASTICSEARCH_PORT_NUMBER=9200
       - BITNAMI_DEBUG=true
@@ -155,6 +154,8 @@ services:
       - SERVER_SECRET=${SECRET}
     restart: unless-stopped
 volumes:
+  # These named volumes are used when custom volume paths are not specified
+  # If VOLUME_*_PATH variables are set, these volumes will be ignored
   db:
   elastic:
   files:
