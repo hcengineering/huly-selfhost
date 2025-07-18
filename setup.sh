@@ -4,6 +4,44 @@ HULY_VERSION="v0.6.501"
 DOCKER_NAME="huly"
 CONFIG_FILE="huly.conf"
 
+# Parse command line arguments
+RESET_VOLUMES=false
+SECRET=false
+
+for arg in "$@"; do
+    case $arg in
+        --secret)
+            SECRET=true
+            ;;
+        --reset-volumes)
+            RESET_VOLUMES=true
+            ;;
+        --help)
+            echo "Usage: $0 [OPTIONS]"
+            echo "Options:"
+            echo "  --secret         Generate a new secret key"
+            echo "  --reset-volumes  Reset all volume paths to default Docker named volumes"
+            echo "  --help           Show this help message"
+            exit 0
+            ;;
+        *)
+            echo "Unknown option: $arg"
+            echo "Use --help for usage information"
+            exit 1
+            ;;
+    esac
+done
+
+if [ "$RESET_VOLUMES" == true ]; then
+    echo -e "\033[33m--reset-volumes flag detected: Resetting all volume paths to default Docker named volumes.\033[0m"
+    sed -i \
+        -e '/^VOLUME_DB_PATH=/s|=.*|=|' \
+        -e '/^VOLUME_ELASTIC_PATH=/s|=.*|=|' \
+        -e '/^VOLUME_FILES_PATH=/s|=.*|=|' \
+        "$CONFIG_FILE"
+    exit 0
+fi
+
 if [ -f "$CONFIG_FILE" ]; then
     source "$CONFIG_FILE"
 fi
@@ -66,10 +104,50 @@ else
     done
 fi
 
-SECRET=false
-if [ "$1" == "--secret" ]; then
-  SECRET=true
-fi
+# Volume path configuration
+echo -e "\n\033[1;34mDocker Volume Configuration:\033[0m"
+
+    echo "You can specify custom paths for persistent data storage, or leave empty to use default Docker named volumes."
+    echo -e "\033[33mTip: To revert from custom paths to default volumes, enter 'default' or just press Enter when prompted.\033[0m"
+
+    # Database volume configuration
+    if [[ -n "$VOLUME_DB_PATH" ]]; then
+        current_db="custom: $VOLUME_DB_PATH"
+    else
+        current_db="default Docker volume"
+    fi
+    read -p "Enter custom path for database volume [current: ${current_db}]: " input
+    if [[ "$input" == "default" ]]; then
+        _VOLUME_DB_PATH=""
+    else
+        _VOLUME_DB_PATH="${input:-${VOLUME_DB_PATH}}"
+    fi
+
+    # Elasticsearch volume configuration
+    if [[ -n "$VOLUME_ELASTIC_PATH" ]]; then
+        current_elastic="custom: $VOLUME_ELASTIC_PATH"
+    else
+        current_elastic="default Docker volume"
+    fi
+    read -p "Enter custom path for Elasticsearch volume [current: ${current_elastic}]: " input
+    if [[ "$input" == "default" ]]; then
+        _VOLUME_ELASTIC_PATH=""
+    else
+        _VOLUME_ELASTIC_PATH="${input:-${VOLUME_ELASTIC_PATH}}"
+    fi
+
+    # Files volume configuration
+    if [[ -n "$VOLUME_FILES_PATH" ]]; then
+        current_files="custom: $VOLUME_FILES_PATH"
+    else
+        current_files="default Docker volume"
+    fi
+    read -p "Enter custom path for files volume [current: ${current_files}]: " input
+    if [[ "$input" == "default" ]]; then
+        _VOLUME_FILES_PATH=""
+    else
+        _VOLUME_FILES_PATH="${input:-${VOLUME_FILES_PATH}}"
+    fi
 
 if [ ! -f .huly.secret ] || [ "$SECRET" == true ]; then
   openssl rand -hex 32 > .huly.secret
@@ -86,6 +164,9 @@ export HTTP_BIND=$HTTP_BIND
 export TITLE=${TITLE:-Huly}
 export DEFAULT_LANGUAGE=${DEFAULT_LANGUAGE:-en}
 export LAST_NAME_FIRST=${LAST_NAME_FIRST:-true}
+export VOLUME_DB_PATH=$_VOLUME_DB_PATH
+export VOLUME_ELASTIC_PATH=$_VOLUME_ELASTIC_PATH
+export VOLUME_FILES_PATH=$_VOLUME_FILES_PATH
 export HULY_SECRET=$(cat .huly.secret)
 
 envsubst < .template.huly.conf > $CONFIG_FILE
@@ -98,6 +179,9 @@ if [[ -n "$SECURE" ]]; then
 else
     echo -e "SSL Enabled: \033[1;31mNo\033[0m"
 fi
+echo -e "Database Volume: \033[1;32m${_VOLUME_DB_PATH:-Docker named volume}\033[0m"
+echo -e "Elasticsearch Volume: \033[1;32m${_VOLUME_ELASTIC_PATH:-Docker named volume}\033[0m"
+echo -e "Files Volume: \033[1;32m${_VOLUME_FILES_PATH:-Docker named volume}\033[0m"
 
 read -p "Do you want to run 'docker compose up -d' now to start Huly? (Y/n): " RUN_DOCKER
 case "${RUN_DOCKER:-Y}" in

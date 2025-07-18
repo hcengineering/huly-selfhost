@@ -61,6 +61,61 @@ sudo docker compose up -d
 
 Now, launch your web browser and enjoy Huly!
 
+## Volume Configuration
+
+By default, Huly uses Docker named volumes to store persistent data (database, Elasticsearch indices, and uploaded files). You can optionally configure custom host paths for these volumes during the setup process.
+
+### During Setup
+
+When running `./setup.sh`, you'll be prompted to specify custom paths for:
+
+- **Database volume**: MongoDB data storage
+- **Elasticsearch volume**: Search index data storage  
+- **Files volume**: User-uploaded files and attachments
+
+You can either:
+- Press Enter to use the default Docker named volumes
+- Specify an absolute path on your host system (e.g., `/var/huly/db`)
+- Enter `default` to clear an existing custom path and revert to Docker named volumes
+
+### Quick Reset to Default Volumes
+
+To quickly reset all volumes back to default Docker named volumes without prompts:
+
+```bash
+./setup.sh --reset-volumes
+```
+
+### Manual Configuration
+
+You can also manually configure volume paths by editing the `huly.conf` file:
+
+```bash
+# Docker volume paths - specify custom paths for persistent data storage
+# Leave empty to use default Docker named volumes
+VOLUME_DB_PATH=/path/to/database
+VOLUME_ELASTIC_PATH=/path/to/elasticsearch
+VOLUME_FILES_PATH=/path/to/files
+```
+
+To revert to default volumes, simply leave the paths empty:
+
+```bash
+VOLUME_DB_PATH=
+VOLUME_ELASTIC_PATH=
+VOLUME_FILES_PATH=
+```
+
+After modifying the configuration, restart the services:
+
+```bash
+docker compose down
+docker compose up -d
+```
+
+> [!WARNING]
+> When changing from named volumes to host paths (or vice versa), make sure to migrate your data appropriately to avoid data loss.
+
 ## Generating Public and Private VAPID keys for front-end
 
 You'll need `Node.js` installed on your machine. Installing `npm` on Debian based distro:
