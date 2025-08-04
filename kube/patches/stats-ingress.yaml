@@ -1,0 +1,4 @@
+---
+- op: replace
+  path: /spec/tls/0/secretName
+  value: stats-tls

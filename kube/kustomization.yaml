@@ -1,0 +1,67 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+patches:
+  # Patch that universally brings all ingresses up to SSL.
+  - path: patches/ssl.yaml
+    target:
+      kind: Ingress
+      annotationSelector: kubernetes.io/ingress.class=nginx
+  # ...However, since we can't use variables in patches, we have
+  # to set some individual ingress overrides manually.
+  #
+  # After all these are done, patches for the domain name must still
+  # be done in OpenTofu modules.
+  - path: patches/transactor-ingress.yaml
+    target:
+      kind: Ingress
+      name: transactor
+  - path: patches/stats-ingress.yaml
+    target:
+      kind: Ingress
+      name: stats
+  - path: patches/rekoni-ingress.yaml
+    target:
+      kind: Ingress
+      name: rekoni
+  - path: patches/front-ingress.yaml
+    target:
+      kind: Ingress
+      name: front
+  - path: patches/collaborator-ingress.yaml
+    target:
+      kind: Ingress
+      name: collaborator
+  - path: patches/account-ingress.yaml
+    target:
+      kind: Ingress
+      name: account
+
+resources:
+- ./fulltext/fulltext-deployment.yaml
+- ./fulltext/fulltext-service.yaml
+- ./workspace/workspace-deployment.yaml
+- ./elastic/elastic-service.yaml
+- ./elastic/elastic-deployment.yaml
+- ./elastic/elastic-persistentvolumeclaim.yaml
+- ./collaborator/collaborator-service.yaml
+- ./collaborator/collaborator-ingress.yaml
+- ./collaborator/collaborator-deployment.yaml
+- ./rekoni/rekoni-service.yaml
+- ./rekoni/rekoni-deployment.yaml
+- ./rekoni/rekoni-ingress.yaml
+- ./account/account-service.yaml
+- ./account/account-ingress.yaml
+- ./account/account-deployment.yaml
+- ./front/front-deployment.yaml
+- ./front/front-service.yaml
+- ./front/front-ingress.yaml
+- ./transactor/transactor-deployment.yaml
+- ./transactor/transactor-service.yaml
+- ./transactor/transactor-ingress.yaml
+- ./stats/stats-deployment.yaml
+- ./stats/stats-service.yaml
+- ./stats/stats-ingress.yaml
+- ./minio/files-persistentvolumeclaim.yaml
+- ./minio/minio-service.yaml
+- ./minio/minio-deployment.yaml
