@@ -55,7 +55,6 @@ spec:
           name: elastic
           ports:
             - containerPort: 9200
-              hostPort: 9200
               protocol: TCP
           volumeMounts:
             - mountPath: /usr/share/elasticsearch/data
