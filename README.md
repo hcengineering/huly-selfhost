@@ -433,10 +433,11 @@ You can also configure a Huly instance to use GitHub OAuth for user authorizatio
 
 ### On the GitHub side
 1. Create a new GitHub OAuth application.
-   * Use `{huly_account_svc}/auth/github/callback` as the sign-in redirect URI. The `huly_account_svc` is the hostname for the account service of the deployment, which should be accessible externally from the client/browser side. In the provided example setup, the account service runs on port 3000.
+   * Use `{huly_account_svc}/_account/auth/github/callback` as the sign-in redirect URI. The `huly_account_svc` is the hostname for the account service of the deployment, which should be accessible externally from the client/browser side.
+
 
    **URI Example:**
-   - `http://huly.mydomain.com:3000/auth/github/callback`
+   - `http://huly.mydomain.com/_account/auth/github/callback`
 
 ### On the Huly side
 
@@ -448,8 +449,6 @@ Specify the following environment variables for the account service:
 Ensure you have configured or add the following environment variable to the front service:
 
 * `ACCOUNTS_URL` (The URL of the account service, accessible from the client side.)
-
-You will need to expose your account service port (e.g. 3000) in your nginx.conf.
 
 Notes:
 
