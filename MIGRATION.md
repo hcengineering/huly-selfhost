@@ -6,7 +6,7 @@ Though, some updates may require updating other configuration options. In this c
 ## v7 preparation
 
 > [!WARNING]
-> Use of MongoDB has been deprecated in v7 in favor of CockroachDB and will be completely removed in v0.8.
+> Use of MongoDB has been deprecated in v7 in favor of CockroachDB and will be completely removed in v8.
 
 Migration to v7 involves backing up your v6 deployment data and restoring it to a fresh v7 installation with CockroachDB.
 
