@@ -108,7 +108,6 @@ VOLUME_REDPANDA_PATH=/path/to/redpanda/data
 To revert to default volumes, simply leave the paths empty:
 
 ```bash
-VOLUME_DB_PATH=
 VOLUME_ELASTIC_PATH=
 VOLUME_FILES_PATH=
 VOLUME_CR_DATA_PATH=
