@@ -3,7 +3,66 @@
 This document describes the changes required to update Huly from one version to another. Most of updates require updating Docker containers versions.
 Though, some updates may require updating other configuration options. In this case, you should review the updated configuration options and update them accordingly.
 
-## v7 preparation
+# v7
+
+## v0.7.204
+
+> [!CAUTION]
+> Do not upgrade directly from v6 to v7. Direct upgrades will lock your deployment with MongoDB-specific data, making the future migration significantly more complex. Follow the migration instructions below instead.
+
+> [!WARNING]
+> Use of MongoDB has been deprecated in v7 in favor of CockroachDB and will be completely removed in v8.
+
+Migration to v7 involves backing up your v6 deployment data and restoring it to a fresh v7 installation with CockroachDB.
+
+Migration Steps (command examples shown for Docker on macOS):
+
+1. Make a full backup of your v6 deployment. Run the following command on **v6** tag of the `huly-selfhost` repository adjusting the variables to the actual values of your deployment in case they differ from the ones in the sample deployment.
+
+```
+  source .env && docker run \
+    --network "${DOCKER_NAME}_default" \
+    -e SERVER_SECRET="$SECRET" \
+    -e TRANSACTOR_URL="ws://transactor:3333" \
+    -e STORAGE_CONFIG="minio|minio?accessKey=minioadmin&secretKey=minioadmin" \
+    -e ACCOUNT_DB_URL="mongodb://mongodb:27017" \
+    -e ACCOUNTS_URL="http://account:3000" \
+    -e DB_URL="mongodb://mongodb:27017" \
+    -v ./backup-all:/backup \
+    -it hardcoreeng/tool:v0.6.504 \
+    -- bundle.js backup-all-to-dir /backup \
+    --internal true \
+    --blobLimit 4096
+```
+
+> [!NOTE]
+> This command will write the necessary backup files to the mounted volume. Make sure this volume will be available to your new v7 deployment to restore the data from it. Consider using an absolute path instead of "./backup-all".
+
+2. Set up a fresh v7 deployment by following the standard [deployment instructions](https://github.com/hcengineering/huly-selfhost/blob/main/README.md).
+
+3. Restore the data from the backup created in step 1. Make sure the deployment is new and doesn't contain any data as it might result in conflicts during the restore procedure. Run the following command on the main branch of the `huly-selfhost` repository adjusting variables to the actual values of your deployment in case they differ from the ones in the sample deployment. Make sure that the mounted volume is referencing the same path as was used in the backup command.
+
+```
+  source .env && docker run \
+    --network "${DOCKER_NAME}_default" \
+    -e SERVER_SECRET="$SECRET" \
+    -e TRANSACTOR_URL="ws://transactor:3333" \
+    -e STORAGE_CONFIG="minio|minio?accessKey=minioadmin&secretKey=minioadmin" \
+    -e ACCOUNT_DB_URL="${CR_DB_URL}" \
+    -e ACCOUNTS_URL="http://account:3000" \
+    -e DB_URL="${CR_DB_URL}" \
+    -e QUEUE_CONFIG="redpanda:9092" \
+    -v ./backup-all:/backup \
+    -it hardcoreeng/tool:s0.7.213 \
+    -- bundle.js restore-from-v6-all /backup
+```
+
+> [!TIP]
+> This procedure doesn't affect the data in the v6 deployment and can be repeated as many times as needed. 
+
+# v6
+
+## v0.6.501
 
 > [!WARNING]
 > Use of MongoDB has been deprecated in v7 in favor of CockroachDB and will be completely removed in v8.

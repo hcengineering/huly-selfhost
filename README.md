@@ -35,7 +35,7 @@ cd huly-selfhost
 ./setup.sh
 ```
 
-This will generate a [huly.conf](./huly.conf) file with your chosen values and create your nginx config.
+This will generate a [huly_v7.conf](./huly_v7.conf) file with your chosen values and create your nginx config.
 
 To add the generated configuration to your Nginx setup, run the following:
 
@@ -61,6 +61,9 @@ sudo docker compose up -d
 
 Now, launch your web browser and enjoy Huly!
 
+> [!IMPORTANT]
+> Provided configrations include deployments of CockroachDB and Redpanda which might not be production-ready. Please inspect them carefully before using in production. For more information on the recommended deployment configurations, please refer to the [CockroachDB](https://www.cockroachlabs.com/docs/stable/recommended-production-settings) and [Redpanda](https://docs.redpanda.com/24.3/deploy/) documentation.
+
 ## Volume Configuration
 
 By default, Huly uses Docker named volumes to store persistent data (database, Elasticsearch indices, and uploaded files). You can optionally configure custom host paths for these volumes during the setup process.
@@ -69,9 +72,11 @@ By default, Huly uses Docker named volumes to store persistent data (database, E
 
 When running `./setup.sh`, you'll be prompted to specify custom paths for:
 
-- **Database volume**: MongoDB data storage
 - **Elasticsearch volume**: Search index data storage  
 - **Files volume**: User-uploaded files and attachments
+- **CockroachDB data volume**: Data storage for workspaces and accounts
+- **CockroachDB certs volume**: Certificates for CockroachDB
+- **Redpanda data volume**: Data storage for Kafka
 
 You can either:
 - Press Enter to use the default Docker named volumes
@@ -88,22 +93,26 @@ To quickly reset all volumes back to default Docker named volumes without prompt
 
 ### Manual Configuration
 
-You can also manually configure volume paths by editing the `huly.conf` file:
+You can also manually configure volume paths by editing the `huly_v7.conf` file:
 
 ```bash
 # Docker volume paths - specify custom paths for persistent data storage
 # Leave empty to use default Docker named volumes
-VOLUME_DB_PATH=/path/to/database
 VOLUME_ELASTIC_PATH=/path/to/elasticsearch
 VOLUME_FILES_PATH=/path/to/files
+VOLUME_CR_DATA_PATH=/path/to/cockroachdb/data
+VOLUME_CR_CERTS_PATH=/path/to/cockroachdb/certs
+VOLUME_REDPANDA_PATH=/path/to/redpanda/data
 ```
 
 To revert to default volumes, simply leave the paths empty:
 
 ```bash
-VOLUME_DB_PATH=
 VOLUME_ELASTIC_PATH=
 VOLUME_FILES_PATH=
+VOLUME_CR_DATA_PATH=
+VOLUME_CR_CERTS_PATH=
+VOLUME_REDPANDA_PATH=
 ```
 
 After modifying the configuration, restart the services:
@@ -115,6 +124,16 @@ docker compose up -d
 
 > [!WARNING]
 > When changing from named volumes to host paths (or vice versa), make sure to migrate your data appropriately to avoid data loss.
+
+## Redpanda Configuration
+
+When using a production deployment of Redpanda with topics auto-creation turned off, you'll need to manually create the following topics:
+
+- fulltext
+- process
+- tx
+- users
+- workspace
 
 ## Generating Public and Private VAPID keys for front-end
 
@@ -321,7 +340,7 @@ self-hosted Huly, perform the following steps:
           - STORAGE_CONFIG=minio|minio?accessKey=minioadmin&secretKey=minioadmin
           - SECRET=secret
           - ACCOUNTS_URL=http://account:3000
-          - DB_URL=mongodb://mongodb:27017
+          - DB_URL=${CR_DB_URL}
           - MONGO_URL=mongodb://mongodb:27017
           - STORAGE_PROVIDER_NAME=minio
           - PORT=8096
@@ -362,7 +381,7 @@ Huly provides AI-powered chatbot that provides several services:
           - STORAGE_CONFIG=minio|minio?accessKey=minioadmin&secretKey=minioadmin
           - SERVER_SECRET=secret
           - ACCOUNTS_URL=http://account:3000
-          - DB_URL=mongodb://mongodb:27017
+          - DB_URL=${CR_DB_URL}
           - MONGO_URL=mongodb://mongodb:27017
           - STATS_URL=http://stats:4900
           - FIRST_NAME=Bot
