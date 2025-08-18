@@ -21,6 +21,8 @@ spec:
                 configMapKeyRef:
                   name: huly-config
                   key: ACCOUNTS_URL
+            - name: ACCOUNTS_URL_INTERNAL
+              value: http://account
             - name: CALENDAR_URL
               value: http://calendar
             - name: COLLABORATOR_URL
@@ -69,7 +71,7 @@ spec:
               value: http://stats
             - name: DESKTOP_UPDATES_CHANNEL
               value: selfhost
-          image: hardcoreeng/front:v0.6.502
+          image: hardcoreeng/front:s0.7.204
           name: front
           ports:
             - containerPort: 8080

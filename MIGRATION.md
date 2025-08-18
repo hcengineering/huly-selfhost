@@ -62,34 +62,6 @@ Migration Steps (command examples shown for Docker on macOS):
 
 # v6
 
-## v0.6.501
-
-> [!WARNING]
-> Use of MongoDB has been deprecated in v7 in favor of CockroachDB and will be completely removed in v8.
-
-Migration to v7 involves backing up your v6 deployment data and restoring it to a fresh v7 installation with CockroachDB.
-
-To make a full backup of your v6 deployment run the following command adjusting the variables to the actual values of your deployment in case they differ from the ones in the sample deployment.
-
-```
-  source .env && docker run \
-    --network "${DOCKER_NAME}_default" \
-    -e SERVER_SECRET="$SECRET" \
-    -e TRANSACTOR_URL="ws://transactor:3333" \
-    -e STORAGE_CONFIG="minio|minio?accessKey=minioadmin&secretKey=minioadmin" \
-    -e ACCOUNT_DB_URL="mongodb://mongodb:27017" \
-    -e ACCOUNTS_URL="http://account:3000" \
-    -e DB_URL="mongodb://mongodb:27017" \
-    -v ./backup-all:/backup \
-    -it hardcoreeng/tool:v0.6.504 \
-    -- bundle.js backup-all-to-dir /backup \
-    --internal true \
-    --blobLimit 4096
-```
-
-> [!NOTE]
-> This command will write the necessary backup files to the mounted volume. Make sure this volume will be available to your new v7 deployment to restore the data from it. Consider using an absolute path instead of "./backup-all".
-
 ## v0.6.502
 <details>
 

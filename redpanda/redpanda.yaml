@@ -1,0 +1,19 @@
+apiVersion: cluster.redpanda.com/v1alpha2
+kind: Redpanda
+metadata:
+  name: redpanda
+spec:
+  clusterSpec:
+    resources:
+      requests:
+        cpu: "10m"
+        memory: "500Mi"
+      limits:
+        cpu: "500m"
+        memory: "1Gi"
+    external:
+      domain: customredpandadomain.local
+    statefulset:
+      initContainers:
+        setDataDirOwnership:
+          enabled: true
