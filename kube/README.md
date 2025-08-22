@@ -18,7 +18,9 @@ The sample configuration assume that Huly is available on huly.example hostname 
 Deploy Huly with `kubectl`.
 
 ```bash
-kubectl apply -R -f .
+kubectl create namespace huly-v7
+
+kubectl apply -R -f . --namespace huly-v7
 ```
 
 Now, launch your web browser and enjoy Huly!

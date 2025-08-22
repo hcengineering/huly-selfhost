@@ -63,12 +63,17 @@ Add host entries to be able to work with ingresses from the host machine:
 sudo cp -p /etc/hosts /tmp/hosts
 echo "127.0.0.1       huly.example" | sudo tee -a /etc/hosts
 echo "127.0.0.1       account.huly.example" | sudo tee -a /etc/hosts
+echo "127.0.0.1       transactor.huly.example" | sudo tee -a /etc/hosts
+echo "127.0.0.1       collaborator.huly.example" | sudo tee -a /etc/hosts
+echo "127.0.0.1       datalake.huly.example" | sudo tee -a /etc/hosts
 ```
 
 Deploy Huly with `kubectl`:
 
 ```bash
-kubectl apply -R -f .
+kubectl create namespace huly-v7
+
+kubectl apply -R -f . --namespace huly-v7
 ```
 
 Wait until the front app is coming up:

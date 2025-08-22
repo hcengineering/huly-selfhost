@@ -39,9 +39,9 @@ spec:
                   key: MONGO_URL
             - name: DB_URL
               valueFrom:
-                configMapKeyRef:
-                  name: huly-config
-                  key: MONGO_URL
+                secretKeyRef:
+                  name: huly-secret
+                  key: CR_DB_URL
             - name: SERVER_CURSOR_MAXTIMEMS
               value: "30000"
             - name: SERVER_PORT
@@ -51,7 +51,9 @@ spec:
                 secretKeyRef:
                   name: huly-secret
                   key: SERVER_SECRET
-          image: hardcoreeng/transactor:v0.6.502
+            - name: QUEUE_CONFIG
+              value: redpanda:9092
+          image: hardcoreeng/transactor:s0.7.204
           name: transactor
           ports:
             - containerPort: 3333

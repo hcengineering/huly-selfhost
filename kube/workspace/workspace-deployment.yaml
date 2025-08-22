@@ -34,9 +34,9 @@ spec:
               value: '*'
             - name: DB_URL
               valueFrom:
-                configMapKeyRef:
-                  name: huly-config
-                  key: MONGO_URL
+                secretKeyRef:
+                  name: huly-secret
+                  key: CR_DB_URL
             - name: MONGO_URL
               valueFrom:
                 configMapKeyRef:
@@ -47,7 +47,9 @@ spec:
                 secretKeyRef:
                   name: huly-secret
                   key: SERVER_SECRET
-          image: hardcoreeng/workspace:v0.6.502
+            - name: QUEUE_CONFIG
+              value: redpanda:9092
+          image: hardcoreeng/workspace:s0.7.204
           name: workspace
           resources:
             limits:

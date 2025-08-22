@@ -13,3 +13,6 @@ data:
   MONGO_URL: 'mongodb://mongodb:27017'
   ELASTIC_URL: 'http://elastic:9200'
   ELASTIC_INDEX_NAME: 'huly_storage_index'
+  filesUrl: 'http://datalake.huly.example/blob/:workspace/:blobId/:filename'
+  uploadUrl: 'http://datalake.huly.example/upload/form-data/:workspace'
+  previewConfig: 'image|http://datalake.huly.example/image/fit=cover,width=:width,height=:height,dpr=:dpr/:workspace/:blobId;video|http://datalake.huly.example/meta/:workspace/:blobId'

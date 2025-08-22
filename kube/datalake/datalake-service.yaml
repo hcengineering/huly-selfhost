@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: datalake
+  name: datalake
+spec:
+  ports:
+    - port: 80
+      targetPort: 4030
+  selector:
+    app: datalake

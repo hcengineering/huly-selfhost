@@ -63,15 +63,18 @@ jobs:
           run: |
             echo 127.0.0.1 huly.example | sudo tee -a /etc/hosts
             echo 127.0.0.1 account.huly.example | sudo tee -a /etc/hosts
+            echo 127.0.0.1 transactor.huly.example | sudo tee -a /etc/hosts
+            echo 127.0.0.1 collaborator.huly.example | sudo tee -a /etc/hosts
+            echo 127.0.0.1 datalake.huly.example | sudo tee -a /etc/hosts
             kubectl apply -R -f .
-            kubectl wait --for=condition=Available deployment/mongodb --timeout 3m
+            kubectl wait --for=condition=Available deployment/cockroachdb-single-node --timeout 3m
             kubectl wait --for=condition=Available deployment/transactor --timeout 3m
             kubectl delete pod -l app=account
             kubectl wait --for=condition=Available deployment/account --timeout 3m
         - name: "Check login"
           run: |
             token=$(curl -v -H 'Content-Type: application/json' \
-            -d '{"method":"createAccount","params":["user1","1234","user","1"]}' \
+            -d '{"method": "signUp","params": {"email": "user3","password": "1234","firstName": "Test","lastName": "User"}}' \
             -X POST \
             http://account.huly.example/ | jq -r '.result.token')
 
