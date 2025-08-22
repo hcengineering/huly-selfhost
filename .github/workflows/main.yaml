@@ -65,6 +65,7 @@ jobs:
             echo 127.0.0.1 account.huly.example | sudo tee -a /etc/hosts
             echo 127.0.0.1 transactor.huly.example | sudo tee -a /etc/hosts
             echo 127.0.0.1 collaborator.huly.example | sudo tee -a /etc/hosts
+            echo 127.0.0.1 datalake.huly.example | sudo tee -a /etc/hosts
             kubectl apply -R -f .
             kubectl wait --for=condition=Available deployment/cockroachdb-single-node --timeout 3m
             kubectl wait --for=condition=Available deployment/transactor --timeout 3m

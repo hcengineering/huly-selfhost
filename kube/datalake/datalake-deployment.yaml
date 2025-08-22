@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: datalake
+  name: datalake
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: datalake
+  template:
+    metadata:
+      labels:
+        app: datalake
+    spec:
+      containers:
+        - image: hardcoreeng/datalake:s0.7.204
+          name: datalake
+          ports:
+            - containerPort: 3000
+          env:
+            - name: PORT
+              value: '4030'
+            - name: SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: huly-secret
+                  key: SERVER_SECRET
+            - name: ACCOUNTS_URL
+              value: http://account
+            - name: STATS_URL
+              value: http://stats
+            - name: DB_URL
+              valueFrom:
+                secretKeyRef:
+                  name: huly-secret
+                  key: CR_DB_URL
+            - name: BUCKETS
+              valueFrom:
+                secretKeyRef:
+                  name: huly-secret
+                  key: datalakeStorageConfig
+            - name: QUEUE_CONFIG
+              value: redpanda:9092
+          resources:
+            limits:
+              memory: "512M"
+      restartPolicy: Always

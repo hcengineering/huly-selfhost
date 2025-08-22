@@ -65,6 +65,7 @@ echo "127.0.0.1       huly.example" | sudo tee -a /etc/hosts
 echo "127.0.0.1       account.huly.example" | sudo tee -a /etc/hosts
 echo "127.0.0.1       transactor.huly.example" | sudo tee -a /etc/hosts
 echo "127.0.0.1       collaborator.huly.example" | sudo tee -a /etc/hosts
+echo "127.0.0.1       datalake.huly.example" | sudo tee -a /etc/hosts
 ```
 
 Deploy Huly with `kubectl`:
