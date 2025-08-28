@@ -47,7 +47,7 @@ Migration Steps (command examples shown for Docker on macOS):
     --network "${DOCKER_NAME}_default" \
     -e SERVER_SECRET="$SECRET" \
     -e TRANSACTOR_URL="ws://transactor:3333" \
-    -e STORAGE_CONFIG="minio|minio?accessKey=minioadmin&secretKey=minioadmin" \
+    -e STORAGE_CONFIG="datalake|http://datalake:4030" \
     -e ACCOUNT_DB_URL="${CR_DB_URL}" \
     -e ACCOUNTS_URL="http://account:3000" \
     -e DB_URL="${CR_DB_URL}" \
