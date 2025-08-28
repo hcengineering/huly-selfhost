@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
-
-HULY_VERSION="v0.6.502"
-DOCKER_NAME="huly"
-CONFIG_FILE="huly.conf"
+CONFIG_FILE="huly_v7.conf"
 
 # Parse command line arguments
 RESET_VOLUMES=false
@@ -35,9 +32,11 @@ done
 if [ "$RESET_VOLUMES" == true ]; then
     echo -e "\033[33m--reset-volumes flag detected: Resetting all volume paths to default Docker named volumes.\033[0m"
     sed -i \
-        -e '/^VOLUME_DB_PATH=/s|=.*|=|' \
         -e '/^VOLUME_ELASTIC_PATH=/s|=.*|=|' \
         -e '/^VOLUME_FILES_PATH=/s|=.*|=|' \
+        -e '/^VOLUME_CR_DATA_PATH=/s|=.*|=|' \
+        -e '/^VOLUME_CR_CERTS_PATH=/s|=.*|=|' \
+        -e '/^VOLUME_REDPANDA_PATH=/s|=.*|=|' \
         "$CONFIG_FILE"
     exit 0
 fi
@@ -110,19 +109,6 @@ echo -e "\n\033[1;34mDocker Volume Configuration:\033[0m"
     echo "You can specify custom paths for persistent data storage, or leave empty to use default Docker named volumes."
     echo -e "\033[33mTip: To revert from custom paths to default volumes, enter 'default' or just press Enter when prompted.\033[0m"
 
-    # Database volume configuration
-    if [[ -n "$VOLUME_DB_PATH" ]]; then
-        current_db="custom: $VOLUME_DB_PATH"
-    else
-        current_db="default Docker volume"
-    fi
-    read -p "Enter custom path for database volume [current: ${current_db}]: " input
-    if [[ "$input" == "default" ]]; then
-        _VOLUME_DB_PATH=""
-    else
-        _VOLUME_DB_PATH="${input:-${VOLUME_DB_PATH}}"
-    fi
-
     # Elasticsearch volume configuration
     if [[ -n "$VOLUME_ELASTIC_PATH" ]]; then
         current_elastic="custom: $VOLUME_ELASTIC_PATH"
@@ -149,12 +135,61 @@ echo -e "\n\033[1;34mDocker Volume Configuration:\033[0m"
         _VOLUME_FILES_PATH="${input:-${VOLUME_FILES_PATH}}"
     fi
 
+    # Cockroach data volume configuration
+    if [[ -n "$VOLUME_CR_DATA_PATH" ]]; then
+        current_cr_data="custom: $VOLUME_CR_DATA_PATH"
+    else
+        current_cr_data="default Docker volume"
+    fi
+    read -p "Enter custom path for CR data volume [current: ${current_cr_data}]: " input
+    if [[ "$input" == "default" ]]; then
+        _VOLUME_CR_DATA_PATH=""
+    else
+        _VOLUME_CR_DATA_PATH="${input:-${VOLUME_CR_DATA_PATH}}"
+    fi
+
+    # Cockroach certs volume configuration
+    if [[ -n "$VOLUME_CR_CERTS_PATH" ]]; then
+        current_cr_certs="custom: $VOLUME_CR_CERTS_PATH"
+    else
+        current_cr_certs="default Docker volume"
+    fi
+    read -p "Enter custom path for CR certs volume [current: ${current_cr_certs}]: " input
+    if [[ "$input" == "default" ]]; then
+        _VOLUME_CR_CERTS_PATH=""
+    else
+        _VOLUME_CR_CERTS_PATH="${input:-${VOLUME_CR_CERTS_PATH}}"
+    fi
+
+    # Redpanda volume configuration
+    if [[ -n "$VOLUME_REDPANDA_PATH" ]]; then
+        current_redpanda="custom: $VOLUME_REDPANDA_PATH"
+    else
+        current_redpanda="default Docker volume"
+    fi
+    read -p "Enter custom path for Redpanda volume [current: ${current_redpanda}]: " input
+    if [[ "$input" == "default" ]]; then
+        _VOLUME_REDPANDA_PATH=""
+    else
+        _VOLUME_REDPANDA_PATH="${input:-${VOLUME_REDPANDA_PATH}}"
+    fi
+
 if [ ! -f .huly.secret ] || [ "$SECRET" == true ]; then
   openssl rand -hex 32 > .huly.secret
   echo "Secret generated and stored in .huly.secret"
 else
   echo -e "\033[33m.huly.secret already exists, not overwriting."
   echo "Run this script with --secret to generate a new secret."
+fi
+
+if [ ! -f .cr.secret ]; then
+  openssl rand -hex 32 > .cr.secret
+  echo "Secret generated and stored in .cr.secret"
+fi
+
+if [ ! -f .rp.secret ]; then
+  openssl rand -hex 32 > .rp.secret
+  echo "Secret generated and stored in .rp.secret"
 fi
 
 export HOST_ADDRESS=$_HOST_ADDRESS
@@ -164,12 +199,22 @@ export HTTP_BIND=$HTTP_BIND
 export TITLE=${TITLE:-Huly}
 export DEFAULT_LANGUAGE=${DEFAULT_LANGUAGE:-en}
 export LAST_NAME_FIRST=${LAST_NAME_FIRST:-true}
-export VOLUME_DB_PATH=$_VOLUME_DB_PATH
+export CR_DATABASE=${CR_DATABASE:-defaultdb}
+export CR_USERNAME=${CR_USERNAME:-selfhost}
+export REDPANDA_ADMIN_USER=${REDPANDA_ADMIN_USER:-superadmin}
 export VOLUME_ELASTIC_PATH=$_VOLUME_ELASTIC_PATH
 export VOLUME_FILES_PATH=$_VOLUME_FILES_PATH
+export VOLUME_CR_DATA_PATH=$_VOLUME_CR_DATA_PATH
+export VOLUME_CR_CERTS_PATH=$_VOLUME_CR_CERTS_PATH
+export VOLUME_REDPANDA_PATH=$_VOLUME_REDPANDA_PATH
 export HULY_SECRET=$(cat .huly.secret)
+export COCKROACH_SECRET=$(cat .cr.secret)
+export REDPANDA_SECRET=$(cat .rp.secret)
 
 envsubst < .template.huly.conf > $CONFIG_FILE
+
+source "$CONFIG_FILE"
+export CR_DB_URL=$CR_DB_URL
 
 echo -e "\n\033[1;34mConfiguration Summary:\033[0m"
 echo -e "Host Address: \033[1;32m$_HOST_ADDRESS\033[0m"
@@ -179,9 +224,11 @@ if [[ -n "$SECURE" ]]; then
 else
     echo -e "SSL Enabled: \033[1;31mNo\033[0m"
 fi
-echo -e "Database Volume: \033[1;32m${_VOLUME_DB_PATH:-Docker named volume}\033[0m"
 echo -e "Elasticsearch Volume: \033[1;32m${_VOLUME_ELASTIC_PATH:-Docker named volume}\033[0m"
 echo -e "Files Volume: \033[1;32m${_VOLUME_FILES_PATH:-Docker named volume}\033[0m"
+echo -e "CockroachDB Volume: \033[1;32m${_VOLUME_CR_DATA_PATH:-Docker named volume}\033[0m"
+echo -e "CockroachDB Certs Volume: \033[1;32m${_VOLUME_CR_CERTS_PATH:-Docker named volume}\033[0m"
+echo -e "Redpanda Volume: \033[1;32m${_VOLUME_REDPANDA_PATH:-Docker named volume}\033[0m"
 
 read -p "Do you want to run 'docker compose up -d' now to start Huly? (Y/n): " RUN_DOCKER
 case "${RUN_DOCKER:-Y}" in

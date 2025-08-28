@@ -3,5 +3,8 @@ traefik/docker-compose.yaml
 nginx.conf
 nginx.conf.bak
 huly.conf
+huly_v7.conf
 .huly.secret
+.cr.secret
+.rp.secret
 .idea

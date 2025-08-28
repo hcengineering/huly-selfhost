@@ -1,0 +1,52 @@
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: cockroachdb-single-node
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          app: cockroach
+      template:
+        metadata:
+          labels:
+            app: cockroach
+        spec:
+          # initContainers:
+          # - name: init-certs-dir
+          #   image: busybox
+          #   command: ['sh', '-c', 'mkdir -p /cockroach/cockroach-certs && chmod -R 700 /cockroach']
+          #   volumeMounts:
+          #   - name: certs
+          #     mountPath: /cockroach/certs
+          containers:
+          - name: cockroachdb
+            image: cockroachdb/cockroach:latest-v24.2
+            args:
+              - start-single-node
+              - --accept-sql-without-tls
+            env:
+              - name: COCKROACH_DATABASE
+                value: "defaultdb"
+              - name: COCKROACH_USER
+                value: "selfhost"
+              - name: COCKROACH_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: huly-secret
+                    key: COCKROACH_PASSWORD
+            ports:
+              - containerPort: 26257
+              - containerPort: 8080
+            volumeMounts:
+              - name: cockroachdb-data
+                mountPath: /cockroach/cockroach-data
+              - name: cockroachdb-certs
+                mountPath: /cockroach/certs
+          volumes:
+            - name: cockroachdb-data
+              persistentVolumeClaim:
+                claimName: cockroachdb-data
+            - name: cockroachdb-certs
+              persistentVolumeClaim:
+                claimName: cockroachdb-certs

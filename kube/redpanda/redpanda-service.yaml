@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: redpanda
+  name: redpanda
+spec:
+  ports:
+    - port: 9092
+      targetPort: 9092
+      name: kafka
+    - port: 33145
+      targetPort: 33145
+      name: rpc
+  selector:
+    app: redpanda

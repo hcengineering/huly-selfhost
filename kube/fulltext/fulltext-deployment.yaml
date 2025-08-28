@@ -23,9 +23,9 @@ spec:
                   key: SERVER_SECRET
             - name: DB_URL
               valueFrom:
-                configMapKeyRef:
-                  name: huly-config
-                  key: MONGO_URL
+                secretKeyRef:
+                  name: huly-secret
+                  key: CR_DB_URL
             - name: FULLTEXT_DB_URL
               valueFrom:
                 configMapKeyRef:
@@ -47,7 +47,9 @@ spec:
               value: http://account
             - name: STATS_URL
               value: http://stats
-          image: hardcoreeng/fulltext:v0.6.502
+            - name: QUEUE_CONFIG
+              value: redpanda:9092
+          image: hardcoreeng/fulltext:s0.7.204
           name: fulltext
           ports:
             - containerPort: 4700

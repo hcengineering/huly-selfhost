@@ -1,0 +1,21 @@
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      name: cockroachdb-data
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 2Gi
+---
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      name: cockroachdb-certs
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 100Mi
