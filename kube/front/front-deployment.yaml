@@ -65,21 +65,8 @@ spec:
               value: http://telegram:8086
             - name: TITLE
               value: Huly Self Hosted
-            - name: FILES_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: huly-config
-                  key: filesUrl
             - name: UPLOAD_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: huly-config
-                  key: uploadUrl
-            - name: PREVIEW_CONFIG
-              valueFrom:
-                configMapKeyRef:
-                  name: huly-config
-                  key: previewConfig
+              value: /files
             - name: STATS_URL
               value: http://stats
             - name: DESKTOP_UPDATES_CHANNEL
