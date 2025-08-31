@@ -7,6 +7,8 @@ services:
     volumes:
       - ./.huly.nginx:/etc/nginx/conf.d/default.conf
     restart: unless-stopped
+    networks:
+      - huly_net
 
   cockroach:
     image: cockroachdb/cockroach:latest-v24.2
@@ -19,6 +21,8 @@ services:
       - ${VOLUME_CR_DATA_PATH:-cr_data}:/cockroach/cockroach-data
       - ${VOLUME_CR_CERTS_PATH:-cr_certs}:/cockroach/certs
     restart: unless-stopped
+    networks:
+      - huly_net
 
   redpanda:
     image: docker.redpanda.com/redpandadata/redpanda:v24.3.6
@@ -46,6 +50,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
+    networks:
+      - huly_net
 
   minio:
     image: "minio/minio"
@@ -57,6 +63,8 @@ services:
       interval: 5s
       retries: 10
     restart: unless-stopped
+    networks:
+      - huly_net
 
   elastic:
     image: "elasticsearch:7.14.2"
@@ -77,6 +85,8 @@ services:
       retries: 10
       test: curl -s http://localhost:9200/_cluster/health | grep -vq '"status":"red"'
     restart: unless-stopped
+    networks:
+      - huly_net
 
   rekoni:
     image: hardcoreeng/rekoni-service:${HULY_VERSION}
@@ -87,6 +97,8 @@ services:
         limits:
           memory: 500M
     restart: unless-stopped
+    networks:
+      - huly_net
 
   transactor:
     image: hardcoreeng/transactor:${HULY_VERSION}
@@ -102,6 +114,8 @@ services:
       - LAST_NAME_FIRST=${LAST_NAME_FIRST:-true}
       - QUEUE_CONFIG=redpanda:9092
     restart: unless-stopped
+    networks:
+      - huly_net
 
   collaborator:
     image: hardcoreeng/collaborator:${HULY_VERSION}
@@ -112,6 +126,8 @@ services:
       - STATS_URL=http://stats:4900
       - STORAGE_CONFIG=datalake|http://datalake:4030
     restart: unless-stopped
+    networks:
+      - huly_net
 
   account:
     image: hardcoreeng/account:${HULY_VERSION}
@@ -128,6 +144,8 @@ services:
       - ACCOUNT_PORT=3000
       - QUEUE_CONFIG=redpanda:9092
     restart: unless-stopped
+    networks:
+      - huly_net
 
   workspace:
     image: hardcoreeng/workspace:${HULY_VERSION}
@@ -141,6 +159,8 @@ services:
       - STATS_URL=http://stats:4900
       - QUEUE_CONFIG=redpanda:9092
     restart: unless-stopped
+    networks:
+      - huly_net
 
   front:
     image: hardcoreeng/front:${HULY_VERSION}
@@ -166,6 +186,8 @@ services:
       - LAST_NAME_FIRST=${LAST_NAME_FIRST:-true}
       - DESKTOP_UPDATES_CHANNEL=${HULY_VERSION}
     restart: unless-stopped
+    networks:
+      - huly_net
 
   fulltext:
     image: hardcoreeng/fulltext:${HULY_VERSION}
@@ -180,6 +202,8 @@ services:
       - STATS_URL=http://stats:4900
       - QUEUE_CONFIG=redpanda:9092
     restart: unless-stopped
+    networks:
+      - huly_net
 
   stats:
     image: hardcoreeng/stats:${HULY_VERSION}
@@ -187,6 +211,8 @@ services:
       - PORT=4900
       - SERVER_SECRET=${SECRET}
     restart: unless-stopped
+    networks:
+      - huly_net
 
   datalake:
     image: hardcoreeng/datalake:${HULY_VERSION}
@@ -208,6 +234,9 @@ services:
       - BUCKETS=huly,eu|http://minio:9000?accessKey=minioadmin&secretKey=minioadmin
       - QUEUE_CONFIG=redpanda:9092
     restart: unless-stopped
+    networks:
+      - huly_net
+
 volumes:
   # These named volumes are used when custom volume paths are not specified
   # If VOLUME_*_PATH variables are set, these volumes will be ignored
@@ -216,3 +245,6 @@ volumes:
   cr_data:
   cr_certs:
   redpanda:
+
+networks:
+  huly_net:
