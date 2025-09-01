@@ -91,14 +91,4 @@ server {
         rewrite ^/_stats(/.*)$ $1 break;
         proxy_pass http://stats:4900/;
     }
-
-    location /_datalake {
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-
-        rewrite ^/_datalake(/.*)$ $1 break;
-        proxy_pass http://datalake:4030/;
-    }
 }
