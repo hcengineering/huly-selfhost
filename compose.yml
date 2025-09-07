@@ -140,6 +140,7 @@ services:
       - ACCOUNTS_URL=http://account:3000
       - STATS_URL=http://stats:4900
       - QUEUE_CONFIG=redpanda:9092
+      - ACCOUNTS_DB_URL=${CR_DB_URL}
     restart: unless-stopped
 
   front:
