@@ -338,7 +338,7 @@ self-hosted Huly, perform the following steps:
           - 8096:8096
         environment:
           - STORAGE_CONFIG=minio|minio?accessKey=minioadmin&secretKey=minioadmin
-          - SECRET=secret
+          - SECRET=${SECRET}
           - ACCOUNTS_URL=http://account:3000
           - DB_URL=${CR_DB_URL}
           - MONGO_URL=mongodb://mongodb:27017
@@ -379,7 +379,7 @@ Huly provides AI-powered chatbot that provides several services:
           - 4010:4010
         environment:
           - STORAGE_CONFIG=minio|minio?accessKey=minioadmin&secretKey=minioadmin
-          - SERVER_SECRET=secret
+          - SERVER_SECRET=${SECRET}
           - ACCOUNTS_URL=http://account:3000
           - DB_URL=${CR_DB_URL}
           - MONGO_URL=mongodb://mongodb:27017
@@ -415,6 +415,36 @@ Huly provides AI-powered chatbot that provides several services:
           - AI_BOT_URL=http://aibot:4010
         ...
     ```
+
+## Configure Google Calendar Service
+
+To integrate Google Calendar with Huly, follow these steps:
+
+### Google side
+
+1. Set up a Google Cloud project and enable the Google Calendar API in Google Cloud Console.
+2. Create OAuth 2.0 credentials. Use `Web application` as the application type and `https://${HOST_ADDRESS}/_calendar/signin/code` (SET REAL VALUE INSTEAD OF ${HOST_ADDRESS}, https is required!!!) as Authorised redirect URIs. Save your credentials!
+3. Add these scopes `./auth/calendar.calendarlist.readonly` `./auth/userinfo.email` `./auth/calendar.calendars.readonly` `./auth/calendar.events`
+
+### Docker-compose side
+
+Add `calendar` container to the docker-compose.yaml
+
+```yaml
+  calendar:
+    image: hardcoreeng/calendar:${HULY_VERSION}
+    ports:
+      - 8095:8095
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017
+      - MONGO_DB=%calendar-service
+      - Credentials=<JSON_STRING_CREDENTIALS_FROM_GOOGLE_CONSOLE>
+      - WATCH_URL=https://${HOST_ADDRESS}/_calendar/push
+      - ACCOUNTS_URL=http://account:3000
+      - STATS_URL=http://stats:4900
+      - SECRET=${SECRET}
+    restart: unless-stopped
+```
 
 ## Configure OpenID Connect (OIDC)
 
