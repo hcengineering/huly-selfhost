@@ -1,7 +1,7 @@
 #!/bin/bash
 
-if [ -f "huly.conf" ]; then
-    source "huly.conf"
+if [ -f ".env" ]; then
+    source ".env"
 fi
 
 # Check for --recreate flag
