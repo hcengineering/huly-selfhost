@@ -32,7 +32,7 @@ spec:
                 secretKeyRef:
                   name: huly-secret
                   key: SERVER_SECRET
-          image: hardcoreeng/collaborator:v0.7.235
+          image: hardcoreeng/collaborator:v0.7.242
           name: collaborator
           ports:
             - containerPort: 3078

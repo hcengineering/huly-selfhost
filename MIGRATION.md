@@ -3,9 +3,19 @@
 This document describes the changes required to update Huly from one version to another. Most of updates require updating Docker containers versions.
 Though, some updates may require updating other configuration options. In this case, you should review the updated configuration options and update them accordingly.
 
-# v7
+## v7
 
-## v0.7.204
+WARNING: if you are migrating from v6 see [v0.7.204](#v07204) for details.
+
+### v0.7.242
+
+No changes required.
+
+### v0.7.235
+
+No changes required.
+
+### v0.7.204
 
 > [!CAUTION]
 > Do not upgrade directly from v6 to v7. Direct upgrades will lock your deployment with MongoDB-specific data, making the future migration significantly more complex. Follow the migration instructions below instead.
@@ -60,9 +70,10 @@ Migration Steps (command examples shown for Docker on macOS):
 > [!TIP]
 > This procedure doesn't affect the data in the v6 deployment and can be repeated as many times as needed. 
 
-# v6
+## v6
 
-## v0.6.502
+### v0.6.502
+
 <details>
 
 <summary>No changes required.</summary>
@@ -73,18 +84,18 @@ Migration Steps (command examples shown for Docker on macOS):
 - v0.6.482
 </details>
 
-## v0.6.471
+### v0.6.471
 
-### Overview
+#### Overview
 
 The new Mail Service, supporting both SMTP and Amazon SES, has been added. If your setup currently uses the `ses` service, you'll need to migrate to the `mail` service.
 
-### Key Changes
+#### Key Changes
 
 - **Unified Mail Service**: The `mail` service can be configured to send emails via SMTP or Amazon SES, but not both simultaneously.
 - **Migration Requirement**: Transitioning from the `ses` service to the `mail` service requires updating your `docker-compose.yaml` file.
 
-### Migration Steps
+#### Migration Steps
 
 1. **Update Configuration**: Replace the `ses` service with the `mail` service in your `docker-compose.yaml` file. Configure the environment variables to match your chosen email service (SMTP or SES).
 
@@ -117,16 +128,15 @@ The new Mail Service, supporting both SMTP and Amazon SES, has been added. If yo
       ...
     ```
 
-
-## v0.6.466
-
-No changes required.
-
-## v0.6.429
+### v0.6.466
 
 No changes required.
 
-## v0.6.424
+### v0.6.429
+
+No changes required.
+
+### v0.6.424
 
 Web-push keys have been moved from the `front` service to the `ses` service. If you are using the `ses` service, you will need to update the configuration:
 
@@ -147,17 +157,17 @@ Web-push keys have been moved from the `front` service to the `ses` service. If 
       - PUSH_PRIVATE_KEY=your private key
 ```
 
-## v0.6.411
+### v0.6.411
 
 No changes required.
 
-## v0.6.405
+### v0.6.405
 
 No changes required.
 
-## v0.6.377
+### v0.6.377
 
-### Fulltext Service
+#### Fulltext Service
 
 Fulltext search functionality has been extracted into a separate `fulltext` service. This service is now required to be running in order to use the fulltext search functionality.
 
@@ -194,7 +204,7 @@ Update the `transactor` service to use the new `fulltext` service:
       # - REKONI_URL=http://rekoni:4004
 ```
 
-### Statistics Service
+#### Statistics Service
 
 New statistics service has been added. The serivce is responsible for collecting and storing statistics about the usage of the application.
 

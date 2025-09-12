@@ -15,7 +15,7 @@ spec:
         app: stats
     spec:
       containers:
-        - image: hardcoreeng/stats:v0.7.235
+        - image: hardcoreeng/stats:v0.7.242
           name: stats
           env:
             - name: PORT
