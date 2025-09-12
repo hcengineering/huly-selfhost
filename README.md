@@ -211,7 +211,7 @@ Add the `ses` container to your `docker-compose.yaml` file with the generated VA
 
 ```yaml
 ses:
-  image: hardcoreeng/ses:v0.6.501
+  image: hardcoreeng/ses:${HULY_VERSION}
   environment:
     - PORT=3335
     - SOURCE=mail@example.com
@@ -232,7 +232,7 @@ The Mail Service is responsible for sending email notifications and confirmation
 
     ```yaml
     mail:
-      image: hardcoreeng/mail:v0.6.502
+      image: hardcoreeng/mail:${HULY_VERSION}
       container_name: mail
       ports:
         - 8097:8097
@@ -332,7 +332,7 @@ self-hosted Huly, perform the following steps:
 
     ```yaml
       love:
-        image: hardcoreeng/love:v0.6.502
+        image: hardcoreeng/love:${HULY_VERSION}
         container_name: love
         ports:
           - 8096:8096
@@ -357,9 +357,37 @@ self-hosted Huly, perform the following steps:
         ...
         environment:
           - LIVEKIT_WS=<LIVEKIT_HOST>
-          - LOVE_ENDPOINT=http://love:8096
         ...
     ```
+
+## Print Service
+
+1. Add `print` container to the docker-compose.yaml
+
+    ```yaml
+      print:
+        image: hardcoreeng/print:${HULY_VERSION}
+        container_name: print
+        ports:
+          - 4005:4005
+        environment:
+          - STORAGE_CONFIG=minio|minio?accessKey=minioadmin&secretKey=minioadmin
+          - STATS_URL=http://stats:4900
+          - SECRET=${SECRET}
+        restart: unless-stopped
+    ```
+
+2. Configure `front` service:
+
+    ```yaml
+      front:
+        ...
+        environment:
+          - PRINT_URL=http${SECURE:+s}://${HOST_ADDRESS}/_print
+        ...
+    ```
+
+3. Uncomment print section in `.huly.nginx` file and reload nginx
 
 ## AI Service
 
@@ -374,7 +402,7 @@ Huly provides AI-powered chatbot that provides several services:
 
     ```yaml
       aibot:
-        image: hardcoreeng/ai-bot:v0.6.502
+        image: hardcoreeng/ai-bot:${HULY_VERSION}
         ports:
           - 4010:4010
         environment:
@@ -401,7 +429,7 @@ Huly provides AI-powered chatbot that provides several services:
         ...
         environment:
           # this should be available outside of the cluster
-          - AI_URL=http://aibot:4010
+          - AI_URL=http${SECURE:+s}://${HOST_ADDRESS}/_aibot
         ...
     ```
 
@@ -415,6 +443,8 @@ Huly provides AI-powered chatbot that provides several services:
           - AI_BOT_URL=http://aibot:4010
         ...
     ```
+
+5. Uncomment aibot section in `.huly.nginx` file and reload nginx
 
 ## Configure Google Calendar Service
 
