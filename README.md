@@ -356,8 +356,7 @@ self-hosted Huly, perform the following steps:
       front:
         ...
         environment:
-          - LIVEKIT_WS=<LIVEKIT_HOST>
-          - LOVE_ENDPOINT=http://love:8096
+          - LIVEKIT_WS=<LIVEKIT_HOST_WITH_WSS>
         ...
     ```
 
