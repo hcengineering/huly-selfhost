@@ -4,7 +4,7 @@ services:
     expose:
       - "80"
     volumes:
-      - ./nginx/huly.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx:/etc/nginx/conf.d
     restart: unless-stopped
     labels:
       - traefik.enable=true
