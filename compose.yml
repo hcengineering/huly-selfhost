@@ -4,7 +4,7 @@ services:
     expose:
       - "80"                       # no host binding; Coolify’s proxy will handle 80/443
     volumes:
-      - ./nginx:/etc/nginx/conf.d  # mount a DIRECTORY that contains your .conf
+      - ./nginx/conf.d:/etc/nginx/conf.d  # mount a DIRECTORY that contains your .conf
     restart: unless-stopped
     labels:
       - traefik.enable=true
