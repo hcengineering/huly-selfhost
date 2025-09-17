@@ -212,29 +212,6 @@ services:
     restart: unless-stopped
     networks:
       - huly_net
-
-  datalake:
-    image: hardcoreeng/datalake:${HULY_VERSION}
-    depends_on:
-      minio:
-        condition: service_healthy
-      cockroach:
-        condition: service_started
-      stats:
-        condition: service_started
-      account:
-        condition: service_started
-    environment:
-      - PORT=4030
-      - SECRET=${SECRET}
-      - ACCOUNTS_URL=http://account:3000
-      - STATS_URL=http://stats:4900
-      - DB_URL=${CR_DB_URL}
-      - BUCKETS=huly,eu|http://minio:9000?accessKey=minioadmin&secretKey=minioadmin
-      - QUEUE_CONFIG=redpanda:9092
-    restart: unless-stopped
-    networks:
-      - huly_net
       
 volumes:
   # These named volumes are used when custom volume paths are not specified
