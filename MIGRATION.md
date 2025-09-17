@@ -7,6 +7,9 @@ Though, some updates may require updating other configuration options. In this c
 
 WARNING: if you are migrating from v6 see [v0.7.204](#v07204) for details.
 
+> [!CAUTION]
+> Do not upgrade directly from v6 to v7. Direct upgrades will lock your deployment with MongoDB-specific data, making the future migration significantly more complex. Follow the migration instructions below instead.
+
 ### v0.7.242
 
 No changes required.
@@ -16,9 +19,6 @@ No changes required.
 No changes required.
 
 ### v0.7.204
-
-> [!CAUTION]
-> Do not upgrade directly from v6 to v7. Direct upgrades will lock your deployment with MongoDB-specific data, making the future migration significantly more complex. Follow the migration instructions below instead.
 
 > [!WARNING]
 > Use of MongoDB has been deprecated in v7 in favor of CockroachDB and will be completely removed in v8.
@@ -54,7 +54,7 @@ Migration Steps (command examples shown for Docker on macOS):
 
 ```
   source .env && docker run \
-    --network "${DOCKER_NAME}_default" \
+    --network "${DOCKER_NAME}_huly_net" \
     -e SERVER_SECRET="$SECRET" \
     -e TRANSACTOR_URL="ws://transactor:3333" \
     -e STORAGE_CONFIG="minio|minio?accessKey=minioadmin&secretKey=minioadmin" \
