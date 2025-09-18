@@ -220,6 +220,8 @@ ses:
     - PUSH_PUBLIC_KEY=${PUSH_PUBLIC_KEY}
     - PUSH_PRIVATE_KEY=${PUSH_PRIVATE_KEY}
   restart: unless-stopped
+  networks:
+    - huly_net
 ```
 
 ## Mail Service
@@ -240,6 +242,8 @@ The Mail Service is responsible for sending email notifications and confirmation
         - PORT=8097
         - SOURCE=<EMAIL_FROM>
       restart: unless-stopped
+      networks:
+        - huly_net
     ```
 
 2. Add the mail container URL to the `transactor` and `account` containers:
@@ -348,6 +352,8 @@ self-hosted Huly, perform the following steps:
           - LIVEKIT_API_KEY=<LIVEKIT_API_KEY>
           - LIVEKIT_API_SECRET=<LIVEKIT_API_SECRET>
         restart: unless-stopped
+        networks:
+          - huly_net
     ```
 
 3. Configure `front` service:
@@ -375,6 +381,8 @@ self-hosted Huly, perform the following steps:
           - STATS_URL=http://stats:4900
           - SECRET=${SECRET}
         restart: unless-stopped
+        networks:
+          - huly_net
     ```
 
 2. Configure `front` service:
@@ -420,6 +428,8 @@ Huly provides AI-powered chatbot that provides several services:
           # optional if you use love service
           - LOVE_ENDPOINT=http://love:8096
         restart: unless-stopped
+        networks:
+          - huly_net
     ```
 
 3. Configure `front` service:
@@ -474,6 +484,8 @@ Add `calendar` container to the docker-compose.yaml
       - STATS_URL=http://stats:4900
       - SECRET=${SECRET}
     restart: unless-stopped
+    networks:
+      - huly_net
 ```
 
 ## Configure OpenID Connect (OIDC)
