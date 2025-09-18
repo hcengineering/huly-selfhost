@@ -183,7 +183,7 @@ services:
       - TITLE=${TITLE:-Huly Self Host}
       - DEFAULT_LANGUAGE=${DEFAULT_LANGUAGE:-en}
       - LAST_NAME_FIRST=${LAST_NAME_FIRST:-true}
-      - DESKTOP_UPDATES_CHANNEL=${HULY_VERSION}
+      - DESKTOP_UPDATES_CHANNEL=${DESKTOP_CHANNEL}
     restart: unless-stopped
     networks:
       - huly_net
