@@ -3,6 +3,9 @@
 This document describes the changes required to update Huly from one version to another. Most of updates require updating Docker containers versions.
 Though, some updates may require updating other configuration options. In this case, you should review the updated configuration options and update them accordingly.
 
+> [!TIP]
+> If you use the desktop app and want it to upgrade from Huly distributions keep DESKTOP_CHANNEL in sync with the version of the containers without "v" prefix.
+
 ## v7
 
 WARNING: if you are migrating from v6 see [v0.7.204](#v07204) for details.
