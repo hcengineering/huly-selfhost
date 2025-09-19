@@ -66,7 +66,7 @@ Migration Steps (command examples shown for Docker on macOS):
     -e DB_URL="${CR_DB_URL}" \
     -e QUEUE_CONFIG="redpanda:9092" \
     -v ./backup-all:/backup \
-    -it hardcoreeng/tool:s0.7.228 \
+    -it hardcoreeng/tool:s0.7.251 \
     -- bundle.js restore-from-v6-all /backup
 ```
 
