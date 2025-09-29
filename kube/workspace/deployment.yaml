@@ -20,11 +20,10 @@ spec:
               value: http://account
             - name: STATS_URL
               value: http://stats
+            - name: FULLTEXT_URL
+              value: http://fulltext
             - name: TRANSACTOR_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: huly-config
-                  key: TRANSACTOR_URL
+              value: http://transactor
             - name: STORAGE_CONFIG
               valueFrom:
                 secretKeyRef:
@@ -36,20 +35,23 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: huly-secret
-                  key: CR_DB_URL
-            - name: MONGO_URL
+                  key: DB_URL
+            - name: ACCOUNTS_DB_URL
               valueFrom:
-                configMapKeyRef:
-                  name: huly-config
-                  key: MONGO_URL
+                secretKeyRef:
+                  name: huly-secret
+                  key: DB_URL
             - name: SERVER_SECRET
               valueFrom:
                 secretKeyRef:
                   name: huly-secret
                   key: SERVER_SECRET
             - name: QUEUE_CONFIG
-              value: redpanda:9092
-          image: hardcoreeng/workspace:v0.7.242
+              valueFrom:
+                secretKeyRef:
+                  name: huly-secret
+                  key: QUEUE_CONFIG
+          image: hardcoreeng/workspace:v0.7.252
           name: workspace
           resources:
             limits:

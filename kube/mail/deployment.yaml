@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: mail
+  name: mail
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mail
+  template:
+    metadata:
+      labels:
+        app: mail
+    spec:
+      containers:
+        - image: hardcoreeng/mail:v0.7.252
+          name: mail
+          env:
+            - name: PORT
+              value: "8097"
+            - name: SOURCE
+              valueFrom:
+                secretKeyRef:
+                  name: huly-secret
+                  key: SMTP_FROM
+            - name: SMTP_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: huly-secret
+                  key: SMTP_HOST
+            - name: SMTP_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: huly-secret
+                  key: SMTP_PORT
+            - name: SMTP_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: huly-secret
+                  key: SMTP_USER
+            - name: SMTP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: huly-secret
+                  key: SMTP_PASS
+          ports:
+            - containerPort: 8097
+              protocol: TCP
+          resources:
+            limits:
+              memory: "512M"
+      restartPolicy: Always

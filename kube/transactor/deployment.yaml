@@ -21,27 +21,21 @@ spec:
             - name: FULLTEXT_URL
               value: http://fulltext
             - name: FRONT_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: huly-config
-                  key: FRONT_URL
+              value: http://front
             - name: STATS_URL
               value: http://stats
+            - name: MAIL_URL
+              value: http://mail
             - name: STORAGE_CONFIG
               valueFrom:
                 secretKeyRef:
                   name: huly-secret
                   key: STORAGE_CONFIG
-            - name: MONGO_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: huly-config
-                  key: MONGO_URL
             - name: DB_URL
               valueFrom:
                 secretKeyRef:
                   name: huly-secret
-                  key: CR_DB_URL
+                  key: DB_URL
             - name: SERVER_CURSOR_MAXTIMEMS
               value: "30000"
             - name: SERVER_PORT
@@ -52,11 +46,16 @@ spec:
                   name: huly-secret
                   key: SERVER_SECRET
             - name: QUEUE_CONFIG
-              value: redpanda:9092
-          image: hardcoreeng/transactor:v0.7.242
+              valueFrom:
+                secretKeyRef:
+                  name: huly-secret
+                  key: QUEUE_CONFIG
+          image: hardcoreeng/transactor:v0.7.252
           name: transactor
           ports:
             - containerPort: 3333
-              hostPort: 3333
               protocol: TCP
+          resources:
+            limits:
+              memory: "512M"
       restartPolicy: Always
