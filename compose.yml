@@ -140,7 +140,7 @@ services:
       - FRONT_URL=http${SECURE:+s}://${HOST_ADDRESS}
       - STATS_URL=http${SECURE:+s}://${HOST_ADDRESS}/stats
       - MODEL_ENABLED=*
-      - ACCOUNTS_URL=http${SECURE:+s}://${HOST_ADDRESS}
+      - ACCOUNTS_URL=http${SECURE:+s}://${HOST_ADDRESS}/_accounts
       - ACCOUNT_PORT=3000
       - QUEUE_CONFIG=redpanda:9092
     restart: unless-stopped
