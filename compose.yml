@@ -36,6 +36,7 @@ services:
       - --schema-registry-addr internal://0.0.0.0:8081,external://0.0.0.0:18081
       - --rpc-addr redpanda:33145
       - --advertise-rpc-addr redpanda:33145
+      # When removing this see the comments in the health check
       - --mode dev-container
       - --smp 1
       - --default-log-level=info
@@ -46,7 +47,9 @@ services:
       - REDPANDA_SUPERUSER_USERNAME=${REDPANDA_ADMIN_USER}
       - REDPANDA_SUPERUSER_PASSWORD=${REDPANDA_ADMIN_PWD}
     healthcheck:
-      test: ['CMD', 'rpk', 'cluster', 'info', '-X', 'user=${REDPANDA_ADMIN_USER}', '-X', 'pass=${REDPANDA_ADMIN_PWD}']
+      # Uncomment the line below if you remove the `--mode dev-container` 
+      # test: ['CMD', 'rpk', 'cluster', 'info', '-X', 'user=${REDPANDA_ADMIN_USER}', '-X', 'pass=${REDPANDA_ADMIN_PWD}']
+      test: ['CMD', 'rpk', 'cluster', 'info'] # Remove this when not using `--mode dev-container` 
       interval: 10s
       timeout: 5s
       retries: 10
@@ -114,6 +117,8 @@ services:
       - LAST_NAME_FIRST=${LAST_NAME_FIRST:-true}
       - QUEUE_CONFIG=redpanda:9092
     restart: unless-stopped
+    depends_on:
+      - redpanda
     networks:
       - huly_net
 
