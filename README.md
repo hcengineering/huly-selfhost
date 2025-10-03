@@ -344,6 +344,12 @@ If you're experiencing issues with email delivery, see the [SMTP Troubleshooting
 1. SMTP and SES configurations cannot be used simultaneously.
 2. `SES_URL` is not supported in version v0.6.470 and later, please use `MAIL_URL` instead.
 
+## Gmail Integration
+
+Huly supports Gmail integration allowing users to connect their Gmail accounts and manage emails directly within the platform.
+
+For detailed setup instructions, see the [Gmail Configuration Guide](guides/gmail-configuration.md).
+
 
 ## Love Service (Audio & Video calls)
 
@@ -385,7 +391,6 @@ self-hosted Huly, perform the following steps:
         ...
     ```
 
-<<<<<<< Updated upstream
 ## Print Service
 
 1. Add `print` container to the docker-compose.yaml
@@ -416,13 +421,6 @@ self-hosted Huly, perform the following steps:
     ```
 
 3. Uncomment print section in `.huly.nginx` file and reload nginx
-=======
-## Gmail Integration
-
-Huly supports Gmail integration allowing users to connect their Gmail accounts and manage emails directly within the platform.
-
-For detailed setup instructions, see the [Gmail Configuration Guide](guides/gmail-configuration.md).
->>>>>>> Stashed changes
 
 ## AI Service
 
