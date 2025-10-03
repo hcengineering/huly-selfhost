@@ -320,10 +320,35 @@ To integrate with an external SMTP server, update the `docker-compose.yaml` file
         - SES_REGION=<SES_REGION>
     ```
 
+### Verifying Mail Service
+
+To verify that the mail service is running correctly:
+
+```bash
+# Check if the mail container is running
+sudo docker ps | grep mail
+
+# View mail service logs
+sudo docker logs mail
+
+# Follow mail service logs in real-time
+sudo docker logs -f mail
+```
+
+### Troubleshooting SMTP Issues
+
+If you're experiencing issues with email delivery, see the [SMTP Troubleshooting Guide](guides/smtp-troubleshooting.md) for comprehensive debugging steps and solutions.
+
 ### Notes
 
 1. SMTP and SES configurations cannot be used simultaneously.
 2. `SES_URL` is not supported in version v0.6.470 and later, please use `MAIL_URL` instead.
+
+## Gmail Integration
+
+Huly supports Gmail integration allowing users to connect their Gmail accounts and manage emails directly within the platform.
+
+For detailed setup instructions, see the [Gmail Configuration Guide](guides/gmail-configuration.md).
 
 
 ## Love Service (Audio & Video calls)
