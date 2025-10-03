@@ -131,7 +131,7 @@ gmail:
   restart: unless-stopped
 ```
 
-### 4.5 Network Configuration
+### 4.3 Network Configuration
 
 Replace the following placeholders with your actual values:
 
