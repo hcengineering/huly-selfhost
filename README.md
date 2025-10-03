@@ -320,6 +320,25 @@ To integrate with an external SMTP server, update the `docker-compose.yaml` file
         - SES_REGION=<SES_REGION>
     ```
 
+### Verifying Mail Service
+
+To verify that the mail service is running correctly:
+
+```bash
+# Check if the mail container is running
+sudo docker ps | grep mail
+
+# View mail service logs
+sudo docker logs mail
+
+# Follow mail service logs in real-time
+sudo docker logs -f mail
+```
+
+### Troubleshooting SMTP Issues
+
+If you're experiencing issues with email delivery, see the [SMTP Troubleshooting Guide](guides/smtp-troubleshooting.md) for comprehensive debugging steps and solutions.
+
 ### Notes
 
 1. SMTP and SES configurations cannot be used simultaneously.
@@ -366,6 +385,7 @@ self-hosted Huly, perform the following steps:
         ...
     ```
 
+<<<<<<< Updated upstream
 ## Print Service
 
 1. Add `print` container to the docker-compose.yaml
@@ -396,6 +416,13 @@ self-hosted Huly, perform the following steps:
     ```
 
 3. Uncomment print section in `.huly.nginx` file and reload nginx
+=======
+## Gmail Integration
+
+Huly supports Gmail integration allowing users to connect their Gmail accounts and manage emails directly within the platform.
+
+For detailed setup instructions, see the [Gmail Configuration Guide](guides/gmail-configuration.md).
+>>>>>>> Stashed changes
 
 ## AI Service
 
