@@ -47,7 +47,10 @@ spec:
                   name: huly-secret
                   key: DB_URL
             - name: TRANSACTOR_URL
-              value: http://transactor
+              valueFrom:
+                configMapKeyRef:
+                  name: huly-config
+                  key: TRANSACTOR_URL
             - name: QUEUE_CONFIG
               valueFrom:
                 secretKeyRef:
