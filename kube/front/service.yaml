@@ -2,11 +2,11 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: fulltext
-  name: fulltext
+    app: front
+  name: front
 spec:
   ports:
     - port: 80
-      targetPort: 4700
+      targetPort: 8080
   selector:
-    app: fulltext
+    app: front
