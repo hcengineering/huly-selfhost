@@ -26,7 +26,10 @@ spec:
             - name: ACCOUNTS_URL
               value: http://account
             - name: FRONT_URL
-              value: http://front
+              valueFrom:
+                configMapKeyRef:
+                  name: huly-config
+                  key: FRONT_URL
             - name: STATS_URL
               value: http://stats
             - name: MAIL_URL

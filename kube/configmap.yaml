@@ -4,9 +4,9 @@ metadata:
   name: huly-config
 data:
   NAME: huly
+  FRONT_URL: 'https://huly.example.com'
   ACCOUNTS_URL: 'https://huly.example.com/_account'
   COLLABORATOR_URL: 'wss://huly.example.com/_collaborator'
-  FRONT_URL: 'https://huly.example.com'
   REKONI_URL: 'https://huly.example.com/_rekoni'
   STATS_URL: 'https://huly.example.com/_stats'
   TRANSACTOR_URL: 'ws://transactor;wss://huly.example.com/_transactor'

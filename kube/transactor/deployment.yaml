@@ -21,7 +21,10 @@ spec:
             - name: FULLTEXT_URL
               value: http://fulltext
             - name: FRONT_URL
-              value: http://front
+              valueFrom:
+                configMapKeyRef:
+                  name: huly-config
+                  key: GMAIL_URL
             - name: STATS_URL
               value: http://stats
             - name: MAIL_URL
