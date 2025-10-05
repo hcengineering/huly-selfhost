@@ -594,3 +594,90 @@ To implement this, set the following environment variable for both the front and
 
 _Note: When setting up a new deployment, either create the initial account before disabling sign-ups or use the
 development tool to create the first account._
+
+## GitHub Service
+
+Huly provides GitHub integration for bi-directional synchronization of issues, pull requests, comments, and reviews.
+
+### Prerequisites
+
+Set up a GitHub Application for your deployment.
+Please refer to [GitHub Apps documentation](https://docs.github.com/en/apps/creating-github-apps/registering-a-github-app/registering-a-github-app) for full instructions on how to register your app.
+
+During registration of the GitHub app, the following secrets should be obtained:
+
+- `GITHUB_APPID` - An application ID number (e.g., 123456), which can be found in General/About in the GitHub UI.
+- `GITHUB_CLIENTID` - A client ID, an identifier from the same page (e.g., Iv1.11a1aaa11aa11111).
+- `GITHUB_CLIENT_SECRET` - A client secret that can be generated in the client secrets section of the General GitHub App UI page.
+- `GITHUB_PRIVATE_KEY` - A private key for authentication.
+
+### Configure Permissions
+
+Set the following permissions for the app:
+
+- Commit statuses: _Read and write_
+- Contents: _Read and write_
+- Custom properties: _Read and write_
+- Discussions: _Read and write_
+- Issues: _Read and write_
+- Metadata: _Read-only_
+- Pages: _Read and write_
+- Projects: _Read and write_
+- Pull requests: _Read and write_
+- Webhooks: _Read and write_
+
+### Subscribe to Events
+
+Enable the following event subscriptions:
+
+- Issues
+- Pull request
+- Pull request review
+- Pull request review comment
+- Pull request review thread
+
+### Docker Configuration
+
+1. Add the `github` container to the docker-compose.yaml
+
+```yaml
+github:
+  image: hardcoreeng/github:${HULY_VERSION}
+  ports:
+    - 3500:3500
+  environment:
+    - PORT=3500
+    - STORAGE_CONFIG=minio|minio?accessKey=minioadmin&secretKey=minioadmin
+    - SERVER_SECRET=${SECRET}
+    - ACCOUNTS_URL=http://account:3000
+    - STATS_URL=http://stats:4900
+    - APP_ID=${GITHUB_APPID}
+    - CLIENT_ID=${GITHUB_CLIENTID}
+    - CLIENT_SECRET=${GITHUB_CLIENT_SECRET}
+    - PRIVATE_KEY=${GITHUB_PRIVATE_KEY}
+    - COLLABORATOR_URL=ws${SECURE:+s}://${HOST_ADDRESS}/_collaborator
+    - WEBHOOK_SECRET=secret
+    - FRONT_URL=http${SECURE:+s}://${HOST_ADDRESS}
+    - BOT_NAME=${yourAppName}[bot]
+  restart: unless-stopped
+  networks:
+    - huly_net
+```
+
+2. Configure the `front` service:
+
+```yaml
+  front:
+   ...
+   environment:
+    # this should be available outside of the cluster
+    - GITHUB_APP=${GITHUB_APPID}
+    - GITHUB_CLIENTID=${GITHUB_CLIENTID}
+   ...
+```
+
+3. Uncomment the github section in `.huly.nginx` file and reload nginx
+
+4. Configure Callback URL and Setup URL (with redirect on update set) to your host: `http${SECURE:+s}://${HOST_ADDRESS}/github`
+
+5. Configure Webhook URL to `http${SECURE:+s}://${HOST_ADDRESS}/_github` with the secret `secret`
