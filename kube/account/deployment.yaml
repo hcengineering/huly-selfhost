@@ -16,13 +16,15 @@ spec:
     spec:
       containers:
         - env:
-            - name: ACCOUNTS_URL
+            - name: SERVER_SECRET
               valueFrom:
-                configMapKeyRef:
-                  name: huly-config
-                  key: ACCOUNTS_URL
+                secretKeyRef:
+                  name: huly-secret
+                  key: SERVER_SECRET
             - name: ACCOUNT_PORT
               value: '3000'
+            - name: ACCOUNTS_URL
+              value: http://account
             - name: FRONT_URL
               valueFrom:
                 configMapKeyRef:
@@ -30,6 +32,8 @@ spec:
                   key: FRONT_URL
             - name: STATS_URL
               value: http://stats
+            - name: MAIL_URL
+              value: http://mail
             - name: STORAGE_CONFIG
               valueFrom:
                 secretKeyRef:
@@ -41,25 +45,23 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: huly-secret
-                  key: CR_DB_URL
-            - name: MONGO_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: huly-config
-                  key: MONGO_URL
-            - name: SERVER_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: huly-secret
-                  key: SERVER_SECRET
+                  key: DB_URL
             - name: TRANSACTOR_URL
               valueFrom:
                 configMapKeyRef:
                   name: huly-config
                   key: TRANSACTOR_URL
             - name: QUEUE_CONFIG
-              value: redpanda:9092
-          image: hardcoreeng/account:v0.7.242
+              valueFrom:
+                secretKeyRef:
+                  name: huly-secret
+                  key: QUEUE_CONFIG
+            - name: DISABLE_SIGNUP
+              valueFrom:
+                configMapKeyRef:
+                  name: huly-config
+                  key: DISABLE_SIGNUP
+          image: hardcoreeng/account:v0.7.252
           name: account
           ports:
             - containerPort: 3000

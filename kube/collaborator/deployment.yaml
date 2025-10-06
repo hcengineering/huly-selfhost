@@ -16,27 +16,27 @@ spec:
     spec:
       containers:
         - env:
-            - name: ACCOUNTS_URL
-              value: http://account
-            - name: STATS_URL
-              value: http://stats
             - name: COLLABORATOR_PORT
               value: "3078"
-            - name: STORAGE_CONFIG
-              valueFrom:
-                secretKeyRef:
-                  name: huly-secret
-                  key: STORAGE_CONFIG
             - name: SECRET
               valueFrom:
                 secretKeyRef:
                   name: huly-secret
                   key: SERVER_SECRET
-          image: hardcoreeng/collaborator:v0.7.242
+            - name: ACCOUNTS_URL
+              value: http://account
+            - name: STATS_URL
+              value: http://stats
+            - name: STORAGE_CONFIG
+              valueFrom:
+                secretKeyRef:
+                  name: huly-secret
+                  key: STORAGE_CONFIG
+          image: hardcoreeng/collaborator:v0.7.252
           name: collaborator
           ports:
             - containerPort: 3078
           resources:
             limits:
-              memory: '512M'
+              memory: "512M"
       restartPolicy: Always
