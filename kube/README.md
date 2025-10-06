@@ -63,21 +63,11 @@ You must define the endpoint and credentials in your deployment environment — 
 
 ## 🏗️ Deployment Overview
 
-Each microservice is deployed as its own **Deployment** and **Service** pair within the namespace.
+Each microservice is deployed within the namespace as its own Deployment and Service pair (except for the workspace, which does not require a service).
 
-| Component     | Description |
-|----------------|-------------|
-| `account`      | Handles user identity, authentication, and account lifecycle. |
-| `collaborator` | Manages user collaboration, roles, and access across workspaces. |
-| `front`        | Public-facing frontend serving the main Huly UI. |
-| `fulltext`     | Provides full-text indexing and search integration with Elasticsearch/OpenSearch. |
-| `mail`         | Email sending and processing service for notifications. |
-| `rekoni`       | Recommendation and analytics engine. |
-| `stats`        | Metrics and statistics aggregation service. |
-| `transactor`   | Core backend handling business logic and transactions. |
-| `workspace`    | Orchestrates workspace creation, project data, and user sessions. |
+These services are organized and managed through the top-level Kustomization file (kustomization.yaml) for convenience and familiarity. Alternatively, you can clone these files, update the corresponding ConfigMap and Secret files, and apply them as standard manifests to set up a functional cluster.
 
-These services are grouped and managed by the top-level **Kustomization** file (`kustomization.yaml`).
+If email functionality is not required, ensure the MAIL_URL environment variable is set to an empty string ("") in both the account and transactor deployments otherwise login will require email verification.
 
 ## 🌐 Example HTTP Route (Gateway API)
 

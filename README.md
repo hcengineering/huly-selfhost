@@ -8,6 +8,21 @@ Please use this README if you want to deploy Huly on your server with `docker co
 
 If you prefer Kubernetes deployment, there is a sample Kubernetes configuration under [kube](kube) directory.
 
+## Service Overview
+
+| Component      | Description |
+|----------------|-------------|
+| `account`      | Handles user identity, authentication, and account lifecycle. |
+| `collaborator` | Document collaboration backend. Serves as synchronization point for users editing the same document. |
+| `front`        | Public-facing frontend serving the main Huly UI. |
+| `fulltext`     | Provides full-text indexing and search integration with Elasticsearch/OpenSearch. |
+| `mail`         | Email sending and processing service for notifications. |
+| `love`         | Audio & Video calls using LiveKit infrastructure. |
+| `rekoni`       | Document recognition service, currently is mainly used by fulltext service. |
+| `stats`        | Metrics and statistics aggregation service. |
+| `transactor`   | Core backend handling business logic and transactions. |
+| `workspace`    | Orchestrates workspace creation, migration, and upgrade. |
+
 ## Installing `nginx` and `docker`
 
 First, update repositories cache:
