@@ -24,7 +24,7 @@ spec:
               valueFrom:
                 configMapKeyRef:
                   name: huly-config
-                  key: GMAIL_URL
+                  key: FRONT_URL
             - name: STATS_URL
               value: http://stats
             - name: MAIL_URL
