@@ -212,6 +212,20 @@ services:
     restart: unless-stopped
     networks:
       - huly_net
+
+  kvs:
+    image: hardcoreeng/hulykvs:${HULY_VERSION}
+    depends_on:
+      cockroach:
+        condition: service_started
+    ports:
+      - 8094:8094
+    environment:
+      - HULY_DB_CONNECTION=${CR_DB_URL}
+      - HULY_TOKEN_SECRET=${SECRET}
+    restart: unless-stopped
+    networks:
+      - huly_net
       
 volumes:
   # These named volumes are used when custom volume paths are not specified

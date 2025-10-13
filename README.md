@@ -508,6 +508,7 @@ Add `calendar` container to the docker-compose.yaml
       - ACCOUNTS_URL=http://account:3000
       - STATS_URL=http://stats:4900
       - SECRET=${SECRET}
+      - KVS_URL=http://kvs:8094
     restart: unless-stopped
     networks:
       - huly_net
