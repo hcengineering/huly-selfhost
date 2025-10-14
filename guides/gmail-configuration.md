@@ -122,7 +122,7 @@ gmail:
     - MINIO_ENDPOINT=minio
     - MINIO_ACCESS_KEY=minioadmin
     - MINIO_SECRET_KEY=minioadmin
-    - KVS_URL=http://huly.local:8094
+    - KVS_URL=http://kvs:8094
     - STORAGE_CONFIG=${STORAGE_CONFIG}
     - VERSION=v1  # Use v1 (default) or v2 (beta, requires chat/inbox modules)
     - MONGO_URI=mongodb://mongodb:27017
