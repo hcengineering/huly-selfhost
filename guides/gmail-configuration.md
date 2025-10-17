@@ -116,18 +116,13 @@ gmail:
   environment:
     - PORT=8093
     - ACCOUNTS_URL=http://account:3000
-    - SECRET=your_secret_key
+    - SECRET=${SECRET}
     - WATCH_TOPIC_NAME=projects/YOUR_PROJECT_ID/topics/email
     - Credentials={"web":{"client_id":"YOUR_CLIENT_ID","client_secret":"YOUR_CLIENT_SECRET","redirect_uris":["http://your-huly-domain.com:8093/signin/code"]}}
-    - MINIO_ENDPOINT=minio
-    - MINIO_ACCESS_KEY=minioadmin
-    - MINIO_SECRET_KEY=minioadmin
     - KVS_URL=http://kvs:8094
-    - STORAGE_CONFIG=${STORAGE_CONFIG}
+    - STORAGE_CONFIG=minio|minio?accessKey=minioadmin&secretKey=minioadmin
     - VERSION=v1  # Use v1 (default) or v2 (beta, requires chat/inbox modules)
-    - MONGO_URI=mongodb://mongodb:27017
     - QUEUE_CONFIG=${QUEUE_CONFIG}
-    - QUEUE_REGION=cockroach
   restart: unless-stopped
 ```
 
