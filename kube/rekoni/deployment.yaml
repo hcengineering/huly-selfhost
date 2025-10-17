@@ -15,7 +15,7 @@ spec:
         app: rekoni
     spec:
       containers:
-        - image: hardcoreeng/rekoni-service:v0.7.242
+        - image: hardcoreeng/rekoni-service:v0.7.252
           name: rekoni
           env:
             - name: SECRET
@@ -25,9 +25,8 @@ spec:
                   key: SERVER_SECRET
           ports:
             - containerPort: 4004
-              hostPort: 4004
               protocol: TCP
           resources:
             limits:
-              memory: "500M"
+              memory: "512M"
       restartPolicy: Always

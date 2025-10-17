@@ -1,0 +1,29 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+labels:
+- includeSelectors: true
+  includeTemplates: true
+  pairs:
+    app.kubernetes.io/package: huly
+
+resources:
+- configmap.yaml
+- secret.yaml
+- account/deployment.yaml
+- account/service.yaml
+- collaborator/deployment.yaml
+- collaborator/service.yaml
+- front/deployment.yaml
+- front/service.yaml
+- fulltext/deployment.yaml
+- fulltext/service.yaml
+- mail/deployment.yaml
+- mail/service.yaml
+- rekoni/deployment.yaml
+- rekoni/service.yaml
+- stats/deployment.yaml
+- stats/service.yaml
+- transactor/deployment.yaml
+- transactor/service.yaml
+- workspace/deployment.yaml
