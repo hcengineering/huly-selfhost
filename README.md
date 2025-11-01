@@ -366,13 +366,12 @@ self-hosted Huly, perform the following steps:
         ports:
           - 8096:8096
         environment:
-          - STORAGE_CONFIG=minio|minio?accessKey=minioadmin&secretKey=minioadmin
+          - PORT=8096
           - SECRET=${SECRET}
           - ACCOUNTS_URL=http://account:3000
           - DB_URL=${CR_DB_URL}
-          - MONGO_URL=mongodb://mongodb:27017
+          - STORAGE_CONFIG=minio|minio?accessKey=minioadmin&secretKey=minioadmin
           - STORAGE_PROVIDER_NAME=minio
-          - PORT=8096
           - LIVEKIT_HOST=<LIVEKIT_HOST>
           - LIVEKIT_API_KEY=<LIVEKIT_API_KEY>
           - LIVEKIT_API_SECRET=<LIVEKIT_API_SECRET>
