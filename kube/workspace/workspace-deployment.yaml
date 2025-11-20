@@ -49,7 +49,7 @@ spec:
                   key: SERVER_SECRET
             - name: QUEUE_CONFIG
               value: redpanda:9092
-          image: hardcoreeng/workspace:v0.7.242
+          image: hardcoreeng/workspace:v0.7.306
           name: workspace
           resources:
             limits:
