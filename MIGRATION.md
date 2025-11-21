@@ -17,6 +17,10 @@ WARNING: if you are migrating from v6 see [v0.7.204](#v07204) for details.
 
 No changes required.
 
+### v0.7.242
+
+No changes required.
+
 ### v0.7.235
 
 No changes required.
