@@ -1,0 +1,96 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: front
+  name: front
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: front
+  template:
+    metadata:
+      labels:
+        app: front
+    spec:
+      containers:
+        - env:
+            - name: SERVER_PORT
+              value: "8080"
+            - name: SERVER_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: huly-secret
+                  key: SERVER_SECRET
+            - name: ACCOUNTS_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: huly-config
+                  key: ACCOUNTS_URL
+            - name: ACCOUNTS_URL_INTERNAL
+              value: http://account
+            - name: COLLABORATOR_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: huly-config
+                  key: COLLABORATOR_URL
+            - name: REKONI_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: huly-config
+                  key: REKONI_URL
+            - name: STATS_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: huly-config
+                  key: STATS_URL
+            - name: GMAIL_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: huly-config
+                  key: GMAIL_URL
+            - name: CALENDAR_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: huly-config
+                  key: CALENDAR_URL
+            - name: TELEGRAM_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: huly-config
+                  key: TELEGRAM_URL
+            - name: STORAGE_CONFIG
+              valueFrom:
+                secretKeyRef:
+                  name: huly-secret
+                  key: STORAGE_CONFIG
+            - name: ELASTIC_URL
+              valueFrom:
+                secretKeyRef:
+                  name: huly-secret
+                  key: ELASTIC_URL
+            - name: UPLOAD_URL
+              value: /files
+            - name: TITLE
+              valueFrom:
+                configMapKeyRef:
+                  name: huly-config
+                  key: NAME
+            - name: DESKTOP_UPDATES_CHANNEL
+              value: selfhost
+            - name: DEFAULT_LANGUAGE
+              valueFrom:
+                configMapKeyRef:
+                  name: huly-config
+                  key: DEFAULT_LANGUAGE
+            - name: DISABLE_SIGNUP
+              valueFrom:
+                configMapKeyRef:
+                  name: huly-config
+                  key: DISABLE_SIGNUP
+          image: hardcoreeng/front:v0.7.252
+          name: front
+          ports:
+            - containerPort: 8080
+      restartPolicy: Always

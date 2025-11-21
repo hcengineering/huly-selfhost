@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: huly-config
+data:
+  NAME: huly
+  FRONT_URL: 'https://huly.example.com'
+  ACCOUNTS_URL: 'https://huly.example.com/_account'
+  COLLABORATOR_URL: 'wss://huly.example.com/_collaborator'
+  REKONI_URL: 'https://huly.example.com/_rekoni'
+  STATS_URL: 'https://huly.example.com/_stats'
+  TRANSACTOR_URL: 'ws://transactor;wss://huly.example.com/_transactor'
+  GMAIL_URL: 'https://huly.example.com/_gmail'
+  CALENDAR_URL: 'https://huly.example.com/_calendar'
+  TELEGRAM_URL: 'https://huly.example.com/_telegram'
+  DEFAULT_LANGUAGE: "en"
+  DISABLE_SIGNUP: "false"

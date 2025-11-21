@@ -25,16 +25,16 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: huly-secret
-                  key: CR_DB_URL
+                  key: DB_URL
             - name: FULLTEXT_DB_URL
               valueFrom:
-                configMapKeyRef:
-                  name: huly-config
+                secretKeyRef:
+                  name: huly-secret
                   key: ELASTIC_URL
             - name: ELASTIC_INDEX_NAME
               valueFrom:
-                configMapKeyRef:
-                  name: huly-config
+                secretKeyRef:
+                  name: huly-secret
                   key: ELASTIC_INDEX_NAME
             - name: STORAGE_CONFIG
               valueFrom:
@@ -48,12 +48,14 @@ spec:
             - name: STATS_URL
               value: http://stats
             - name: QUEUE_CONFIG
-              value: redpanda:9092
-          image: hardcoreeng/fulltext:v0.7.242
+              valueFrom:
+                secretKeyRef:
+                  name: huly-secret
+                  key: QUEUE_CONFIG
+          image: hardcoreeng/fulltext:v0.7.252
           name: fulltext
           ports:
             - containerPort: 4700
-              hostPort: 4700
               protocol: TCP
           resources:
             limits:
