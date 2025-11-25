@@ -53,7 +53,7 @@ spec:
                   key: SERVER_SECRET
             - name: QUEUE_CONFIG
               value: redpanda:9092
-          image: hardcoreeng/transactor:v0.7.242
+          image: hardcoreeng/transactor:v0.7.310
           name: transactor
           ports:
             - containerPort: 3333

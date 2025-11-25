@@ -13,6 +13,10 @@ WARNING: if you are migrating from v6 see [v0.7.204](#v07204) for details.
 > [!CAUTION]
 > Do not upgrade directly from v6 to v7. Direct upgrades will lock your deployment with MongoDB-specific data, making the future migration significantly more complex. Follow the migration instructions below instead.
 
+### v0.7.310
+
+No changes required.
+
 ### v0.7.242
 
 No changes required.
