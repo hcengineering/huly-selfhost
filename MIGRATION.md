@@ -6,12 +6,16 @@ Though, some updates may require updating other configuration options. In this c
 > [!TIP]
 > If you use the desktop app and want it to upgrade from Huly distributions keep DESKTOP_CHANNEL in sync with the version of the containers without "v" prefix.
 
-## v7
+## v0.7
 
 WARNING: if you are migrating from v6 see [v0.7.204](#v07204) for details.
 
 > [!CAUTION]
 > Do not upgrade directly from v6 to v7. Direct upgrades will lock your deployment with MongoDB-specific data, making the future migration significantly more complex. Follow the migration instructions below instead.
+
+### v0.7.311
+
+No changes required.
 
 ### v0.7.310
 
@@ -77,7 +81,7 @@ Migration Steps (command examples shown for Docker on macOS):
 > [!TIP]
 > This procedure doesn't affect the data in the v6 deployment and can be repeated as many times as needed. 
 
-## v6
+## v0.6
 
 ### v0.6.502
 
