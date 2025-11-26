@@ -59,7 +59,11 @@ spec:
                   key: TRANSACTOR_URL
             - name: QUEUE_CONFIG
               value: redpanda:9092
+<<<<<<< Updated upstream
           image: hardcoreeng/account:v0.7.307
+=======
+          image: hardcoreeng/account:v0.7.311
+>>>>>>> Stashed changes
           name: account
           ports:
             - containerPort: 3000

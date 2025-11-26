@@ -15,7 +15,11 @@ spec:
         app: rekoni
     spec:
       containers:
+<<<<<<< Updated upstream
         - image: hardcoreeng/rekoni-service:v0.7.307
+=======
+        - image: hardcoreeng/rekoni-service:v0.7.311
+>>>>>>> Stashed changes
           name: rekoni
           env:
             - name: SECRET
