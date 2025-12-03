@@ -117,50 +117,8 @@ graph TB
 
 ---
 
-## 2. Data Flow Architecture
 
-```mermaid
-sequenceDiagram
-    participant Client
-    participant Nginx
-    participant Front
-    participant Account
-    participant Transactor
-    participant Fulltext
-    participant CockroachDB
-    participant Elasticsearch
-    participant Redpanda
-    participant Minio
-    
-    Client->>Nginx: HTTP Request
-    Nginx->>Front: Proxy Request
-    Front->>Account: Verify Token
-    Account->>CockroachDB: Query User
-    CockroachDB-->>Account: User Data
-    Account-->>Front: Token Valid
-    
-    Client->>Nginx: WebSocket Connect
-    Nginx->>Transactor: Proxy WebSocket
-    Transactor->>CockroachDB: Load Workspace Data
-    CockroachDB-->>Transactor: Workspace State
-    Transactor-->>Client: Real-time Connection
-    
-    Client->>Transactor: Create Document
-    Transactor->>CockroachDB: Save Document
-    Transactor->>Redpanda: Publish Event
-    
-    Redpanda->>Fulltext: Index Event
-    Fulltext->>CockroachDB: Fetch Document
-    Fulltext->>Elasticsearch: Index Content
-    
-    Client->>Nginx: Upload File
-    Nginx->>Minio: Store File
-    Minio-->>Client: File URL
-```
-
----
-
-## 3. Network Topology & Nginx Routing
+## 2. Network Topology & Nginx Routing
 
 ```mermaid
 graph TB
@@ -223,7 +181,7 @@ graph TB
 
 ---
 
-## 4. Event-Driven Architecture (Redpanda/Kafka)
+## 3. Event-Driven Architecture (Redpanda/Kafka)
 
 ```mermaid
 graph LR
@@ -263,48 +221,7 @@ graph LR
 
 ---
 
-## 5. Storage Architecture
-
-```mermaid
-graph TB
-    subgraph "Client Layer"
-        Client[Client Application]
-    end
-    
-    subgraph "Reverse Proxy"
-        Nginx[Nginx<br/>/files endpoint]
-    end
-    
-    subgraph "Storage Services"
-        Collaborator[Collaborator Service<br/>:3078<br/>Document Storage]
-        Front[Front Service<br/>:8080<br/>File Upload]
-    end
-    
-    subgraph "Metadata Storage"
-        CockroachDB[(CockroachDB<br/>File Metadata<br/>Permissions<br/>References)]
-    end
-    
-    subgraph "Blob Storage"
-        Minio[(MinIO<br/>S3-Compatible<br/>Object Storage)]
-        Buckets[Buckets:<br/>- huly-storage]
-    end
-    
-    Client -->|Upload/Download| Nginx
-    Nginx -->|/files| Minio
-    
-    Collaborator -->|Document Blobs| Minio
-    Front -->|File Storage| Minio
-    
-    Minio --> Buckets
-    
-    style Minio fill:#C92A2A
-    style CockroachDB fill:#7ED321
-    style Nginx fill:#009639
-```
-
----
-
-## 6. Authentication & Authorization Flow
+## 4. Authentication & Authorization Flow
 
 ```mermaid
 sequenceDiagram
@@ -346,7 +263,7 @@ sequenceDiagram
 
 ---
 
-## 7. Docker Compose Service Map
+## 5. Docker Compose Service Map
 
 ```mermaid
 graph TB
