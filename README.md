@@ -8,6 +8,18 @@ Please use this README if you want to deploy Huly on your server with `docker co
 
 If you prefer Kubernetes deployment, there is a sample Kubernetes configuration under [kube](kube) directory.
 
+## Platform Repository
+
+The Huly platform source code is available on GitHub: **[hcengineering/platform](https://github.com/hcengineering/platform)**
+
+> [!NOTE]
+> For self-hosted deployments, use production versions (`v*` tags). For example: `v0.7.310`, `v0.7.307`, `v0.6.501`
+> See all available versions on [GitHub Releases](https://github.com/hcengineering/platform/releases).
+
+## Architecture Overview
+
+For detailed information about the Huly self-hosted architecture, services, and their interactions, see [ARCHITECTURE_OVERVIEW.md](ARCHITECTURE_OVERVIEW.md).
+
 ## Installing `nginx` and `docker`
 
 First, update repositories cache:
