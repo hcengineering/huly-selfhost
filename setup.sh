@@ -4,6 +4,7 @@ CONFIG_FILE="huly_v7.conf"
 # Parse command line arguments
 RESET_VOLUMES=false
 SECRET=false
+QUICK=false
 
 for arg in "$@"; do
     case $arg in
@@ -13,11 +14,15 @@ for arg in "$@"; do
         --reset-volumes)
             RESET_VOLUMES=true
             ;;
+        --quick)
+            QUICK=true
+            ;;
         --help)
             echo "Usage: $0 [OPTIONS]"
             echo "Options:"
             echo "  --secret         Generate a new secret key"
             echo "  --reset-volumes  Reset all volume paths to default Docker named volumes"
+            echo "  --quick          Quick setup with defaults (localhost:8087, no SSL, auto-start)"
             echo "  --help           Show this help message"
             exit 0
             ;;
@@ -40,6 +45,19 @@ if [ "$RESET_VOLUMES" == true ]; then
         "$CONFIG_FILE"
     exit 0
 fi
+
+# Quick mode: use all defaults, skip prompts
+if [ "$QUICK" == true ]; then
+    echo -e "\033[1;34m🚀 Quick setup mode - using defaults for fast verification\033[0m"
+    _HOST_ADDRESS="localhost:8087"
+    _HTTP_PORT="8087"
+    _SECURE=""
+    _VOLUME_ELASTIC_PATH=""
+    _VOLUME_FILES_PATH=""
+    _VOLUME_CR_DATA_PATH=""
+    _VOLUME_CR_CERTS_PATH=""
+    _VOLUME_REDPANDA_PATH=""
+else
 
 if [ -f "$CONFIG_FILE" ]; then
     source "$CONFIG_FILE"
@@ -174,6 +192,8 @@ echo -e "\n\033[1;34mDocker Volume Configuration:\033[0m"
         _VOLUME_REDPANDA_PATH="${input:-${VOLUME_REDPANDA_PATH}}"
     fi
 
+fi # End of non-quick mode
+
 if [ ! -f .huly.secret ] || [ "$SECRET" == true ]; then
   openssl rand -hex 32 > .huly.secret
   echo "Secret generated and stored in .huly.secret"
@@ -230,16 +250,35 @@ echo -e "CockroachDB Volume: \033[1;32m${_VOLUME_CR_DATA_PATH:-Docker named volu
 echo -e "CockroachDB Certs Volume: \033[1;32m${_VOLUME_CR_CERTS_PATH:-Docker named volume}\033[0m"
 echo -e "Redpanda Volume: \033[1;32m${_VOLUME_REDPANDA_PATH:-Docker named volume}\033[0m"
 
-read -p "Do you want to run 'docker compose up -d' now to start Huly? (Y/n): " RUN_DOCKER
-case "${RUN_DOCKER:-Y}" in
-    [Yy]* )
-         echo -e "\033[1;32mRunning 'docker compose up -d' now...\033[0m"
-         docker compose up -d
-         ;;
-    [Nn]* )
-        echo "You can run 'docker compose up -d' later to start Huly."
-        ;;
-esac
+if [ "$QUICK" == true ]; then
+    echo -e "\033[1;32mRunning 'docker compose up -d' now...\033[0m"
+    docker compose up -d
+else
+    read -p "Do you want to run 'docker compose up -d' now to start Huly? (Y/n): " RUN_DOCKER
+    case "${RUN_DOCKER:-Y}" in
+        [Yy]* )
+             echo -e "\033[1;32mRunning 'docker compose up -d' now...\033[0m"
+             docker compose up -d
+             ;;
+        [Nn]* )
+            echo "You can run 'docker compose up -d' later to start Huly."
+            ;;
+    esac
+fi
 
 echo -e "\033[1;32mSetup is complete!\n Generating nginx.conf...\033[0m"
 ./nginx.sh
+
+if [ "$QUICK" == true ]; then
+    echo ""
+    echo -e "\033[1;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
+    echo -e "\033[1;32m✅ Quick setup complete!\033[0m"
+    echo -e "\033[1;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
+    echo ""
+    echo -e "🌐 Access Huly at: \033[1;36mhttp://localhost:8087\033[0m"
+    echo ""
+    echo -e "⏳ Wait ~60 seconds for all services to initialize..."
+    echo -e "📊 Check status with: \033[1;33mdocker compose ps\033[0m"
+    echo -e "📋 View logs with:   \033[1;33mdocker compose logs -f\033[0m"
+    echo ""
+fi
