@@ -14,7 +14,7 @@ The Huly self-hosted deployment consists of 14 services working together. This s
 | **workspace** | Workspace lifecycle management. Handles workspace creation, initialization, upgrades, and configuration. Runs background jobs for workspace maintenance. |
 | **collaborator** | Real-time document collaboration service using Y.js CRDT. Enables multiple users to edit documents simultaneously with automatic conflict resolution and presence awareness. |
 | **fulltext** | Search indexing service. Consumes events from the message queue, extracts content from documents, and maintains the Elasticsearch search index for fast full-text search. |
-| **rekoni** | AI/ML recognition service. Provides OCR (optical character recognition), image analysis, and content extraction capabilities used by the fulltext service for indexing attachments. |
+| **rekoni** | Content intelligence service. Extracts text and structured data from binary documents (PDF, DOC, DOCX, RTF) to make them searchable. Used by fulltext service for indexing document attachments. |
 | **stats** | Metrics collection service. Aggregates usage statistics and health metrics from all services for monitoring and debugging. |
 
 ### Infrastructure Services
