@@ -1,5 +1,42 @@
 # Huly Self-Hosted Architecture Diagrams
 
+## Service Overview
+
+The Huly self-hosted deployment consists of 14 services working together. This section describes each service and its role in the platform.
+
+### Application Services
+
+| Service | Description |
+|---------|-------------|
+| **front** | Web application server that serves the Huly UI. Handles static assets, client-side routing, and coordinates with backend services for data and authentication. |
+| **account** | Authentication and user management service. Handles user registration, login, JWT token generation/validation, and workspace membership. |
+| **transactor** | Core transaction processing engine. Maintains WebSocket connections with clients for real-time updates, processes all data mutations, enforces business logic, and publishes events to the message queue. |
+| **workspace** | Workspace lifecycle management. Handles workspace creation, initialization, upgrades, and configuration. Runs background jobs for workspace maintenance. |
+| **collaborator** | Real-time document collaboration service using Y.js CRDT. Enables multiple users to edit documents simultaneously with automatic conflict resolution and presence awareness. |
+| **fulltext** | Search indexing service. Consumes events from the message queue, extracts content from documents, and maintains the Elasticsearch search index for fast full-text search. |
+| **rekoni** | AI/ML recognition service. Provides OCR (optical character recognition), image analysis, and content extraction capabilities used by the fulltext service for indexing attachments. |
+| **stats** | Metrics collection service. Aggregates usage statistics and health metrics from all services for monitoring and debugging. |
+
+### Infrastructure Services
+
+| Service | Description |
+|---------|-------------|
+| **nginx** | Reverse proxy and SSL termination. Routes external requests to internal services, handles HTTPS certificates, and provides a single entry point for all client connections. |
+| **cockroach** | CockroachDB - the primary database. Stores all application data including users, workspaces, documents, and metadata. Provides ACID transactions and horizontal scalability. |
+| **elastic** | Elasticsearch search engine. Stores and indexes document content for fast full-text search queries. Managed by the fulltext service. |
+| **minio** | S3-compatible object storage. Stores all binary files including attachments, images, and document blobs. Accessed directly by nginx for file downloads. |
+| **redpanda** | Kafka-compatible event streaming platform. Provides reliable message delivery between services for asynchronous processing (e.g., search indexing after document changes). |
+| **kvs (HulyKVS)** | Key-value store service. Provides fast key-value storage for application configuration, user preferences, and cached data. |
+
+### Service Communication Patterns
+
+- **Synchronous (HTTP/WebSocket)**: Client ↔ Nginx ↔ Services
+- **Asynchronous (Events)**: Transactor → Redpanda → Fulltext
+- **Direct Database**: Services → CockroachDB
+- **File Storage**: Services → MinIO (via S3 API)
+
+---
+
 ## 1. High-Level System Architecture
 
 ```mermaid
@@ -34,8 +71,11 @@ graph TB
         Stats[Stats Service<br/>:4900<br/>Metrics Collection]
     end
     
-    subgraph "Infrastructure"
-        CockroachDB[(CockroachDB<br/>:26257<br/>Primary Database)]
+    subgraph "Primary Database"
+        CockroachDB[(CockroachDB<br/>:26257<br/>Distributed SQL)]
+    end
+    
+    subgraph "Supporting Infrastructure"
         Elasticsearch[(Elasticsearch<br/>:9200<br/>Search Engine)]
         Minio[(MinIO<br/>:9000<br/>Object Storage)]
         Redpanda[Redpanda<br/>:9092<br/>Event Streaming]
@@ -77,95 +117,7 @@ graph TB
 
 ---
 
-## 2. Service Dependencies & Communication Flow
-
-```mermaid
-graph LR
-    subgraph "Entry Point"
-        Client[Client<br/>Browser/Desktop]
-    end
-    
-    subgraph "Reverse Proxy"
-        Nginx[Nginx<br/>:80/:443]
-    end
-    
-    subgraph "Frontend"
-        Front[Front Server<br/>:8080]
-    end
-    
-    subgraph "Authentication"
-        Account[Account<br/>:3000]
-    end
-    
-    subgraph "Core Transaction Layer"
-        Transactor[Transactor<br/>:3333]
-        Workspace[Workspace<br/>Manager]
-    end
-    
-    subgraph "Real-time Services"
-        Collaborator[Collaborator<br/>:3078<br/>Document Sync]
-    end
-    
-    subgraph "Storage & Data"
-        HulyKVS[HulyKVS<br/>:8094]
-    end
-    
-    subgraph "Search & Indexing"
-        Fulltext[Fulltext<br/>:4700]
-        Rekoni[Rekoni<br/>:4004<br/>AI/ML]
-    end
-    
-    subgraph "Monitoring"
-        Stats[Stats<br/>:4900]
-    end
-    
-    subgraph "Infrastructure"
-        CockroachDB[(CockroachDB)]
-        Elastic[(Elasticsearch)]
-        Minio[(MinIO)]
-        Redpanda[Redpanda<br/>Kafka]
-    end
-    
-    Client -->|HTTP/WS| Nginx
-    Nginx -->|Proxy| Front
-    Nginx -->|/_accounts| Account
-    Nginx -->|/_transactor| Transactor
-    Nginx -->|/_collaborator| Collaborator
-    Nginx -->|/_rekoni| Rekoni
-    Nginx -->|/_stats| Stats
-    Nginx -->|/files| Minio
-    
-    Front -->|Auth| Account
-    
-    Transactor -->|DB| CockroachDB
-    Transactor -->|Events| Redpanda
-    Transactor -->|Search| Fulltext
-    
-    Workspace -->|DB| CockroachDB
-    Workspace -->|Events| Redpanda
-    
-    Account -->|DB| CockroachDB
-    Account -->|Events| Redpanda
-    
-    Collaborator -->|Storage| Minio
-    
-    Fulltext -->|Index| Elastic
-    Fulltext -->|AI| Rekoni
-    Fulltext -->|Events| Redpanda
-    
-    HulyKVS -->|DB| CockroachDB
-    
-    style Nginx fill:#009639
-    style Front fill:#4A90E2
-    style Transactor fill:#E24A4A
-    style Account fill:#E24A4A
-    style CockroachDB fill:#7ED321
-    style Redpanda fill:#F5A623
-```
-
----
-
-## 3. Data Flow Architecture
+## 2. Data Flow Architecture
 
 ```mermaid
 sequenceDiagram
@@ -208,75 +160,7 @@ sequenceDiagram
 
 ---
 
-## 4. Infrastructure & Databases
-
-```mermaid
-graph TB
-    subgraph "Primary Database"
-        CR[(CockroachDB<br/>:26257<br/>Distributed SQL)]
-    end
-    
-    subgraph "Search Engine"
-        ES[(Elasticsearch<br/>:9200<br/>Fulltext Search)]
-    end
-    
-    subgraph "Object Storage"
-        Minio[(MinIO<br/>:9000<br/>S3-Compatible)]
-    end
-    
-    subgraph "Message Queue"
-        RP[Redpanda<br/>:9092<br/>Kafka-Compatible<br/>Event Streaming]
-    end
-    
-    subgraph "Services Using CockroachDB"
-        Account[Account]
-        Workspace[Workspace]
-        Transactor[Transactor]
-        HulyKVS[HulyKVS]
-        Fulltext[Fulltext]
-    end
-    
-    subgraph "Services Using Elasticsearch"
-        FT[Fulltext Service]
-    end
-    
-    subgraph "Services Using MinIO"
-        Collaborator[Collaborator]
-        FrontS[Front]
-    end
-    
-    subgraph "Services Using Redpanda"
-        WS[Workspace]
-        TR[Transactor]
-        FTS[Fulltext]
-        ACC[Account]
-    end
-    
-    Account --> CR
-    Workspace --> CR
-    Transactor --> CR
-    HulyKVS --> CR
-    Fulltext --> CR
-    
-    FT --> ES
-    
-    Collaborator --> Minio
-    FrontS --> Minio
-    
-    WS --> RP
-    TR --> RP
-    FTS --> RP
-    ACC --> RP
-    
-    style CR fill:#7ED321
-    style ES fill:#FFD700
-    style Minio fill:#C92A2A
-    style RP fill:#F5A623
-```
-
----
-
-## 5. Network Topology & Nginx Routing
+## 3. Network Topology & Nginx Routing
 
 ```mermaid
 graph TB
@@ -310,8 +194,11 @@ graph TB
         HulyKVS[HulyKVS :8094]
     end
     
-    subgraph "Infrastructure Services"
+    subgraph "Primary Database"
         CockroachDB[(CockroachDB :26257)]
+    end
+    
+    subgraph "Supporting Infrastructure"
         Elasticsearch[(Elasticsearch :9200)]
         Minio[(MinIO :9000/:9001)]
         Redpanda[Redpanda :9092/:19092]
@@ -336,7 +223,7 @@ graph TB
 
 ---
 
-## 6. Event-Driven Architecture (Redpanda/Kafka)
+## 4. Event-Driven Architecture (Redpanda/Kafka)
 
 ```mermaid
 graph LR
@@ -376,7 +263,7 @@ graph LR
 
 ---
 
-## 7. Storage Architecture
+## 5. Storage Architecture
 
 ```mermaid
 graph TB
@@ -417,7 +304,7 @@ graph TB
 
 ---
 
-## 8. Authentication & Authorization Flow
+## 6. Authentication & Authorization Flow
 
 ```mermaid
 sequenceDiagram
@@ -459,69 +346,7 @@ sequenceDiagram
 
 ---
 
-## 9. Service Categories & Responsibilities
-
-```mermaid
-mindmap
-  root((Huly Self-Hosted))
-    Authentication
-      Account Service
-        User Management
-        Token Generation
-        Workspace Assignment
-      Stats Service
-        Usage Tracking
-        Metrics Collection
-    
-    Core Data
-      Transactor
-        Transaction Processing
-        Real-time Updates
-        Business Logic
-      Workspace
-        Workspace Management
-        Initialization
-    
-    Storage
-      HulyKVS
-        Key-Value Store
-        Configuration
-      MinIO
-        Object Storage
-        File Management
-    
-    Search
-      Fulltext Service
-        Elasticsearch Integration
-        Content Indexing
-      Rekoni
-        AI/ML Processing
-        Content Recognition
-    
-    Real-time
-      Collaborator
-        Document Collaboration
-        Y.js Synchronization
-    
-    Infrastructure
-      Nginx
-        Reverse Proxy
-        SSL Termination
-        Route Management
-      CockroachDB
-        Primary Database
-        Distributed SQL
-      Elasticsearch
-        Search Engine
-        Full-text Index
-      Redpanda
-        Event Streaming
-        Message Queue
-```
-
----
-
-## 10. Docker Compose Service Map
+## 7. Docker Compose Service Map
 
 ```mermaid
 graph TB
@@ -542,8 +367,11 @@ graph TB
             HulyKVS[kvs<br/>:8094<br/>hardcoreeng/hulykvs]
         end
         
-        subgraph "Infrastructure"
+        subgraph "Primary Database"
             CockroachDB[(cockroach<br/>:26257<br/>cockroachdb/cockroach)]
+        end
+        
+        subgraph "Supporting Infrastructure"
             Elasticsearch[(elastic<br/>:9200<br/>elasticsearch:7.14.2)]
             Minio[(minio<br/>:9000/:9001<br/>minio/minio)]
             Redpanda[redpanda<br/>:9092/:19092<br/>redpandadata/redpanda]
@@ -595,8 +423,9 @@ graph TB
 | rekoni | hardcoreeng/rekoni-service | 4004 | AI/ML recognition service | - |
 | **Monitoring** | | | | |
 | stats | hardcoreeng/stats | 4900 | Metrics collection | - |
-| **Infrastructure** | | | | |
-| cockroach | cockroachdb/cockroach | 26257 | Primary database | - |
+| **Primary Database** | | | | |
+| cockroach | cockroachdb/cockroach | 26257 | Distributed SQL database | - |
+| **Supporting Infrastructure** | | | | |
 | elastic | elasticsearch:7.14.2 | 9200 | Search engine | - |
 | minio | minio/minio | 9000/9001 | Object storage | - |
 | redpanda | redpandadata/redpanda | 9092/19092 | Event streaming (Kafka) | - |
