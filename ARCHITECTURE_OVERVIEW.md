@@ -1,4 +1,4 @@
-# Huly Self-Hosted Architecture Diagrams
+# Huly Self-Hosted Architecture Overview
 
 ## Service Overview
 
