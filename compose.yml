@@ -138,7 +138,7 @@ services:
       - TRANSACTOR_URL=ws://transactor:3333;ws${SECURE:+s}://${HOST_ADDRESS}/_transactor
       - STORAGE_CONFIG=minio|minio?accessKey=minioadmin&secretKey=minioadmin
       - FRONT_URL=http${SECURE:+s}://${HOST_ADDRESS}
-      - STATS_URL=http${SECURE:+s}://${HOST_ADDRESS}/stats
+      - STATS_URL=http${SECURE:+s}://${HOST_ADDRESS}/_stats
       - MODEL_ENABLED=*
       - ACCOUNTS_URL=http${SECURE:+s}://${HOST_ADDRESS}/_accounts
       - ACCOUNT_PORT=3000
