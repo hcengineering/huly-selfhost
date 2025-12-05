@@ -20,6 +20,27 @@ The Huly platform source code is available on GitHub: **[hcengineering/platform]
 
 For detailed information about the Huly self-hosted architecture, services, and their interactions, see [ARCHITECTURE_OVERVIEW.md](ARCHITECTURE_OVERVIEW.md).
 
+## Quick Start (Local Testing)
+
+For fast local verification without going through the full setup process:
+
+```bash
+git clone https://github.com/hcengineering/huly-selfhost.git
+cd huly-selfhost
+./setup.sh --quick
+```
+
+This will:
+- Use `localhost:8087` as the host address
+- Skip all configuration prompts
+- Use default Docker volumes
+- Automatically start all services
+
+Access Huly at **http://localhost:8087** (wait ~60 seconds for services to initialize).
+
+> [!NOTE]
+> Quick start is intended for local testing only. For production deployments, follow the full setup instructions below.
+
 ## Installing `nginx` and `docker`
 
 First, update repositories cache:
