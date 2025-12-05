@@ -419,7 +419,7 @@ self-hosted Huly, perform the following steps:
       front:
         ...
         environment:
-          - LIVEKIT_WS=<LIVEKIT_HOST>
+          - LIVEKIT_WS=ws${SECURE:+s}://<LIVEKIT_HOST>
         ...
     ```
 
