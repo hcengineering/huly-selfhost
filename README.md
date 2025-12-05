@@ -423,6 +423,8 @@ self-hosted Huly, perform the following steps:
         ...
     ```
 
+4. Uncomment love section in `.huly.nginx` file and reload nginx
+
 ## Print Service
 
 1. Add `print` container to the docker-compose.yaml
