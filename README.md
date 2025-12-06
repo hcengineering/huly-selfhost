@@ -116,6 +116,10 @@ You can either:
 - Specify an absolute path on your host system (e.g., `/var/huly/db`)
 - Enter `default` to clear an existing custom path and revert to Docker named volumes
 
+> [!NOTE]
+> When using custom paths, pay attention to the permissions of the directory. each folder needs to be owned by the user defined in the setup script
+> for example: `chown -R 1000:1000 /var/huly/db` (this is the user most services uses) but for example redpanda uses user 101
+
 ### Quick Reset to Default Volumes
 
 To quickly reset all volumes back to default Docker named volumes without prompts:
@@ -510,8 +514,10 @@ Huly provides AI-powered chatbot that provides several services:
           - AI_BOT_URL=http://aibot:4010
         ...
     ```
-
 5. Uncomment aibot section in `.huly.nginx` file and reload nginx
+
+> [!NOTE]
+> You can also add the `AI_OPENAI_MODEL`, `AI_OPENAI_TRANSLATE_MODEL`, `AI_OPENAI_SUMMARY_MODEL` environment variables to the aibot service to use a different model, by default it uses `gpt-4o-mini` for all of them
 
 ## Configure Google Calendar Service
 
@@ -640,9 +646,10 @@ Please refer to [GitHub Apps documentation](https://docs.github.com/en/apps/crea
 During registration of the GitHub app, the following secrets should be obtained:
 
 - `GITHUB_APPID` - An application ID number (e.g., 123456), which can be found in General/About in the GitHub UI.
+- `GITHUB_APPNAME` - The name of the app, the slug of the app, which can be found in General/About in the GitHub UI.
 - `GITHUB_CLIENTID` - A client ID, an identifier from the same page (e.g., Iv1.11a1aaa11aa11111).
 - `GITHUB_CLIENT_SECRET` - A client secret that can be generated in the client secrets section of the General GitHub App UI page.
-- `GITHUB_PRIVATE_KEY` - A private key for authentication.
+- `GITHUB_PRIVATE_KEY` - A private key for authentication. GitHub will generate and download a PEM file, this is a RSA key that contains multiple lines of text and should be copied into the environment variable AS IS otherwise it will not work.
 
 ### Configure Permissions
 
@@ -704,7 +711,8 @@ github:
    ...
    environment:
     # this should be available outside of the cluster
-    - GITHUB_APP=${GITHUB_APPID}
+    - GITHUB_URL=http${SECURE:+s}://${HOST_ADDRESS}/_github
+    - GITHUB_APP=${GITHUB_APPNAME}
     - GITHUB_CLIENTID=${GITHUB_CLIENTID}
    ...
 ```
@@ -713,4 +721,4 @@ github:
 
 4. Configure Callback URL and Setup URL (with redirect on update set) to your host: `http${SECURE:+s}://${HOST_ADDRESS}/github`
 
-5. Configure Webhook URL to `http${SECURE:+s}://${HOST_ADDRESS}/_github` with the secret `secret`
+5. Configure Webhook URL to `http${SECURE:+s}://${HOST_ADDRESS}/_github/api/webhook` with the secret `secret`
