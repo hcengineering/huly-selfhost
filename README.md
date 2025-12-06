@@ -423,9 +423,11 @@ self-hosted Huly, perform the following steps:
       front:
         ...
         environment:
-          - LIVEKIT_WS=<LIVEKIT_HOST>
+          - LIVEKIT_WS=ws${SECURE:+s}://<LIVEKIT_HOST>
         ...
     ```
+
+4. Uncomment love section in `.huly.nginx` file and reload nginx
 
 ## Print Service
 
