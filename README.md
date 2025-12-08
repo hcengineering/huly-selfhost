@@ -419,11 +419,13 @@ self-hosted Huly, perform the following steps:
       front:
         ...
         environment:
-          - LIVEKIT_WS=ws${SECURE:+s}://<LIVEKIT_HOST>
+          - LIVEKIT_WS=<LIVEKIT_HOST>
         ...
     ```
 
 4. Uncomment love section in `.huly.nginx` file and reload nginx
+
+Note that the `LIVEKIT_HOST` should include the protocol (`wss://` by default if using livekit cloud).
 
 ## Print Service
 
