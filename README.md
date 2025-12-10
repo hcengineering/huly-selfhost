@@ -427,6 +427,10 @@ self-hosted Huly, perform the following steps:
         ...
     ```
 
+4. Uncomment love section in `.huly.nginx` file and reload nginx
+
+Note that the `LIVEKIT_HOST` should include the protocol (`wss://` by default if using livekit cloud).
+
 ## Print Service
 
 1. Add `print` container to the docker-compose.yaml
