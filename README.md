@@ -462,6 +462,38 @@ Note that the `LIVEKIT_HOST` should include the protocol (`wss://` by default if
 
 3. Uncomment print section in `.huly.nginx` file and reload nginx
 
+## Export Service
+
+1. Add `exports` container to `compose.yml`
+
+```yml
+exports:
+    image: hardcoreeng/export:${HULY_VERSION}
+    ports:
+      - 4009:4009
+    environment:
+      - STORAGE_CONFIG=minio|minio?accessKey=minioadmin&secretKey=minioadmin
+      - SECRET=${SECRET}
+      - DB_URL=${CR_DB_URL}
+      - ACCOUNTS_URL=http://account:3000
+      - SERVICE_ID=export-service
+      - PORT=4009
+    restart: unless-stopped
+    networks:
+      - huly_net
+```
+2. Configure `front` service
+
+```yml
+front:
+  ...
+  environment:
+    ...
+    - EXPORT_URL=https://${HOST_ADDRESS}/_export
+```
+3. Uncomment `_export` route in `.huly.nginx`
+
+
 ## AI Service
 
 Huly provides AI-powered chatbot that provides several services:
