@@ -445,6 +445,7 @@ Note that the `LIVEKIT_HOST` should include the protocol (`wss://` by default if
           - STORAGE_CONFIG=minio|minio?accessKey=minioadmin&secretKey=minioadmin
           - STATS_URL=http://stats:4900
           - SECRET=${SECRET}
+          - ACCOUNTS_URL=http://account:3000
         restart: unless-stopped
         networks:
           - huly_net
