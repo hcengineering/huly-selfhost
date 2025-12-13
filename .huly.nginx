@@ -127,4 +127,17 @@ server {
     #    rewrite ^/_github(/.*)$ $1 break;
     #    proxy_pass http://github:3500/;
     #}
+
+    # location /_export {
+    #     proxy_set_header host $host;
+    #     proxy_set_header x-real-ip $remote_addr;
+    #     proxy_set_header x-forwarded-for $proxy_add_x_forwarded_for;
+    #     proxy_set_header x-forwarded-proto $scheme;
+    #
+    #     proxy_http_version 1.1;
+    #     proxy_set_header upgrade $http_upgrade;
+    #     proxy_set_header connection "upgrade";
+    #     rewrite ^/_export(/.*)$ $1 break;
+    #     proxy_pass http://exports:4009/;
+    # }
 }
