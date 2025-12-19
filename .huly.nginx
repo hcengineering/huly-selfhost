@@ -118,6 +118,16 @@ server {
         proxy_pass http://stats:4900/;
     }
 
+    location /_telegram {
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        rewrite ^/_telegram(/.*)$ $1 break;
+        proxy_pass http://telegram-bot:4020/;
+    }
+    
     #location /_github {
     #    proxy_set_header Host $host;
     #    proxy_set_header X-Real-IP $remote_addr;
