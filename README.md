@@ -801,7 +801,7 @@ Telegram Bot Service is responsible for sending notifications from Huly to Teleg
 front:
   ...
   environment:
-    - TELEGRAM_URL=http${SECURE:+s}://${HOST_ADDRESS}/_telegram
+    - TELEGRAM_BOT_URL=http${SECURE:+s}://${HOST_ADDRESS}/_telegram
   ...
 ```
 
