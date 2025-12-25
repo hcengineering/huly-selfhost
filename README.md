@@ -715,7 +715,7 @@ Enable the following event subscriptions:
 
 ### Docker Configuration
 
-1. Add the `github` container to the docker-compose.yaml
+1. Add the `github` container to the `compose.yml`:
 
 ```yaml
 github:
@@ -759,3 +759,61 @@ github:
 4. Configure Callback URL and Setup URL (with redirect on update set) to your host: `http${SECURE:+s}://${HOST_ADDRESS}/github`
 
 5. Configure Webhook URL to `http${SECURE:+s}://${HOST_ADDRESS}/_github/api/webhook` with the secret `secret`
+
+## Telegram Bot Service
+
+Telegram Bot Service is responsible for sending notifications from Huly to Telegram (private chats or groups). The service works as an external notification channel and does not provide interactive control or command execution for Huly.
+
+### Prerequisites
+
+1. Create a Telegram bot using **@BotFather**.
+2. Obtain the **BOT_TOKEN**.
+3. Determine the **CHAT_ID**:
+   - for private messages — send a message to the bot and retrieve `chat_id` using the `getUpdates` method
+   - for group chats — add the bot to the group and use the group `chat_id` (usually a negative value)
+
+### Docker Configuration
+
+1. Add the `telegram-bot` service to `compose.yml`:
+
+```yaml
+  telegram-bot:
+    image: hardcoreeng/telegram-bot:${HULY_VERSION}
+    container_name: telegram-bot
+    restart: unless-stopped
+    environment:
+      - PORT=4020
+      - DB_URL=${CR_DB_URL}
+      - BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - ACCOUNTS_URL=http://account:3000
+      - SECRET=${SECRET}
+      - SERVICE_ID=telegram-bot-service
+      - STORAGE_CONFIG=minio|minio?accessKey=minioadmin&secretKey=minioadmin
+      - QUEUE_CONFIG=redpanda:9092
+      - QUEUE_REGION=
+    networks:
+      - huly_net
+```
+
+2. Configure the `front` service:
+
+```yaml
+front:
+  ...
+  environment:
+    - TELEGRAM_BOT_URL=http${SECURE:+s}://${HOST_ADDRESS}/_telegram
+  ...
+```
+
+3. Uncomment the _telegram section in the .huly.nginx file.
+
+### Notifications Setup
+
+After the service is running:
+
+1. Go to **Settings → Notifications**.
+2. Enable Telegram notifications.
+3. Specify the `CHAT_ID` where notifications should be delivered.
+
+> **Note**  
+> Notification settings are user-specific. Each user must configure Telegram notifications individually.
