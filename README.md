@@ -784,7 +784,7 @@ Telegram Bot Service is responsible for sending notifications from Huly to Teleg
     environment:
       - PORT=4020
       - DB_URL=${CR_DB_URL}
-      - BOT_TOKEN=${TELEGRAM_BOT_ID}
+      - BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
       - ACCOUNTS_URL=http://account:3000
       - SECRET=${SECRET}
       - SERVICE_ID=telegram-bot-service
