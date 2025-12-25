@@ -184,7 +184,6 @@ services:
       - DEFAULT_LANGUAGE=${DEFAULT_LANGUAGE:-en}
       - LAST_NAME_FIRST=${LAST_NAME_FIRST:-true}
       - DESKTOP_UPDATES_CHANNEL=${DESKTOP_CHANNEL}
-      - TELEGRAM_BOT_URL=http${SECURE:+s}://${HOST_ADDRESS}/_telegram
     restart: unless-stopped
     networks:
       - huly_net
@@ -227,24 +226,7 @@ services:
     restart: unless-stopped
     networks:
       - huly_net
-
-  telegram-bot:
-    image: hardcoreeng/telegram-bot:${HULY_VERSION}
-    container_name: telegram-bot
-    restart: unless-stopped
-    environment:
-      - PORT=4020
-      - DB_URL=${CR_DB_URL}
-      - BOT_TOKEN=${TELEGRAM_BOT_ID}
-      - ACCOUNTS_URL=http://account:3000
-      - SECRET=${SECRET}
-      - SERVICE_ID=telegram-bot-service
-      - STORAGE_CONFIG=minio|minio?accessKey=minioadmin&secretKey=minioadmin
-      - QUEUE_CONFIG=redpanda:9092
-      - QUEUE_REGION=
-    networks:
-      - huly_net
-
+      
 volumes:
   # These named volumes are used when custom volume paths are not specified
   # If VOLUME_*_PATH variables are set, these volumes will be ignored
