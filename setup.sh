@@ -231,10 +231,38 @@ export HULY_SECRET=$(cat .huly.secret)
 export COCKROACH_SECRET=$(cat .cr.secret)
 export REDPANDA_SECRET=$(cat .rp.secret)
 
+# Ask about external PostgreSQL database
+echo -e "\n\033[1;34mDatabase Configuration:\033[0m"
+echo "The default configuration uses CockroachDB (which is commented out in compose.yml)."
+read -p "Do you want to use an external PostgreSQL database? (y/n) [default: n]: " USE_EXTERNAL_DB
+case "${USE_EXTERNAL_DB:-n}" in
+    [Yy]* )
+        read -p "Enter PostgreSQL connection string (e.g., postgres://user:pass@host:5432/dbname): " EXTERNAL_DB_URL
+        if [[ -n "$EXTERNAL_DB_URL" ]]; then
+            export DB_URL="$EXTERNAL_DB_URL"
+            echo -e "\033[1;32mExternal PostgreSQL configured.\033[0m"
+        else
+            echo -e "\033[33mNo database URL provided, using default (you can edit huly_v7.conf later).\033[0m"
+            export DB_URL=""
+        fi
+        ;;
+    [Nn]* )
+        echo -e "\033[33mUsing default database configuration. Edit huly_v7.conf to set DB_URL for external PostgreSQL.\033[0m"
+        export DB_URL=""
+        ;;
+esac
+
 envsubst < .template.huly.conf > $CONFIG_FILE
 
+# If DB_URL was not set, generate default CockroachDB URL
+if [[ -z "$DB_URL" ]]; then
+    DB_URL="postgres://${CR_USERNAME}:${COCKROACH_SECRET}@cockroach:26257/${CR_DATABASE}"
+    # Update the config file with the generated URL
+    sed -i "s|^DB_URL=\$|DB_URL=${DB_URL}|" "$CONFIG_FILE"
+fi
+
 source "$CONFIG_FILE"
-export CR_DB_URL=$CR_DB_URL
+export DB_URL=$DB_URL
 
 echo -e "\n\033[1;34mConfiguration Summary:\033[0m"
 echo -e "Host Address: \033[1;32m$_HOST_ADDRESS\033[0m"
@@ -246,9 +274,13 @@ else
 fi
 echo -e "Elasticsearch Volume: \033[1;32m${_VOLUME_ELASTIC_PATH:-Docker named volume}\033[0m"
 echo -e "Files Volume: \033[1;32m${_VOLUME_FILES_PATH:-Docker named volume}\033[0m"
-echo -e "CockroachDB Volume: \033[1;32m${_VOLUME_CR_DATA_PATH:-Docker named volume}\033[0m"
-echo -e "CockroachDB Certs Volume: \033[1;32m${_VOLUME_CR_CERTS_PATH:-Docker named volume}\033[0m"
 echo -e "Redpanda Volume: \033[1;32m${_VOLUME_REDPANDA_PATH:-Docker named volume}\033[0m"
+if [[ -n "$DB_URL" ]]; then
+    echo -e "Database: \033[1;32mExternal PostgreSQL\033[0m"
+    echo -e "Database URL: \033[1;32m${DB_URL}\033[0m"
+else
+    echo -e "Database: \033[33mConfigure DB_URL in huly_v7.conf for external PostgreSQL\033[0m"
+fi
 
 if [ "$QUICK" == true ]; then
     echo -e "\033[1;32mRunning 'docker compose up -d' now...\033[0m"

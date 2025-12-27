@@ -10,19 +10,22 @@ services:
     networks:
       - huly_net
 
-  cockroach:
-    image: cockroachdb/cockroach:latest-v24.2
-    command: start-single-node --accept-sql-without-tls
-    environment:
-      - COCKROACH_DATABASE=${CR_DATABASE}
-      - COCKROACH_USER=${CR_USERNAME}
-      - COCKROACH_PASSWORD=${CR_USER_PASSWORD}
-    volumes:
-      - ${VOLUME_CR_DATA_PATH:-cr_data}:/cockroach/cockroach-data
-      - ${VOLUME_CR_CERTS_PATH:-cr_certs}:/cockroach/certs
-    restart: unless-stopped
-    networks:
-      - huly_net
+  # CockroachDB service removed - using external PostgreSQL database
+  # To use external PostgreSQL, set DB_URL in huly_v7.conf to:
+  # DB_URL=postgres://username:password@database_host:5432/database_name
+  # cockroach:
+  #   image: cockroachdb/cockroach:latest-v24.2
+  #   command: start-single-node --accept-sql-without-tls
+  #   environment:
+  #     - COCKROACH_DATABASE=${CR_DATABASE}
+  #     - COCKROACH_USER=${CR_USERNAME}
+  #     - COCKROACH_PASSWORD=${CR_USER_PASSWORD}
+  #   volumes:
+  #     - ${VOLUME_CR_DATA_PATH:-cr_data}:/cockroach/cockroach-data
+  #     - ${VOLUME_CR_CERTS_PATH:-cr_certs}:/cockroach/certs
+  #   restart: unless-stopped
+  #   networks:
+  #     - huly_net
 
   redpanda:
     image: docker.redpanda.com/redpandadata/redpanda:v24.3.6
@@ -105,7 +108,7 @@ services:
     environment:
       - SERVER_PORT=3333
       - SERVER_SECRET=${SECRET}
-      - DB_URL=${CR_DB_URL}
+      - DB_URL=${DB_URL}
       - STORAGE_CONFIG=minio|minio?accessKey=minioadmin&secretKey=minioadmin
       - FRONT_URL=http://localhost:8087
       - ACCOUNTS_URL=http://account:3000
@@ -134,7 +137,7 @@ services:
     environment:
       - SERVER_PORT=3000
       - SERVER_SECRET=${SECRET}
-      - DB_URL=${CR_DB_URL}
+      - DB_URL=${DB_URL}
       - TRANSACTOR_URL=ws://transactor:3333;ws${SECURE:+s}://${HOST_ADDRESS}/_transactor
       - STORAGE_CONFIG=minio|minio?accessKey=minioadmin&secretKey=minioadmin
       - FRONT_URL=http${SECURE:+s}://${HOST_ADDRESS}
@@ -151,14 +154,14 @@ services:
     image: hardcoreeng/workspace:${HULY_VERSION}
     environment:
       - SERVER_SECRET=${SECRET}
-      - DB_URL=${CR_DB_URL}
+      - DB_URL=${DB_URL}
       - TRANSACTOR_URL=ws://transactor:3333;ws${SECURE:+s}://${HOST_ADDRESS}/_transactor
       - STORAGE_CONFIG=minio|minio?accessKey=minioadmin&secretKey=minioadmin
       - MODEL_ENABLED=*
       - ACCOUNTS_URL=http://account:3000
       - STATS_URL=http://stats:4900
       - QUEUE_CONFIG=redpanda:9092
-      - ACCOUNTS_DB_URL=${CR_DB_URL}
+      - ACCOUNTS_DB_URL=${DB_URL}
     restart: unless-stopped
     networks:
       - huly_net
@@ -192,7 +195,7 @@ services:
     image: hardcoreeng/fulltext:${HULY_VERSION}
     environment:
       - SERVER_SECRET=${SECRET}
-      - DB_URL=${CR_DB_URL}
+      - DB_URL=${DB_URL}
       - FULLTEXT_DB_URL=http://elastic:9200
       - ELASTIC_INDEX_NAME=huly_storage_index
       - STORAGE_CONFIG=minio|minio?accessKey=minioadmin&secretKey=minioadmin
@@ -215,13 +218,11 @@ services:
 
   kvs:
     image: hardcoreeng/hulykvs:${HULY_VERSION}
-    depends_on:
-      cockroach:
-        condition: service_started
+    # Removed depends_on cockroach - using external PostgreSQL
     ports:
       - 8094:8094
     environment:
-      - HULY_DB_CONNECTION=${CR_DB_URL}
+      - HULY_DB_CONNECTION=${DB_URL}
       - HULY_TOKEN_SECRET=${SECRET}
     restart: unless-stopped
     networks:
@@ -232,8 +233,9 @@ volumes:
   # If VOLUME_*_PATH variables are set, these volumes will be ignored
   elastic:
   files:
-  cr_data:
-  cr_certs:
+  # CockroachDB volumes removed - using external PostgreSQL
+  # cr_data:
+  # cr_certs:
   redpanda:
 
 networks:
