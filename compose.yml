@@ -88,6 +88,16 @@ services:
     networks:
       - huly_net
 
+  # mongodb:
+  #   image: mongo:7-jammy
+  #   container_name: mongodb
+  #   restart: unless-stopped
+  #   volumes:
+  #     - ${VOLUME_MONGO_PATH:-mongodb}:/data/db
+  #   networks:
+  #     - huly_net
+  #   # Required by aibot and calendar services
+
   rekoni:
     image: hardcoreeng/rekoni-service:${HULY_VERSION}
     environment:
@@ -235,6 +245,7 @@ volumes:
   cr_data:
   cr_certs:
   redpanda:
+  mongodb:
 
 networks:
   huly_net:

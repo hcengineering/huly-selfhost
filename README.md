@@ -504,7 +504,10 @@ Huly provides AI-powered chatbot that provides several services:
 - live translations for virtual office voice and video chats
 
 1. Set up OpenAI account
-2. Add `aibot` container to the docker-compose.yaml
+2. Enable MongoDB service (required by aibot):
+   - Uncomment the `mongodb` service in `compose.yml`
+   - MongoDB is used by the aibot service for storing conversation data
+3. Add `aibot` container to the docker-compose.yaml
 
     ```yaml
       aibot:
