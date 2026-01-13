@@ -10,6 +10,31 @@ services:
     networks:
       - huly_net
 
+  github:
+    image: hardcoreeng/github:${HULY_VERSION}
+    volumes:
+    - ./github-private-key.pem:/run/secrets/github.pem:ro
+    ports:
+      - "3500:3500"
+    environment:
+      - PORT=3500
+      - STORAGE_CONFIG=minio|minio?accessKey=minioadmin&secretKey=minioadmin
+      - SERVER_SECRET=${SECRET}
+      - ACCOUNTS_URL=http://account:3000
+      - STATS_URL=http://stats:4900
+      - APP_ID=2647580
+      - CLIENT_ID=Iv23liuG64UDIIkP1prE
+      - CLIENT_SECRET=00a2420829e25636638f8923e2f4b1f76af95643
+      - COLLABORATOR_URL=ws${SECURE:+s}://${HOST_ADDRESS}/_collaborator
+      - WEBHOOK_SECRET=webhook_secret
+      - FRONT_URL=https://unprovidentially-transsonic-jeanne.ngrok-free.dev
+      - BOT_NAME=${GITHUB_APPNAME}[bot]
+    command: >
+      sh -lc 'export PRIVATE_KEY="$(cat /run/secrets/github.pem)";
+            exec node /usr/src/app/bundle.js'
+    restart: unless-stopped
+    networks:
+      - huly_net
   cockroach:
     image: cockroachdb/cockroach:latest-v24.2
     command: start-single-node --accept-sql-without-tls
@@ -166,6 +191,9 @@ services:
   front:
     image: hardcoreeng/front:${HULY_VERSION}
     environment:
+      - GITHUB_URL=https://unprovidentially-transsonic-jeanne.ngrok-free.dev/_github
+      - GITHUB_APP=huly-ne-integration
+      - GITHUB_CLIENTID=Iv23liuG64UDIIkP1prE
       - SERVER_PORT=8080
       - SERVER_SECRET=${SECRET}
       - LOVE_ENDPOINT=http${SECURE:+s}://${HOST_ADDRESS}/_love
