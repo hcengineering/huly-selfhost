@@ -26,7 +26,7 @@ services:
       - CLIENT_ID=Iv23liuG64UDIIkP1prE
       - CLIENT_SECRET=00a2420829e25636638f8923e2f4b1f76af95643
       - COLLABORATOR_URL=ws${SECURE:+s}://${HOST_ADDRESS}/_collaborator
-      - WEBHOOK_SECRET=secret
+      - WEBHOOK_SECRET=webhook_secret
       - FRONT_URL=https://unprovidentially-transsonic-jeanne.ngrok-free.dev
       - BOT_NAME=${GITHUB_APPNAME}[bot]
     command: >
