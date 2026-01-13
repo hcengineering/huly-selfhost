@@ -184,6 +184,9 @@ services:
       - DEFAULT_LANGUAGE=${DEFAULT_LANGUAGE:-en}
       - LAST_NAME_FIRST=${LAST_NAME_FIRST:-true}
       - DESKTOP_UPDATES_CHANNEL=${DESKTOP_CHANNEL}
+      - GITHUB_URL=https://${HOST_ADDRESS}/_github
+      - GITHUB_APP=${GITHUB_APPNAME}
+      - GITHUB_CLIENTID=${GITHUB_CLIENTID}
     restart: unless-stopped
     networks:
       - huly_net
@@ -226,7 +229,55 @@ services:
     restart: unless-stopped
     networks:
       - huly_net
-      
+  github:
+    image: hardcoreeng/github:${HULY_VERSION}
+    ports:
+    - "3500:3500"
+    environment:
+      PORT: "3500"
+      STORAGE_CONFIG: "minio|minio?accessKey=minioadmin&secretKey=minioadmin"
+      SERVER_SECRET: "${SECRET}"
+      ACCOUNTS_URL: "http://account:3000"
+      STATS_URL: "http://stats:4900"
+      APP_ID: "${GITHUB_APPID}"
+      CLIENT_ID: "${GITHUB_CLIENTID}"
+      CLIENT_SECRET: "${GITHUB_CLIENT_SECRET}"
+      COLLABORATOR_URL: "wss://${HOST_ADDRESS}/_collaborator"
+      WEBHOOK_SECRET: "secret"
+      FRONT_URL: "https://${HOST_ADDRESS}"
+      BOT_NAME: "${GITHUB_APPNAME}[bot]"
+      PRIVATE_KEY: |-
+        -----BEGIN RSA PRIVATE KEY-----
+        MIIEowIBAAKCAQEAxu9pmBbkXtlMkPPjyMIkPbZZ7nq9qDOhWoELX+yaoC81uvZ8
+        frQIcXZIViUrRfX0+IRRTbjiCLf+HhGjfNQ8yKNG8VCB5ZJouwQQmyyB5cNl1Ivk
+        NEdn40jLvohOkiPC+0C9JItSAYoMWPFadooqA9IMlHAuM0D6iWC0Ukc3O98Kxk2D
+        x1+9Jx1vSPaZ61yn4UIik3ZeVnMrIDo/x81sIPTUrd3MKrYkbbiFgDk5yGvcneBb
+        eDXkAjmkLwK8YX2eoIeIixLNOyjM52cIwfUhJQqWp8Qh/5BuJAntNEVYi/Ssbhcm
+        i5zcuprTwpQN9GQ+xbq1/9WwxQ7ao7eSqCAieQIDAQABAoIBABE/XJZVFcOrb1n5
+        6zvSqTW4g5+LgLn+j/S6z3OnndhZf30QNcb+cOT1blwZqODN7ElHn4zvhJlg6mVM
+        /jGqbQKwNUxiwIBY6z+boJzzhOeYw1FkN4rYzgcEnrWMN9Ovyg3ilQOAGMINZ/im
+        JEO2wuHF6lVMTJUhAxe6DKg9iGpmSuLeMqlm/wwPal/sYpmEou3D+7xDFLj3IhHB
+        fEZJElk7K+61173uhO8q49COTBQlcDWwUqCWfCy3AHjqRO66pX8fJRb+umlTximy
+        YKRrXpgcdp/XtXwkPYsGz4hYPCbGmIdRdIDuvJa80WmfwmtYhzW7od6mGiXtf39K
+        J5Ek0aECgYEA77us7xi7yd0Icx1SiAnQ558NSqvV3AQj5DMqIj2FDlzLr3gII0Mn
+        MCp7e4tRaHKZvXMU8Xy8lB40R9Mh1IJL69sGIJ1qd0ot3ZEnF222wel1HKuRu4Pu
+        1iCSvOcWM6kaCfv+e8H3VbFWNFRSn0jqpYEaRJvTbox98orPM7byyV0CgYEA1G8M
+        0rH9aJBYoywltprYO8e1AEM7LpuqPZrQOgZkc6YtDsdH5dQVRJBhN+/xyo6cfaQO
+        thVgDBMYUgAGIK+Lnfd8tfTf3qJljpVkVN0ebX5OnhrouKtPsuYqB7NJy0WrifCc
+        PAavR+S14hdtfmOdhvbTGicBl42ODI5V56tTP80CgYEAn/ao0/m7BF1akAVW1rNG
+        E+eLZPH4B5EzqceCK8rFB+pfdzwuoejjMz6FmtBBh+JAN6uco+5JnsPwuqRlBHnU
+        0xIYqpafPe3fYOLEJNvugMGYhYLuASNtsK+XejjwFZSWbWcaTdYFhcaI8O37G5H6
+        EGlu76zSjgds2vRIggdnRXkCgYADL7M6ic7qPZgGwofCSGpL4z/0xA1kMpOIHwVW
+        iXgCQBDW8uhCKz8yaxP6OdAfoKn6PHa4BnQNWk/4EuYEoX1vniGxvP2Kolbxn44E
+        s9hb/hQBzReGhZNJdKhWuzq1INNk20YMpHEGnAiaXo2W4rmfJ56c+s7MTiQ+Tfg9
+        5FT4VQKBgEDHKN5x9Hyh2wbDA4Fg+Mey3S4Te+pCAIEy9Plnkp17QRdwhl7K1n20
+        yYOGChOgpVqYFQTrtrRlwcP8irAtTPRJmZg2jFBan5pA2HrruHNdRNFPRDYzMjlb
+        OfJDsDc2hCrPr5PLCL1L1ePcF9Qwf8GfHpyhgHw5ekZvgW1AfhFV
+        -----END RSA PRIVATE KEY-----
+    restart: unless-stopped
+    networks:
+      - huly_net
+
 volumes:
   # These named volumes are used when custom volume paths are not specified
   # If VOLUME_*_PATH variables are set, these volumes will be ignored
