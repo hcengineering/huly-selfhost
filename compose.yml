@@ -184,6 +184,9 @@ services:
       - DEFAULT_LANGUAGE=${DEFAULT_LANGUAGE:-en}
       - LAST_NAME_FIRST=${LAST_NAME_FIRST:-true}
       - DESKTOP_UPDATES_CHANNEL=${DESKTOP_CHANNEL}
+      - GITHUB_URL=http${SECURE:+s}://${HOST_ADDRESS}/_github
+      - GITHUB_APP=${GITHUB_APPNAME}
+      - GITHUB_CLIENTID=${GITHUB_CLIENTID}
     restart: unless-stopped
     networks:
       - huly_net
@@ -223,6 +226,27 @@ services:
     environment:
       - HULY_DB_CONNECTION=${CR_DB_URL}
       - HULY_TOKEN_SECRET=${SECRET}
+    restart: unless-stopped
+    networks:
+      - huly_net
+  github:
+    image: hardcoreeng/github:${HULY_VERSION}
+    ports:
+      - 3500:3500
+    environment:
+      - PORT=3500
+      - STORAGE_CONFIG=minio|minio?accessKey=minioadmin&secretKey=minioadmin
+      - SERVER_SECRET=${SECRET}
+      - ACCOUNTS_URL=http://account:3000
+      - STATS_URL=http://stats:4900
+      - APP_ID=${GITHUB_APPID}
+      - CLIENT_ID=${GITHUB_CLIENTID}
+      - CLIENT_SECRET=${GITHUB_CLIENT_SECRET}
+      - PRIVATE_KEY=${GITHUB_PRIVATE_KEY}
+      - COLLABORATOR_URL=ws${SECURE:+s}://${HOST_ADDRESS}/_collaborator
+      - WEBHOOK_SECRET=secret
+      - FRONT_URL=http${SECURE:+s}://${HOST_ADDRESS}
+      - BOT_NAME=${yourAppName}[bot]
     restart: unless-stopped
     networks:
       - huly_net
