@@ -59,7 +59,7 @@ spec:
                   key: TRANSACTOR_URL
             - name: QUEUE_CONFIG
               value: redpanda:9092
-          image: hardcoreeng/account:v0.7.350
+          image: hardcoreeng/account:v0.7.353
           name: account
           ports:
             - containerPort: 3000
