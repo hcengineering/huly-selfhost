@@ -4,7 +4,7 @@ This folder contains a sample configuration for Huly Kubernetes deployment.
 
 ## Requires
 
-Requires a working kubernetes cluster with min one node. Each node should have min 2 vCPUs and 4GB of RAM.
+Requires a working kubernetes cluster with min one node. Each node should have at least 2 vCPUs and 8 GB RAM.
 
 If you don't have any k8s cluster, consider using the [kind setup](QUICKSTART.md).
 

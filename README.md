@@ -2,11 +2,18 @@
 
 Please use this README if you want to deploy Huly on your server with `docker compose`. I'm using a Basic Droplet on Digital Ocean with Ubuntu 24.04, but these instructions can be easily adapted for any Linux distribution.
 
-> [!NOTE]
-> Huly is quite resource-heavy, so I recommend using a Droplet with 2 vCPUs and 4GB of RAM. Droplets with less RAM may
-> stop responding or fail.
-
 If you prefer Kubernetes deployment, there is a sample Kubernetes configuration under [kube](kube) directory.
+
+## System Requirements
+
+Huly is resource-heavy. Use a server that meets or exceeds the following:
+
+- **Minimum:** 2 vCPUs and 8 GB RAM
+- **Recommended:** 4 vCPUs and 16 GB RAM or more
+
+> [!WARNING]
+> Servers below the minimum may stop responding or fail.
+
 
 ## Platform Repository
 
@@ -506,6 +513,7 @@ Huly provides AI-powered chatbot that provides several services:
 1. Set up OpenAI account
 2. Enable MongoDB service (required by aibot):
    - Uncomment the `mongodb` service in `compose.yml`
+   - Uncomment the `mongodb` volume entry in the `volumes` section of `compose.yml`
    - MongoDB is used by the aibot service for storing conversation data
 3. Add `aibot` container to the docker-compose.yaml
 
