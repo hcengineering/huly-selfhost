@@ -36,7 +36,7 @@ This will:
 - Use default Docker volumes
 - Automatically start all services
 
-Access Huly at **http://localhost:8087** (wait ~60 seconds for services to initialize).
+Access Huly at **http://localhost:8087** (wait ~60 seconds for services to initialize). To stop all services, run `docker compose down` from the `huly-selfhost` folder.
 
 > [!NOTE]
 > Quick start is intended for local testing only. For production deployments, follow the full setup instructions below.
