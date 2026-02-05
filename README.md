@@ -43,7 +43,7 @@ This will:
 - Use default Docker volumes
 - Automatically start all services
 
-Access Huly at **http://localhost:8087** (wait ~60 seconds for services to initialize).
+Access Huly at **http://localhost:8087** (wait ~60 seconds for services to initialize). To stop all services, run `docker compose down` from the `huly-selfhost` folder.
 
 > [!NOTE]
 > Quick start is intended for local testing only. For production deployments, follow the full setup instructions below.
@@ -99,7 +99,7 @@ sudo nginx -s reload
 sudo docker compose up -d
 ```
 
-Now, launch your web browser and enjoy Huly!
+Now, launch your web browser and enjoy Huly! To stop all services, run `docker compose down` from the `huly-selfhost` project directory.
 
 > [!IMPORTANT]
 > Provided configrations include deployments of CockroachDB and Redpanda which might not be production-ready. Please inspect them carefully before using in production. For more information on the recommended deployment configurations, please refer to the [CockroachDB](https://www.cockroachlabs.com/docs/stable/recommended-production-settings) and [Redpanda](https://docs.redpanda.com/24.3/deploy/) documentation.
