@@ -438,6 +438,53 @@ self-hosted Huly, perform the following steps:
 
 Note that the `LIVEKIT_HOST` should include the protocol (`wss://` by default if using livekit cloud).
 
+## HulyPulse (Push / real-time updates)
+
+HulyPulse provides WebSocket push notifications and real-time updates. It requires Redis.
+It will allow the following functions to work:
+- The knock and invite features in video calls
+- Information about who is viewing/editing objects right now
+- Shows that someone is typing a message in a chat.
+
+
+1. Enable Redis and HulyPulse in `compose.yml`:
+   - Uncomment the `redis` service.
+   - Uncomment the `hulypulse` service.
+
+2. Configure the `transactor` service:
+
+    ```yaml
+    transactor:
+      ...
+      environment:
+        - PULSE_URL=http://hulypulse:8099
+      ...
+    ```
+
+3. Configure the `front` service:
+
+    ```yaml
+    front:
+      ...
+      environment:
+        - PULSE_URL=http${SECURE:+s}://${HOST_ADDRESS}/_pulse
+      ...
+    ```
+
+4. Uncomment the `/_pulse` location in `.huly.nginx` and reload nginx:
+
+    ```bash
+    sudo nginx -s reload
+    ```
+
+5. Recreate and start the stack from the `huly-selfhost` folder:
+
+    ```bash
+    docker compose up -d --force-recreate
+    ```
+
+Redis is configured with a 512 MB memory limit by default. For production you may want to set a Redis password and use `HULY_REDIS_URLS=redis://:YOUR_PASSWORD@redis:6379` in the `hulypulse` environment. The image tag uses `HULY_PULSE_VERSION` if set (default `0.1.29`).
+
 ## Print Service
 
 1. Add `print` container to the docker-compose.yaml

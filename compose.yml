@@ -98,6 +98,37 @@ services:
   #     - huly_net
   #   # Required by aibot and calendar services
 
+  # redis:
+  #   image: redis:7-alpine
+  #   container_name: redis
+  #   command: redis-server --maxmemory 512mb --maxmemory-policy allkeys-lru
+  #   restart: unless-stopped
+  #   networks:
+  #     - huly_net
+  #   # Required by HulyPulse (push notifications / real-time updates)
+
+  # hulypulse:
+  #   image: hardcoreeng/service_hulypulse:${HULY_PULSE_VERSION:-0.1.29}
+  #   container_name: hulypulse
+  #   ports:
+  #     - 8099:8099
+  #   environment:
+  #     - HULY_BIND_PORT=8099
+  #     - HULY_LOG=info
+  #     - HULY_TOKEN_SECRET=${SECRET}
+  #     - HULY_HEARTBEAT_TIMEOUT=60
+  #     - HULY_REDIS_MODE=direct
+  #     - HULY_REDIS_URLS=redis://redis:6379
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         memory: 512M
+  #   depends_on:
+  #     - redis
+  #   restart: unless-stopped
+  #   networks:
+  #     - huly_net
+
   rekoni:
     image: hardcoreeng/rekoni-service:${HULY_VERSION}
     environment:
