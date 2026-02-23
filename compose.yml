@@ -117,14 +117,15 @@ services:
   #     - HULY_LOG=info
   #     - HULY_TOKEN_SECRET=${SECRET}
   #     - HULY_HEARTBEAT_TIMEOUT=60
-  #     - HULY_REDIS_MODE=direct
-  #     - HULY_REDIS_URLS=redis://redis:6379
+  #     - HULY_BACKEND=memory
+  #     # For Redis backend instead of in-memory (optional, e.g. multi-node setups):
+  #     # - HULY_BACKEND=redis
+  #     # - HULY_REDIS_MODE=direct
+  #     # - HULY_REDIS_URLS=redis://redis:6379
   #   deploy:
   #     resources:
   #       limits:
   #         memory: 512M
-  #   depends_on:
-  #     - redis
   #   restart: unless-stopped
   #   networks:
   #     - huly_net
