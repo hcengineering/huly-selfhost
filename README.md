@@ -2,7 +2,7 @@
 
 Please use this README if you want to deploy Huly on your server with `docker compose`. I'm using a Basic Droplet on Digital Ocean with Ubuntu 24.04, but these instructions can be easily adapted for any Linux distribution.
 
-If you prefer Kubernetes deployment, there is a sample Kubernetes configuration under [kube](kube) directory. To deploy with [Coolify](https://coolify.io) using a PostgreSQL-based stack and Coolify's built-in proxy, use the [Coolify deployment guide](guides/coolify-deployment.md) and set the compose path to `coolify/docker-compose.yaml` in Coolify's Docker Compose build pack.
+If you prefer Kubernetes deployment, there is a sample Kubernetes configuration under [kube](kube) directory.
 
 ## System Requirements
 
@@ -460,15 +460,22 @@ Note that the `LIVEKIT_HOST` should include the protocol (`wss://` by default if
 
 ## HulyPulse (Push / real-time updates)
 
-HulyPulse provides WebSocket push notifications and real-time updates. It requires Redis.
+HulyPulse provides WebSocket push notifications and real-time updates.
 It will allow the following functions to work:
 - The knock and invite features in video calls
 - Information about who is viewing/editing objects right now
 - Shows that someone is typing a message in a chat.
 
+Since Huly platform version `v0.7.375`, HulyPulse supports an **in-memory backend**.
+By default, templates in this repository use:
 
-1. Enable Redis and HulyPulse in `compose.yml`:
-   - Uncomment the `redis` service.
+- `HULY_BACKEND=memory`
+
+This mode does not require Redis and is suitable for single-node or small self-hosted deployments.
+
+### Enabling HulyPulse (in-memory backend)
+
+1. Enable HulyPulse in `compose.yml`:
    - Uncomment the `hulypulse` service.
 
 2. Configure the `transactor` service:
@@ -503,7 +510,24 @@ It will allow the following functions to work:
     docker compose up -d --force-recreate
     ```
 
-Redis is configured with a 512 MB memory limit by default. For production you may want to set a Redis password and use `HULY_REDIS_URLS=redis://:YOUR_PASSWORD@redis:6379` in the `hulypulse` environment. The image tag uses `HULY_PULSE_VERSION` if set (default `0.1.29`).
+### Using Redis as backend (optional)
+
+Redis can be used as an alternative backend for HulyPulse – for example, in multi-node or higher-availability setups.
+
+1. Enable Redis and HulyPulse in `compose.yml`:
+   - Uncomment the `redis` service.
+   - Uncomment the `hulypulse` service.
+   - In the `hulypulse` environment, switch to Redis:
+
+     ```yaml
+     - HULY_BACKEND=redis
+     - HULY_REDIS_MODE=direct
+     - HULY_REDIS_URLS=redis://redis:6379
+     # or with password:
+     # - HULY_REDIS_URLS=redis://:YOUR_PASSWORD@redis:6379
+     ```
+
+2. Redis is configured with a 512 MB memory limit by default in the provided `compose.yml`. Adjust limits, password, and URLs as needed for your production setup. The image tag uses `HULY_PULSE_VERSION` if set (default `0.1.29`).
 
 ## Print Service
 
