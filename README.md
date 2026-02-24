@@ -104,6 +104,26 @@ Now, launch your web browser and enjoy Huly! To stop all services, run `docker c
 > [!IMPORTANT]
 > Provided configrations include deployments of CockroachDB and Redpanda which might not be production-ready. Please inspect them carefully before using in production. For more information on the recommended deployment configurations, please refer to the [CockroachDB](https://www.cockroachlabs.com/docs/stable/recommended-production-settings) and [Redpanda](https://docs.redpanda.com/24.3/deploy/) documentation.
 
+## Troubleshooting
+
+### Huly opens, but user sign-up fails
+
+If the UI loads but sign-up fails, check logs for the `account` service first:
+
+```bash
+docker compose logs -f account
+```
+
+This usually reveals issues with account callbacks, URL configuration, or connectivity to dependent services.
+
+### SSL errors (for example: `SSL wrong version number`)
+
+This usually means HTTPS/WSS is enabled in configuration, but the endpoint is serving plain HTTP/WS or has invalid TLS setup.
+
+- Verify your Nginx TLS configuration and certificates (`ssl_certificate`, `ssl_certificate_key`).
+- Confirm your domain points to the correct host and that port `443` is reachable.
+- For local/testing deployments, disable secure mode by setting `SECURE=` in `huly_v7.conf`, then regenerate/reload config and restart containers.
+
 ## Volume Configuration
 
 By default, Huly uses Docker named volumes to store persistent data (database, Elasticsearch indices, and uploaded files). You can optionally configure custom host paths for these volumes during the setup process.
