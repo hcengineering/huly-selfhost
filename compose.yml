@@ -2,8 +2,6 @@ name: ${DOCKER_NAME}
 services:
   nginx:
     image: "nginx:1.21.3"
-    ports:
-      - "${HTTP_BIND}:${HTTP_PORT}:80"
     volumes:
       - ./.huly.nginx:/etc/nginx/conf.d/default.conf
     restart: unless-stopped
