@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: front
+  labels:
+    app.kubernetes.io/name: front
+    app.kubernetes.io/part-of: huly
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: front
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: front
+    spec:
+      containers:
+        - name: front
+          image: hardcoreeng/front:latest
+          ports:
+            - name: http
+              containerPort: 8080
+          env:
+            - name: SERVER_PORT
+              value: "8080"
+            - name: SERVER_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: huly-secret
+                  key: SERVER_SECRET
+            - name: STORAGE_CONFIG
+              valueFrom:
+                secretKeyRef:
+                  name: huly-secret
+                  key: STORAGE_CONFIG
+          envFrom:
+            - configMapRef:
+                name: huly-config
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              memory: 512Mi
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10

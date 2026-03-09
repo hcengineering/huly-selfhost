@@ -1,0 +1,79 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Set your namespace
+namespace: huly
+
+resources:
+  - ../../base
+
+# Pin all Huly images to a specific version.
+# Find the latest tag at https://hub.docker.com/u/hardcoreeng
+images:
+  - name: hardcoreeng/front
+    newTag: latest
+  - name: hardcoreeng/account
+    newTag: latest
+  - name: hardcoreeng/transactor
+    newTag: latest
+  - name: hardcoreeng/collaborator
+    newTag: latest
+  - name: hardcoreeng/workspace
+    newTag: latest
+  - name: hardcoreeng/fulltext
+    newTag: latest
+  - name: hardcoreeng/rekoni-service
+    newTag: latest
+  - name: hardcoreeng/stats
+    newTag: latest
+
+# Uncomment and set your domain to override the placeholder (huly.example).
+# This replaces the ConfigMap values and Ingress hosts/TLS.
+#
+# patches:
+#   - target:
+#       kind: ConfigMap
+#       name: huly-config
+#     patch: |
+#       - op: replace
+#         path: /data/FRONT_URL
+#         value: "https://huly.yourdomain.com"
+#       - op: replace
+#         path: /data/ACCOUNTS_URL
+#         value: "https://huly.yourdomain.com/_accounts"
+#       - op: replace
+#         path: /data/COLLABORATOR_URL
+#         value: "wss://huly.yourdomain.com/_collaborator"
+#       - op: replace
+#         path: /data/REKONI_URL
+#         value: "https://huly.yourdomain.com/_rekoni"
+#       - op: replace
+#         path: /data/STATS_URL
+#         value: "https://huly.yourdomain.com/_stats"
+#       - op: replace
+#         path: /data/TRANSACTOR_URL
+#         value: "ws://transactor:3333;wss://huly.yourdomain.com/_transactor"
+#       - op: replace
+#         path: /data/GMAIL_URL
+#         value: "https://huly.yourdomain.com/_gmail"
+#       - op: replace
+#         path: /data/TELEGRAM_URL
+#         value: "https://huly.yourdomain.com/_telegram"
+#       - op: replace
+#         path: /data/CALENDAR_URL
+#         value: "https://huly.yourdomain.com/_calendar"
+#       - op: replace
+#         path: /data/LOVE_ENDPOINT
+#         value: "https://huly.yourdomain.com/_love"
+#       - op: replace
+#         path: /data/ADMIN_EMAILS
+#         value: "you@yourdomain.com"
+#   - target:
+#       kind: Ingress
+#     patch: |
+#       - op: replace
+#         path: /spec/tls/0/hosts/0
+#         value: huly.yourdomain.com
+#       - op: replace
+#         path: /spec/rules/0/host
+#         value: huly.yourdomain.com
