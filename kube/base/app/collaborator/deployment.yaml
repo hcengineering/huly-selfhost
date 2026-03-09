@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: collaborator
+  labels:
+    app.kubernetes.io/name: collaborator
+    app.kubernetes.io/part-of: huly
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: collaborator
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: collaborator
+    spec:
+      containers:
+        - name: collaborator
+          image: hardcoreeng/collaborator:latest
+          ports:
+            - name: ws
+              containerPort: 3078
+          env:
+            - name: COLLABORATOR_PORT
+              value: "3078"
+            - name: SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: huly-secret
+                  key: SERVER_SECRET
+            - name: ACCOUNTS_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: huly-config
+                  key: ACCOUNTS_URL_INTERNAL
+            - name: STATS_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: huly-config
+                  key: STATS_URL_INTERNAL
+            - name: STORAGE_CONFIG
+              valueFrom:
+                secretKeyRef:
+                  name: huly-secret
+                  key: STORAGE_CONFIG
+          readinessProbe:
+            tcpSocket:
+              port: ws
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              memory: 512Mi

@@ -1,0 +1,9 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ingress-front.yaml
+  - ingress-accounts.yaml
+  - ingress-transactor.yaml
+  - ingress-collaborator.yaml
+  - ingress-rekoni.yaml
+  - ingress-stats.yaml

@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stats
+  labels:
+    app.kubernetes.io/name: stats
+    app.kubernetes.io/part-of: huly
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: stats
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: stats
+    spec:
+      containers:
+        - name: stats
+          image: hardcoreeng/stats:latest
+          ports:
+            - name: http
+              containerPort: 4900
+          env:
+            - name: PORT
+              value: "4900"
+            - name: SERVER_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: huly-secret
+                  key: SERVER_SECRET
+          readinessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              memory: 256Mi

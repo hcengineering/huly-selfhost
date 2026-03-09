@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redpanda
+  labels:
+    app.kubernetes.io/name: redpanda
+    app.kubernetes.io/part-of: huly
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: redpanda
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: redpanda
+    spec:
+      securityContext:
+        fsGroup: 101
+        runAsUser: 101
+        runAsGroup: 101
+      containers:
+        - name: redpanda
+          image: docker.redpanda.com/redpandadata/redpanda:v24.3.6
+          command: ["rpk"]
+          args:
+            - "redpanda"
+            - "start"
+            - "--kafka-addr"
+            - "internal://0.0.0.0:9092"
+            - "--advertise-kafka-addr"
+            - "internal://redpanda:9092"
+            - "--rpc-addr"
+            - "0.0.0.0:33145"
+            - "--advertise-rpc-addr"
+            - "redpanda:33145"
+            - "--mode"
+            - "dev-container"
+            - "--smp"
+            - "1"
+            - "--default-log-level=info"
+          ports:
+            - name: kafka
+              containerPort: 9092
+            - name: rpc
+              containerPort: 33145
+          env:
+            - name: REDPANDA_SUPERUSER_USERNAME
+              value: "admin"
+            - name: REDPANDA_SUPERUSER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: huly-secret
+                  key: REDPANDA_SUPERUSER_PASSWORD
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/redpanda/data
+          resources:
+            requests:
+              cpu: 100m
+              memory: 512Mi
+            limits:
+              memory: 1536Mi
+          readinessProbe:
+            exec:
+              command: ["rpk", "cluster", "info"]
+            initialDelaySeconds: 15
+            periodSeconds: 10
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: redpanda-data

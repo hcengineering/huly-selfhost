@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: huly-rekoni
+  labels:
+    app.kubernetes.io/part-of: huly
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - huly.example
+      secretName: huly-tls
+  rules:
+    - host: huly.example
+      http:
+        paths:
+          - path: /_rekoni(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: rekoni
+                port:
+                  number: 4004
