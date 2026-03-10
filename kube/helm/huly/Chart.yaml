@@ -1,0 +1,13 @@
+apiVersion: v2
+name: huly
+description: Huly — open-source project management platform
+type: application
+version: 0.1.0
+appVersion: "0.7.382"
+home: https://huly.io
+sources:
+  - https://github.com/hcengineering/huly-selfhost
+keywords:
+  - huly
+  - project-management
+  - collaboration

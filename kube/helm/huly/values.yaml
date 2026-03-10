@@ -1,0 +1,209 @@
+# ──────────────────────────────────────────────────────────────
+# REQUIRED — set this to your domain
+# ──────────────────────────────────────────────────────────────
+domain: huly.example
+
+# Override the chart name / full release name
+nameOverride: ""
+fullnameOverride: ""
+
+# ──────────────────────────────────────────────────────────────
+# Global image tag for all Huly services
+# ──────────────────────────────────────────────────────────────
+hulyVersion: v0.7.382
+
+# ──────────────────────────────────────────────────────────────
+# Secrets — leave empty to auto-generate (persists across upgrades)
+# ──────────────────────────────────────────────────────────────
+secrets:
+  # Shared JWT signing secret (auto-generated if empty)
+  serverSecret: ""
+  # Full storage config string override.
+  # When empty, auto-derived from storage.type + storage.s3.* (or random MinIO creds).
+  # Format: s3|https://s3.example.com?accessKey=X&secretKey=Y&region=us-east-1&rootBucket=data
+  #     or: minio|minio?accessKey=<key>&secretKey=<secret>
+  storageConfig: ""
+  # CockroachDB password (auto-generated if empty)
+  cockroachPassword: ""
+  # Redpanda superuser password (auto-generated if empty)
+  redpandaPassword: ""
+  # CockroachDB connection URL (auto-derived from cockroachPassword if empty)
+  # Set this when using an external database (cockroach.enabled=false).
+  # Format: postgres://<user>:<pass>@<host>:26257/<db>
+  crDbUrl: ""
+
+# ──────────────────────────────────────────────────────────────
+# Authentication providers (set on the account service)
+# At least one provider should be configured for user login.
+# ──────────────────────────────────────────────────────────────
+auth:
+  # Google OAuth 2.0
+  google:
+    clientId: ""
+    clientSecret: ""
+  # GitHub OAuth
+  github:
+    clientId: ""
+    clientSecret: ""
+  # OpenID Connect (generic OIDC provider)
+  oidc:
+    clientId: ""
+    clientSecret: ""
+    issuer: ""       # e.g. https://accounts.google.com
+  # Set to true to prevent new user registration
+  disableSignup: false
+
+# ──────────────────────────────────────────────────────────────
+# Storage backend — built-in MinIO or external S3
+# ──────────────────────────────────────────────────────────────
+storage:
+  # "minio" = use built-in MinIO (default)
+  # "s3"    = use external S3-compatible storage (disables built-in MinIO)
+  type: minio
+  s3:
+    endpoint: ""       # e.g. https://s3.amazonaws.com
+    region: ""         # e.g. us-east-1
+    accessKey: ""
+    secretKey: ""
+    # rootBucket: store all workspaces as prefixes inside a single bucket
+    rootBucket: ""     # e.g. huly-data
+    # bucketPrefix: prefix prepended to per-workspace bucket names (only used if rootBucket is empty)
+    bucketPrefix: ""   # e.g. huly-
+
+# ──────────────────────────────────────────────────────────────
+# Ingress
+# ──────────────────────────────────────────────────────────────
+ingress:
+  enabled: true
+  className: nginx
+  # Extra annotations merged into every ingress resource
+  annotations: {}
+  tls:
+    enabled: true
+    clusterIssuer: letsencrypt-prod
+
+# ──────────────────────────────────────────────────────────────
+# App settings (ConfigMap)
+# ──────────────────────────────────────────────────────────────
+appSettings:
+  modelEnabled: "*"
+  lastNameFirst: "true"
+  title: "Huly Self Host"
+  defaultLanguage: "en"
+  # Comma-separated list of admin email addresses
+  adminEmails: ""
+  # Desktop update channel
+  desktopChannel: "selfhost"
+
+# ──────────────────────────────────────────────────────────────
+# Global pod settings (applied to all services)
+# ──────────────────────────────────────────────────────────────
+global:
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+# ──────────────────────────────────────────────────────────────
+# Infrastructure — set enabled: false to use external services
+#
+# When disabled, provide connection details via:
+#   cockroach:  secrets.crDbUrl
+#   redpanda:   external.redpanda
+#   elastic:    external.elastic
+#   minio:      storage.type=s3 + storage.s3.*
+# ──────────────────────────────────────────────────────────────
+cockroach:
+  enabled: true
+  image: cockroachdb/cockroach:latest-v24.2
+  database: defaultdb
+  username: selfhost
+  storage: 10Gi
+  storageClassName: ""
+  resources: {}
+
+redpanda:
+  enabled: true
+  image: docker.redpanda.com/redpandadata/redpanda:v24.3.6
+  storage: 5Gi
+  storageClassName: ""
+  resources:
+    limits:
+      memory: 512Mi
+
+elastic:
+  enabled: true
+  image: elasticsearch:7.14.2
+  storage: 10Gi
+  storageClassName: ""
+  javaOpts: "-Xms1024m -Xmx1024m"
+  resources: {}
+
+minio:
+  # Automatically disabled when storage.type=s3
+  enabled: true
+  image: minio/minio
+  storage: 50Gi
+  storageClassName: ""
+  resources: {}
+
+# ──────────────────────────────────────────────────────────────
+# External infrastructure endpoints
+# Used when the corresponding built-in service is disabled.
+# ──────────────────────────────────────────────────────────────
+external:
+  # Used when redpanda.enabled=false
+  redpanda: ""       # e.g. kafka.example.com:9092
+  # Used when elastic.enabled=false
+  elastic: ""        # e.g. https://elasticsearch.example.com:9200
+
+# ──────────────────────────────────────────────────────────────
+# Application services
+# ──────────────────────────────────────────────────────────────
+front:
+  replicas: 1
+  resources: {}
+
+account:
+  replicas: 1
+  resources:
+    limits:
+      memory: 512Mi
+
+transactor:
+  replicas: 1
+  resources: {}
+
+collaborator:
+  replicas: 1
+  resources:
+    limits:
+      memory: 512Mi
+
+workspace:
+  replicas: 1
+  resources:
+    limits:
+      memory: 512Mi
+
+fulltext:
+  replicas: 1
+  resources:
+    limits:
+      memory: 512Mi
+
+rekoni:
+  replicas: 1
+  resources:
+    limits:
+      memory: 500Mi
+
+stats:
+  replicas: 1
+  resources:
+    limits:
+      memory: 500Mi
+
+kvs:
+  enabled: true
+  replicas: 1
+  resources: {}

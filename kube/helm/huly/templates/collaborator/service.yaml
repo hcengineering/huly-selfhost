@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: collaborator
+  labels:
+    {{- include "huly.labels" . | nindent 4 }}
+    app: collaborator
+spec:
+  selector:
+    app: collaborator
+  ports:
+    - name: http
+      port: 3078
+      targetPort: 3078

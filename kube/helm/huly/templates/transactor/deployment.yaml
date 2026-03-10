@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: transactor
+  labels:
+    {{- include "huly.labels" . | nindent 4 }}
+    app: transactor
+spec:
+  replicas: {{ .Values.transactor.replicas }}
+  selector:
+    matchLabels:
+      app: transactor
+  template:
+    metadata:
+      annotations:
+        {{- include "huly.checksumAnnotations" . | nindent 8 }}
+      labels:
+        {{- include "huly.labels" . | nindent 8 }}
+        app: transactor
+    spec:
+      {{- include "huly.scheduling" . | nindent 6 }}
+      initContainers:
+        {{- include "huly.waitForCockroach" . | nindent 8 }}
+        {{- include "huly.waitForRedpanda" . | nindent 8 }}
+      containers:
+        - name: transactor
+          image: hardcoreeng/transactor:{{ .Values.hulyVersion }}
+          ports:
+            - name: http
+              containerPort: 3333
+          env:
+            - name: SERVER_PORT
+              value: "3333"
+            {{- include "huly.envSecret" (dict "name" "SERVER_SECRET" "key" "SERVER_SECRET" "root" .) | nindent 12 }}
+            {{- include "huly.envSecret" (dict "name" "DB_URL" "key" "CR_DB_URL" "root" .) | nindent 12 }}
+            {{- include "huly.envSecret" (dict "name" "STORAGE_CONFIG" "key" "STORAGE_CONFIG" "root" .) | nindent 12 }}
+            {{- include "huly.envConfig" (dict "name" "FRONT_URL" "key" "FRONT_URL" "root" .) | nindent 12 }}
+            {{- include "huly.envConfig" (dict "name" "ACCOUNTS_URL" "key" "ACCOUNTS_URL_INTERNAL" "root" .) | nindent 12 }}
+            {{- include "huly.envConfig" (dict "name" "FULLTEXT_URL" "key" "FULLTEXT_URL" "root" .) | nindent 12 }}
+            {{- include "huly.envConfig" (dict "name" "STATS_URL" "key" "STATS_URL_INTERNAL" "root" .) | nindent 12 }}
+            {{- include "huly.envConfig" (dict "name" "QUEUE_CONFIG" "key" "QUEUE_CONFIG" "root" .) | nindent 12 }}
+            {{- include "huly.envConfig" (dict "name" "LAST_NAME_FIRST" "key" "LAST_NAME_FIRST" "root" .) | nindent 12 }}
+            - name: SERVER_CURSOR_MAXTIMEMS
+              value: "30000"
+          readinessProbe:
+            tcpSocket:
+              port: 3333
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 3333
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          {{- with .Values.transactor.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}

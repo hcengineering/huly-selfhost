@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: collaborator
+  labels:
+    {{- include "huly.labels" . | nindent 4 }}
+    app: collaborator
+spec:
+  replicas: {{ .Values.collaborator.replicas }}
+  selector:
+    matchLabels:
+      app: collaborator
+  template:
+    metadata:
+      annotations:
+        {{- include "huly.checksumAnnotations" . | nindent 8 }}
+      labels:
+        {{- include "huly.labels" . | nindent 8 }}
+        app: collaborator
+    spec:
+      {{- include "huly.scheduling" . | nindent 6 }}
+      containers:
+        - name: collaborator
+          image: hardcoreeng/collaborator:{{ .Values.hulyVersion }}
+          ports:
+            - name: http
+              containerPort: 3078
+          env:
+            - name: COLLABORATOR_PORT
+              value: "3078"
+            {{- include "huly.envSecret" (dict "name" "SECRET" "key" "SERVER_SECRET" "root" .) | nindent 12 }}
+            {{- include "huly.envSecret" (dict "name" "STORAGE_CONFIG" "key" "STORAGE_CONFIG" "root" .) | nindent 12 }}
+            {{- include "huly.envConfig" (dict "name" "ACCOUNTS_URL" "key" "ACCOUNTS_URL_INTERNAL" "root" .) | nindent 12 }}
+            {{- include "huly.envConfig" (dict "name" "STATS_URL" "key" "STATS_URL_INTERNAL" "root" .) | nindent 12 }}
+          readinessProbe:
+            tcpSocket:
+              port: 3078
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 3078
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          {{- with .Values.collaborator.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}

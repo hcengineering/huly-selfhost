@@ -1,0 +1,17 @@
+{{- if .Values.redpanda.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: redpanda-data
+  labels:
+    {{- include "huly.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  {{- if .Values.redpanda.storageClassName }}
+  storageClassName: {{ .Values.redpanda.storageClassName }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.redpanda.storage }}
+{{- end }}

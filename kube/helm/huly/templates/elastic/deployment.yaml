@@ -1,0 +1,82 @@
+{{- if .Values.elastic.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: elastic
+  labels:
+    {{- include "huly.labels" . | nindent 4 }}
+    app: elastic
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: elastic
+  template:
+    metadata:
+      labels:
+        {{- include "huly.labels" . | nindent 8 }}
+        app: elastic
+    spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      {{- include "huly.scheduling" . | nindent 6 }}
+      containers:
+        - name: elastic
+          image: {{ .Values.elastic.image }}
+          args:
+            - /bin/sh
+            - -c
+            - |
+              bin/elasticsearch-plugin install --batch ingest-attachment;
+              /usr/local/bin/docker-entrypoint.sh elasticsearch
+          ports:
+            - name: http
+              containerPort: 9200
+          env:
+            - name: BITNAMI_DEBUG
+              value: "true"
+            - name: ELASTICSEARCH_PORT_NUMBER
+              value: "9200"
+            - name: ES_JAVA_OPTS
+              value: {{ .Values.elastic.javaOpts | quote }}
+            - name: discovery.type
+              value: single-node
+            - name: http.cors.enabled
+              value: "true"
+            - name: http.cors.allow-origin
+              value: "http://localhost:8082"
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  curl -sf http://localhost:9200/_cluster/health | grep -vq '"status":"red"'
+            initialDelaySeconds: 60
+            periodSeconds: 20
+            failureThreshold: 10
+          readinessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  curl -sf http://localhost:9200/_cluster/health
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          volumeMounts:
+            - name: data
+              mountPath: /usr/share/elasticsearch/data
+          {{- with .Values.elastic.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: elastic-data
+{{- end }}

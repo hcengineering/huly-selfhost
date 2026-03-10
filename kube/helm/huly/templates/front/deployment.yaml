@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: front
+  labels:
+    {{- include "huly.labels" . | nindent 4 }}
+    app: front
+spec:
+  replicas: {{ .Values.front.replicas }}
+  selector:
+    matchLabels:
+      app: front
+  template:
+    metadata:
+      annotations:
+        {{- include "huly.checksumAnnotations" . | nindent 8 }}
+      labels:
+        {{- include "huly.labels" . | nindent 8 }}
+        app: front
+    spec:
+      {{- include "huly.scheduling" . | nindent 6 }}
+      containers:
+        - name: front
+          image: hardcoreeng/front:{{ .Values.hulyVersion }}
+          ports:
+            - name: http
+              containerPort: 8080
+          env:
+            - name: SERVER_PORT
+              value: "8080"
+            {{- include "huly.envSecret" (dict "name" "SERVER_SECRET" "key" "SERVER_SECRET" "root" .) | nindent 12 }}
+            {{- include "huly.envSecret" (dict "name" "STORAGE_CONFIG" "key" "STORAGE_CONFIG" "root" .) | nindent 12 }}
+            {{- include "huly.envConfig" (dict "name" "ACCOUNTS_URL" "key" "ACCOUNTS_URL" "root" .) | nindent 12 }}
+            {{- include "huly.envConfig" (dict "name" "ACCOUNTS_URL_INTERNAL" "key" "ACCOUNTS_URL_INTERNAL" "root" .) | nindent 12 }}
+            {{- include "huly.envConfig" (dict "name" "COLLABORATOR_URL" "key" "COLLABORATOR_URL" "root" .) | nindent 12 }}
+            {{- include "huly.envConfig" (dict "name" "REKONI_URL" "key" "REKONI_URL" "root" .) | nindent 12 }}
+            {{- include "huly.envConfig" (dict "name" "ELASTIC_URL" "key" "ELASTIC_URL" "root" .) | nindent 12 }}
+            {{- include "huly.envConfig" (dict "name" "STATS_URL" "key" "STATS_URL" "root" .) | nindent 12 }}
+            {{- include "huly.envConfig" (dict "name" "DEFAULT_LANGUAGE" "key" "DEFAULT_LANGUAGE" "root" .) | nindent 12 }}
+            {{- include "huly.envConfig" (dict "name" "TITLE" "key" "TITLE" "root" .) | nindent 12 }}
+            {{- include "huly.envConfig" (dict "name" "UPLOAD_URL" "key" "UPLOAD_URL" "root" .) | nindent 12 }}
+            {{- include "huly.envConfig" (dict "name" "LAST_NAME_FIRST" "key" "LAST_NAME_FIRST" "root" .) | nindent 12 }}
+            {{- include "huly.envConfig" (dict "name" "DESKTOP_UPDATES_CHANNEL" "key" "DESKTOP_UPDATES_CHANNEL" "root" .) | nindent 12 }}
+            {{- include "huly.envConfig" (dict "name" "CALENDAR_URL" "key" "CALENDAR_URL" "root" .) | nindent 12 }}
+            {{- include "huly.envConfig" (dict "name" "GMAIL_URL" "key" "GMAIL_URL" "root" .) | nindent 12 }}
+            {{- include "huly.envConfig" (dict "name" "TELEGRAM_URL" "key" "TELEGRAM_URL" "root" .) | nindent 12 }}
+            {{- include "huly.envConfig" (dict "name" "LOVE_ENDPOINT" "key" "LOVE_ENDPOINT" "root" .) | nindent 12 }}
+            {{- if .Values.auth.disableSignup }}
+            - name: DISABLE_SIGNUP
+              value: "true"
+            {{- end }}
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 30
+          {{- with .Values.front.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
