@@ -48,3 +48,9 @@ data:
   TELEGRAM_URL: "{{ $proto }}://{{ .Values.domain }}/_telegram"
   CALENDAR_URL: "{{ $proto }}://{{ .Values.domain }}/_calendar"
   LOVE_ENDPOINT: "{{ $proto }}://{{ .Values.domain }}/_love"
+
+  {{- if .Values.aibot.enabled }}
+  AI_URL: "{{ $proto }}://{{ .Values.domain }}/_aibot"
+  AI_BOT_URL: "http://aibot:4010"
+  MONGO_URL: {{ ternary "mongodb://mongodb:27017" .Values.external.mongodb .Values.mongodb.enabled | quote }}
+  {{- end }}

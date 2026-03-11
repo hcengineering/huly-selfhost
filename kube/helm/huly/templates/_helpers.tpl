@@ -91,6 +91,17 @@ Init container that waits for CockroachDB to accept connections.
 {{- end }}
 
 {{/*
+Init container that waits for MongoDB to accept connections.
+*/}}
+{{- define "huly.waitForMongodb" -}}
+{{- if .Values.mongodb.enabled }}
+- name: wait-mongodb
+  image: busybox:1.36
+  command: ['sh', '-c', 'until nc -z mongodb 27017; do echo "waiting for mongodb..."; sleep 2; done']
+{{- end }}
+{{- end }}
+
+{{/*
 Init container that waits for Redpanda to accept connections.
 */}}
 {{- define "huly.waitForRedpanda" -}}

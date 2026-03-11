@@ -1,0 +1,82 @@
+{{- if .Values.aibot.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aibot
+  labels:
+    {{- include "huly.labels" . | nindent 4 }}
+    app: aibot
+spec:
+  replicas: {{ .Values.aibot.replicas }}
+  selector:
+    matchLabels:
+      app: aibot
+  template:
+    metadata:
+      annotations:
+        {{- include "huly.checksumAnnotations" . | nindent 8 }}
+      labels:
+        {{- include "huly.labels" . | nindent 8 }}
+        app: aibot
+    spec:
+      {{- include "huly.scheduling" . | nindent 6 }}
+      initContainers:
+        {{- include "huly.waitForCockroach" . | nindent 8 }}
+        {{- include "huly.waitForMongodb" . | nindent 8 }}
+      containers:
+        - name: aibot
+          image: "{{ .Values.aibot.image }}:{{ .Values.hulyVersion }}"
+          ports:
+            - name: http
+              containerPort: 4010
+          env:
+            - name: SERVER_PORT
+              value: "4010"
+            - name: FIRST_NAME
+              value: {{ .Values.aibot.firstName | quote }}
+            - name: LAST_NAME
+              value: {{ .Values.aibot.lastName | quote }}
+            {{- include "huly.envSecret" (dict "name" "SERVER_SECRET" "key" "SERVER_SECRET" "root" .) | nindent 12 }}
+            {{- include "huly.envSecret" (dict "name" "STORAGE_CONFIG" "key" "STORAGE_CONFIG" "root" .) | nindent 12 }}
+            {{- include "huly.envSecret" (dict "name" "DB_URL" "key" "CR_DB_URL" "root" .) | nindent 12 }}
+            {{- include "huly.envSecret" (dict "name" "OPENAI_API_KEY" "key" "OPENAI_API_KEY" "root" .) | nindent 12 }}
+            {{- include "huly.envSecret" (dict "name" "PASSWORD" "key" "AIBOT_PASSWORD" "root" .) | nindent 12 }}
+            {{- if .Values.secrets.openaiBaseUrl }}
+            {{- include "huly.envSecret" (dict "name" "OPENAI_BASE_URL" "key" "OPENAI_BASE_URL" "root" .) | nindent 12 }}
+            {{- end }}
+            {{- include "huly.envConfig" (dict "name" "ACCOUNTS_URL" "key" "ACCOUNTS_URL_INTERNAL" "root" .) | nindent 12 }}
+            {{- include "huly.envConfig" (dict "name" "MONGO_URL" "key" "MONGO_URL" "root" .) | nindent 12 }}
+            {{- include "huly.envConfig" (dict "name" "STATS_URL" "key" "STATS_URL_INTERNAL" "root" .) | nindent 12 }}
+            {{- include "huly.envConfig" (dict "name" "QUEUE_CONFIG" "key" "QUEUE_CONFIG" "root" .) | nindent 12 }}
+            {{- include "huly.envConfig" (dict "name" "LOVE_ENDPOINT" "key" "LOVE_ENDPOINT" "root" .) | nindent 12 }}
+            {{- with .Values.aibot.openaiModel }}
+            - name: OPENAI_MODEL
+              value: {{ . | quote }}
+            {{- end }}
+            {{- with .Values.aibot.openaiEmbeddingModel }}
+            - name: OPENAI_EMBEDDING_MODEL
+              value: {{ . | quote }}
+            {{- end }}
+            {{- with .Values.aibot.openaiTranslateModel }}
+            - name: AI_OPENAI_TRANSLATE_MODEL
+              value: {{ . | quote }}
+            {{- end }}
+            {{- with .Values.aibot.openaiSummaryModel }}
+            - name: AI_OPENAI_SUMMARY_MODEL
+              value: {{ . | quote }}
+            {{- end }}
+          readinessProbe:
+            tcpSocket:
+              port: 4010
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 4010
+            initialDelaySeconds: 15
+            periodSeconds: 30
+          {{- with .Values.aibot.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+{{- end }}

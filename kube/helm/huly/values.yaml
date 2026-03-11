@@ -31,6 +31,12 @@ secrets:
   # Set this when using an external database (cockroach.enabled=false).
   # Format: postgres://<user>:<pass>@<host>:26257/<db>
   crDbUrl: ""
+  # OpenAI API key (required when aibot.enabled=true)
+  openaiApiKey: ""
+  # OpenAI base URL override (optional, e.g. for Azure OpenAI or proxies)
+  openaiBaseUrl: ""
+  # AI bot password (auto-generated if empty)
+  aibotPassword: ""
 
 # ──────────────────────────────────────────────────────────────
 # Authentication providers (set on the account service)
@@ -111,6 +117,7 @@ global:
 #   redpanda:   external.redpanda
 #   elastic:    external.elastic
 #   minio:      storage.type=s3 + storage.s3.*
+#   mongodb:    external.mongodb (only when aibot.enabled=true)
 # ──────────────────────────────────────────────────────────────
 cockroach:
   enabled: true
@@ -146,6 +153,14 @@ minio:
   storageClassName: ""
   resources: {}
 
+mongodb:
+  # Built-in MongoDB — only deployed when aibot.enabled=true
+  enabled: true
+  image: mongo:7
+  storage: 5Gi
+  storageClassName: ""
+  resources: {}
+
 # ──────────────────────────────────────────────────────────────
 # External infrastructure endpoints
 # Used when the corresponding built-in service is disabled.
@@ -155,6 +170,8 @@ external:
   redpanda: ""       # e.g. kafka.example.com:9092
   # Used when elastic.enabled=false
   elastic: ""        # e.g. https://elasticsearch.example.com:9200
+  # Used when mongodb.enabled=false (requires aibot.enabled=true)
+  mongodb: ""        # e.g. mongodb://user:pass@host:27017
 
 # ──────────────────────────────────────────────────────────────
 # Application services
@@ -207,3 +224,19 @@ kvs:
   enabled: true
   replicas: 1
   resources: {}
+
+aibot:
+  # AI bot service — requires OpenAI API key
+  enabled: false
+  replicas: 1
+  image: hardcoreeng/ai-bot
+  firstName: "Huly"
+  lastName: "AI"
+  # Override default models (leave empty for upstream defaults)
+  openaiModel: ""
+  openaiEmbeddingModel: ""
+  openaiTranslateModel: ""
+  openaiSummaryModel: ""
+  resources:
+    limits:
+      memory: 512Mi

@@ -40,6 +40,9 @@ spec:
             {{- include "huly.envConfig" (dict "name" "STATS_URL" "key" "STATS_URL_INTERNAL" "root" .) | nindent 12 }}
             {{- include "huly.envConfig" (dict "name" "QUEUE_CONFIG" "key" "QUEUE_CONFIG" "root" .) | nindent 12 }}
             {{- include "huly.envConfig" (dict "name" "LAST_NAME_FIRST" "key" "LAST_NAME_FIRST" "root" .) | nindent 12 }}
+            {{- if .Values.aibot.enabled }}
+            {{- include "huly.envConfig" (dict "name" "AI_BOT_URL" "key" "AI_BOT_URL" "root" .) | nindent 12 }}
+            {{- end }}
             - name: SERVER_CURSOR_MAXTIMEMS
               value: "30000"
           readinessProbe:

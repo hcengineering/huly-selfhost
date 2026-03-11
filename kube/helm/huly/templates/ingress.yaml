@@ -14,6 +14,9 @@
   (dict "name" "rekoni"       "svc" "rekoni"       "port" 4004 "ws" false)
   (dict "name" "stats"        "svc" "stats"        "port" 4900 "ws" false)
 -}}
+{{- if .Values.aibot.enabled }}
+{{- $backends = append $backends (dict "name" "aibot" "svc" "aibot" "port" 4010 "ws" true) }}
+{{- end -}}
 
 {{- range $backends }}
 ---
