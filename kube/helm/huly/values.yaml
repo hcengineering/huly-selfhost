@@ -12,6 +12,11 @@ fullnameOverride: ""
 # ──────────────────────────────────────────────────────────────
 hulyVersion: v0.7.382
 
+# Docker registry prefix for Huly service images.
+# Default "hardcoreeng" pulls from Docker Hub (hardcoreeng/front, etc.).
+# Override to use a private registry, e.g. europe-west3-docker.pkg.dev/kendall-ledo/docker/huly
+hulyRegistry: hardcoreeng
+
 # ──────────────────────────────────────────────────────────────
 # Secrets — leave empty to auto-generate (persists across upgrades)
 # ──────────────────────────────────────────────────────────────
@@ -240,3 +245,33 @@ aibot:
   resources:
     limits:
       memory: 512Mi
+
+# ──────────────────────────────────────────────────────────────
+# Backup — nightly CronJobs to S3-compatible storage
+# ──────────────────────────────────────────────────────────────
+backup:
+  enabled: false
+  schedule: "0 2 * * *"           # 2 AM daily
+  retentionDays: 30
+  rcloneImage: rclone/rclone:latest
+  s3:
+    endpoint: ""                   # e.g. https://nbg1.your-objectstorage.com
+    region: ""
+    bucket: ""                     # e.g. ledo-backups
+    pathPrefix: ""                 # e.g. huly-ledo
+    accessKey: ""
+    secretKey: ""
+    # Secondary credentials for rotation (optional)
+    secondaryAccessKey: ""
+    secondarySecretKey: ""
+    # Which credential set is active: "primary" or "secondary"
+    activeCredential: "primary"
+  cockroachdb:
+    enabled: true
+    schedule: ""                   # override global schedule
+  files:
+    enabled: true
+    schedule: ""
+  mongodb:
+    enabled: true                  # only runs when aibot.enabled=true
+    schedule: ""

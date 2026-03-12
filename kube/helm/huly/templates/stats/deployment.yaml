@@ -21,7 +21,7 @@ spec:
       {{- include "huly.scheduling" . | nindent 6 }}
       containers:
         - name: stats
-          image: hardcoreeng/stats:{{ .Values.hulyVersion }}
+          image: {{ .Values.hulyRegistry }}/stats:{{ .Values.hulyVersion }}
           ports:
             - name: http
               containerPort: 4900

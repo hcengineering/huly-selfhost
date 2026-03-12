@@ -1,0 +1,85 @@
+{{- if and .Values.backup.enabled .Values.backup.cockroachdb.enabled .Values.cockroach.enabled }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "huly.fullname" . }}-backup-cockroachdb
+  labels:
+    {{- include "huly.labels" . | nindent 4 }}
+    app: backup-cockroachdb
+spec:
+  schedule: {{ .Values.backup.cockroachdb.schedule | default .Values.backup.schedule | quote }}
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      template:
+        metadata:
+          labels:
+            {{- include "huly.labels" . | nindent 12 }}
+            app: backup-cockroachdb
+        spec:
+          {{- include "huly.scheduling" . | nindent 10 }}
+          restartPolicy: OnFailure
+          volumes:
+            - name: backup
+              emptyDir: {}
+          initContainers:
+            - name: pg-dump
+              image: postgres:16-alpine
+              volumeMounts:
+                - name: backup
+                  mountPath: /backup
+              env:
+                {{- include "huly.envSecret" (dict "name" "CR_DB_URL" "key" "CR_DB_URL" "root" .) | nindent 16 }}
+              command:
+                - sh
+                - -c
+                - |
+                  set -e
+                  STAMP=$(date +%Y%m%d-%H%M%S)
+                  DEST="/backup/cockroachdb_${STAMP}.sql.gz"
+                  echo "Dumping CockroachDB to ${DEST}..."
+                  pg_dump "$CR_DB_URL" | gzip > "$DEST"
+                  ls -lh "$DEST"
+                  echo "pg_dump complete."
+          containers:
+            - name: rclone-upload
+              image: {{ .Values.backup.rcloneImage }}
+              volumeMounts:
+                - name: backup
+                  mountPath: /backup
+              env:
+                {{- include "huly.envBackupSecret" (dict "name" "BACKUP_S3_ENDPOINT" "key" "BACKUP_S3_ENDPOINT" "root" .) | nindent 16 }}
+                {{- include "huly.envBackupSecret" (dict "name" "BACKUP_S3_REGION" "key" "BACKUP_S3_REGION" "root" .) | nindent 16 }}
+                {{- include "huly.envBackupSecret" (dict "name" "BACKUP_S3_BUCKET" "key" "BACKUP_S3_BUCKET" "root" .) | nindent 16 }}
+                {{- include "huly.envBackupSecret" (dict "name" "BACKUP_S3_PATH_PREFIX" "key" "BACKUP_S3_PATH_PREFIX" "root" .) | nindent 16 }}
+                {{- include "huly.envBackupSecret" (dict "name" "BACKUP_S3_ACCESS_KEY" "key" "BACKUP_S3_ACCESS_KEY" "root" .) | nindent 16 }}
+                {{- include "huly.envBackupSecret" (dict "name" "BACKUP_S3_SECRET_KEY" "key" "BACKUP_S3_SECRET_KEY" "root" .) | nindent 16 }}
+              command:
+                - sh
+                - -c
+                - |
+                  set -e
+                  # Configure rclone remote
+                  rclone config create backup s3 \
+                    provider=Other \
+                    env_auth=false \
+                    access_key_id="$BACKUP_S3_ACCESS_KEY" \
+                    secret_access_key="$BACKUP_S3_SECRET_KEY" \
+                    endpoint="$BACKUP_S3_ENDPOINT" \
+                    region="$BACKUP_S3_REGION" \
+                    --non-interactive
+
+                  REMOTE_PATH="backup:${BACKUP_S3_BUCKET}/${BACKUP_S3_PATH_PREFIX}/cockroachdb/"
+
+                  echo "Uploading to ${REMOTE_PATH}..."
+                  rclone copy /backup/ "$REMOTE_PATH" --include "*.sql.gz" -v
+
+                  echo "Cleaning up backups older than {{ .Values.backup.retentionDays }} days..."
+                  rclone delete "$REMOTE_PATH" --min-age {{ .Values.backup.retentionDays }}d -v
+
+                  echo "Backup complete."
+                  rclone ls "$REMOTE_PATH" | tail -5
+{{- end }}

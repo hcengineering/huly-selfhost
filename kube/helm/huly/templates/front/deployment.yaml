@@ -21,7 +21,7 @@ spec:
       {{- include "huly.scheduling" . | nindent 6 }}
       containers:
         - name: front
-          image: hardcoreeng/front:{{ .Values.hulyVersion }}
+          image: {{ .Values.hulyRegistry }}/front:{{ .Values.hulyVersion }}
           ports:
             - name: http
               containerPort: 8080

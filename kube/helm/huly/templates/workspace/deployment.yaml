@@ -24,7 +24,7 @@ spec:
         {{- include "huly.waitForRedpanda" . | nindent 8 }}
       containers:
         - name: workspace
-          image: hardcoreeng/workspace:{{ .Values.hulyVersion }}
+          image: {{ .Values.hulyRegistry }}/workspace:{{ .Values.hulyVersion }}
           env:
             {{- include "huly.envSecret" (dict "name" "SERVER_SECRET" "key" "SERVER_SECRET" "root" .) | nindent 12 }}
             {{- include "huly.envSecret" (dict "name" "DB_URL" "key" "CR_DB_URL" "root" .) | nindent 12 }}

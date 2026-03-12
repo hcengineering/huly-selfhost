@@ -21,7 +21,7 @@ spec:
       {{- include "huly.scheduling" . | nindent 6 }}
       containers:
         - name: collaborator
-          image: hardcoreeng/collaborator:{{ .Values.hulyVersion }}
+          image: {{ .Values.hulyRegistry }}/collaborator:{{ .Values.hulyVersion }}
           ports:
             - name: http
               containerPort: 3078

@@ -24,7 +24,7 @@ spec:
         {{- include "huly.waitForRedpanda" . | nindent 8 }}
       containers:
         - name: account
-          image: hardcoreeng/account:{{ .Values.hulyVersion }}
+          image: {{ .Values.hulyRegistry }}/account:{{ .Values.hulyVersion }}
           ports:
             - name: http
               containerPort: 3000

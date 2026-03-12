@@ -113,6 +113,25 @@ Init container that waits for Redpanda to accept connections.
 {{- end }}
 
 {{/*
+Backup secret resource name.
+*/}}
+{{- define "huly.backupSecretName" -}}
+{{- printf "%s-backup-secret" (include "huly.fullname" .) }}
+{{- end }}
+
+{{/*
+Env var from backup Secret helper.
+Usage: {{- include "huly.envBackupSecret" (dict "name" "BACKUP_S3_ENDPOINT" "key" "BACKUP_S3_ENDPOINT" "root" .) }}
+*/}}
+{{- define "huly.envBackupSecret" -}}
+- name: {{ .name }}
+  valueFrom:
+    secretKeyRef:
+      name: {{ include "huly.backupSecretName" .root }}
+      key: {{ .key }}
+{{- end }}
+
+{{/*
 Env var from Secret helper — reduces boilerplate.
 Usage: {{- include "huly.envSecret" (dict "name" "SERVER_SECRET" "key" "SERVER_SECRET" "root" .) }}
 */}}

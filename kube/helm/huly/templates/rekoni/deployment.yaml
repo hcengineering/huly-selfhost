@@ -21,7 +21,7 @@ spec:
       {{- include "huly.scheduling" . | nindent 6 }}
       containers:
         - name: rekoni
-          image: hardcoreeng/rekoni-service:{{ .Values.hulyVersion }}
+          image: {{ .Values.hulyRegistry }}/rekoni-service:{{ .Values.hulyVersion }}
           ports:
             - name: http
               containerPort: 4004

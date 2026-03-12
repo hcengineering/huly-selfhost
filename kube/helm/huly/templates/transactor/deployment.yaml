@@ -24,7 +24,7 @@ spec:
         {{- include "huly.waitForRedpanda" . | nindent 8 }}
       containers:
         - name: transactor
-          image: hardcoreeng/transactor:{{ .Values.hulyVersion }}
+          image: {{ .Values.hulyRegistry }}/transactor:{{ .Values.hulyVersion }}
           ports:
             - name: http
               containerPort: 3333
