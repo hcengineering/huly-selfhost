@@ -1,0 +1,17 @@
+{
+  "name": "@huly-selfhost/mint-token",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Mint workspace-scoped JWT tokens for Huly API access",
+  "scripts": {
+    "mint": "tsx mint.ts"
+  },
+  "dependencies": {
+    "jwt-simple": "^0.5.6"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}

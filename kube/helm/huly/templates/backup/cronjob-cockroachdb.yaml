@@ -26,13 +26,11 @@ spec:
             - name: backup
               emptyDir: {}
           initContainers:
-            - name: pg-dump
-              image: postgres:16-alpine
+            - name: crdb-dump
+              image: cockroachdb/cockroach:latest-v24.2
               volumeMounts:
                 - name: backup
                   mountPath: /backup
-              env:
-                {{- include "huly.envSecret" (dict "name" "CR_DB_URL" "key" "CR_DB_URL" "root" .) | nindent 16 }}
               command:
                 - sh
                 - -c
@@ -40,10 +38,49 @@ spec:
                   set -e
                   STAMP=$(date +%Y%m%d-%H%M%S)
                   DEST="/backup/cockroachdb_${STAMP}.sql.gz"
-                  echo "Dumping CockroachDB to ${DEST}..."
-                  pg_dump "$CR_DB_URL" | gzip > "$DEST"
-                  ls -lh "$DEST"
-                  echo "pg_dump complete."
+                  CRDB="cockroach sql --insecure --host=cockroach:26257 -d {{ .Values.cockroach.database }}"
+
+                  echo "=== CockroachDB backup started at $(date -u) ==="
+
+                  {
+                    # 1. Schema DDL
+                    echo "-- Schema dump"
+                    $CRDB --format=raw -e "SHOW CREATE ALL TABLES"
+
+                    # 2. Per-table data as CSV (COPY format)
+                    TABLES=$($CRDB --format=csv -e "
+                      SELECT schema_name || '.' || table_name
+                      FROM [SHOW TABLES FROM {{ .Values.cockroach.database }}]
+                      WHERE schema_name NOT IN ('crdb_internal','pg_catalog','pg_extension','information_schema')
+                      ORDER BY schema_name, table_name
+                    " | tail -n +2)
+
+                    for tbl in $TABLES; do
+                      ROW_COUNT=$($CRDB --format=csv -e "SELECT count(*) FROM ${tbl}" | tail -1)
+                      if [ "$ROW_COUNT" -gt 0 ] 2>/dev/null; then
+                        echo ""
+                        echo "-- Data for ${tbl} (${ROW_COUNT} rows)"
+                        $CRDB --format=raw -e "SELECT
+                          'INSERT INTO ${tbl} (' ||
+                          array_to_string(
+                            (SELECT array_agg(column_name ORDER BY ordinal_position)
+                             FROM information_schema.columns
+                             WHERE table_schema = split_part('${tbl}', '.', 1)
+                               AND table_name = split_part('${tbl}', '.', 2)),
+                            ', '
+                          ) || ') VALUES' AS header" 2>/dev/null || true
+
+                        # Export as CSV, can be loaded with IMPORT INTO
+                        echo "-- CSV data for IMPORT INTO ${tbl}:"
+                        echo "COPY ${tbl} FROM stdin WITH CSV HEADER;"
+                        $CRDB --format=csv -e "TABLE ${tbl}"
+                        echo "\\."
+                      fi
+                    done
+                  } | gzip > "$DEST"
+
+                  SIZE=$(ls -lh "$DEST" | awk '{print $5}')
+                  echo "=== Dump complete: ${DEST} (${SIZE}) ==="
           containers:
             - name: rclone-upload
               image: {{ .Values.backup.rcloneImage }}
