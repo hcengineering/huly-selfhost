@@ -286,34 +286,33 @@ Add the public key into `compose.yaml` in section `services:front:environment`:
 ## Web Push Notifications
 
 > [!NOTE]
-> In version 0.7.x and later, the `ses` service has been replaced with the `notification` service for web push notifications and the `mail` service for sending emails using SES. The environment variables `SECRET_KEY`, `PUSH_PUBLIC_KEY`, and `PUSH_PRIVATE_KEY` are not required for web push notifications in 0.7.x.
+> In version 0.7.x and later, the legacy `ses` service has been replaced with the **`notification`** service for web push notifications and the `mail` service for sending emails using SES. New deployments should use the `notification` service.
 
-To enable web push notifications in Huly, you need to configure the SES service with the VAPID keys.
+To enable web push notifications in Huly, you need to configure the `notification` service with the VAPID keys and point `transactor` to it.
 
 ### Step 1: Configure the Transactor Service
 
-Add `WEB_PUSH_URL` to `transactor` container:
+Add `WEB_PUSH_URL` to the `transactor` container:
 
 ```yaml
 transactor:
   ...
   environment:
-    - WEB_PUSH_URL=http://ses:3335
+    - WEB_PUSH_URL=http://notification:8091
   ...
 ```
 
-### Step 2: Configure the SES Service
+### Step 2: Configure the Notification Service
 
-Add the `ses` container to your `docker-compose.yaml` file with the generated VAPID keys:
+Add the `notification` container to your `docker-compose.yaml` file with the generated VAPID keys:
 
 ```yaml
-ses:
-  image: hardcoreeng/ses:${HULY_VERSION}
+notification:
+  image: hardcoreeng/notification:${HULY_VERSION}
   environment:
-    - PORT=3335
+    - PORT=8091
     - SOURCE=mail@example.com
-    - ACCESS_KEY=none
-    - SECRET_KEY=none
+    - STATS_URL=http://stats:4900
     - PUSH_PUBLIC_KEY=${PUSH_PUBLIC_KEY}
     - PUSH_PRIVATE_KEY=${PUSH_PRIVATE_KEY}
   restart: unless-stopped
