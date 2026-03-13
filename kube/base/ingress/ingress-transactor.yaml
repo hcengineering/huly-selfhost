@@ -1,0 +1,30 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: huly-transactor
+  labels:
+    app.kubernetes.io/part-of: huly
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-http-version: "1.1"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - huly.example
+      secretName: huly-tls
+  rules:
+    - host: huly.example
+      http:
+        paths:
+          - path: /_transactor(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: transactor
+                port:
+                  number: 3333

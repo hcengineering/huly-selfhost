@@ -1,0 +1,15 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - cockroach/deployment.yaml
+  - cockroach/service.yaml
+  - cockroach/pvc.yaml
+  - redpanda/deployment.yaml
+  - redpanda/service.yaml
+  - redpanda/pvc.yaml
+  - elastic/deployment.yaml
+  - elastic/service.yaml
+  - elastic/pvc.yaml
+  - minio/deployment.yaml
+  - minio/service.yaml
+  - minio/pvc.yaml
