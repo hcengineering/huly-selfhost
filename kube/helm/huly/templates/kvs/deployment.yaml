@@ -24,7 +24,8 @@ spec:
         {{- include "huly.waitForCockroach" . | nindent 8 }}
       containers:
         - name: kvs
-          image: {{ .Values.hulyRegistry }}/hulykvs:{{ .Values.hulyVersion }}
+          image: {{ .Values.hulyRegistry }}/hulykvs:{{ .Values.kvs.version | default .Values.hulyVersion }}
+          imagePullPolicy: Always
           ports:
             - name: http
               containerPort: 8094
