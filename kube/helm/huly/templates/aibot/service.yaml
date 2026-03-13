@@ -1,0 +1,16 @@
+{{- if .Values.aibot.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: aibot
+  labels:
+    {{- include "huly.labels" . | nindent 4 }}
+    app: aibot
+spec:
+  selector:
+    app: aibot
+  ports:
+    - name: http
+      port: 4010
+      targetPort: 4010
+{{- end }}

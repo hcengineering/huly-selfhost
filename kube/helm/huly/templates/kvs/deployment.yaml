@@ -1,0 +1,49 @@
+{{- if .Values.kvs.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kvs
+  labels:
+    {{- include "huly.labels" . | nindent 4 }}
+    app: kvs
+spec:
+  replicas: {{ .Values.kvs.replicas }}
+  selector:
+    matchLabels:
+      app: kvs
+  template:
+    metadata:
+      annotations:
+        {{- include "huly.checksumAnnotations" . | nindent 8 }}
+      labels:
+        {{- include "huly.labels" . | nindent 8 }}
+        app: kvs
+    spec:
+      {{- include "huly.scheduling" . | nindent 6 }}
+      initContainers:
+        {{- include "huly.waitForCockroach" . | nindent 8 }}
+      containers:
+        - name: kvs
+          image: {{ .Values.hulyRegistry }}/hulykvs:{{ .Values.kvs.version | default .Values.hulyVersion }}
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8094
+          env:
+            {{- include "huly.envSecret" (dict "name" "HULY_DB_CONNECTION" "key" "CR_DB_URL" "root" .) | nindent 12 }}
+            {{- include "huly.envSecret" (dict "name" "HULY_TOKEN_SECRET" "key" "SERVER_SECRET" "root" .) | nindent 12 }}
+          readinessProbe:
+            tcpSocket:
+              port: 8094
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 8094
+            initialDelaySeconds: 15
+            periodSeconds: 30
+          {{- with .Values.kvs.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+{{- end }}

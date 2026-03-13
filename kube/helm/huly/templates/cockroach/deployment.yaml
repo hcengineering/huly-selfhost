@@ -1,0 +1,62 @@
+{{- if .Values.cockroach.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cockroach
+  labels:
+    {{- include "huly.labels" . | nindent 4 }}
+    app: cockroach
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: cockroach
+  template:
+    metadata:
+      labels:
+        {{- include "huly.labels" . | nindent 8 }}
+        app: cockroach
+    spec:
+      {{- include "huly.scheduling" . | nindent 6 }}
+      containers:
+        - name: cockroach
+          image: {{ .Values.cockroach.image }}
+          args:
+            - start-single-node
+            - --insecure
+          ports:
+            - name: grpc
+              containerPort: 26257
+            - name: http
+              containerPort: 8080
+          env:
+            - name: COCKROACH_DATABASE
+              value: {{ .Values.cockroach.database }}
+            - name: COCKROACH_USER
+              value: {{ .Values.cockroach.username }}
+            {{- include "huly.envSecret" (dict "name" "COCKROACH_PASSWORD" "key" "COCKROACH_PASSWORD" "root" .) | nindent 12 }}
+          readinessProbe:
+            exec:
+              command: ['sh', '-c', 'curl -sf http://localhost:8080/health?ready=1']
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          volumeMounts:
+            - name: data
+              mountPath: /cockroach/cockroach-data
+          {{- with .Values.cockroach.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: cockroach-data
+{{- end }}

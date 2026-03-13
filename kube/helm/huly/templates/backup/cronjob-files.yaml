@@ -1,0 +1,107 @@
+{{- if and .Values.backup.enabled .Values.backup.files.enabled }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "huly.fullname" . }}-backup-files
+  labels:
+    {{- include "huly.labels" . | nindent 4 }}
+    app: backup-files
+spec:
+  schedule: {{ .Values.backup.files.schedule | default .Values.backup.schedule | quote }}
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      template:
+        metadata:
+          labels:
+            {{- include "huly.labels" . | nindent 12 }}
+            app: backup-files
+        spec:
+          {{- include "huly.scheduling" . | nindent 10 }}
+          restartPolicy: OnFailure
+          containers:
+            - name: rclone-sync
+              image: {{ .Values.backup.rcloneImage }}
+              env:
+                {{- include "huly.envSecret" (dict "name" "STORAGE_CONFIG" "key" "STORAGE_CONFIG" "root" .) | nindent 16 }}
+                {{- include "huly.envBackupSecret" (dict "name" "BACKUP_S3_ENDPOINT" "key" "BACKUP_S3_ENDPOINT" "root" .) | nindent 16 }}
+                {{- include "huly.envBackupSecret" (dict "name" "BACKUP_S3_REGION" "key" "BACKUP_S3_REGION" "root" .) | nindent 16 }}
+                {{- include "huly.envBackupSecret" (dict "name" "BACKUP_S3_BUCKET" "key" "BACKUP_S3_BUCKET" "root" .) | nindent 16 }}
+                {{- include "huly.envBackupSecret" (dict "name" "BACKUP_S3_PATH_PREFIX" "key" "BACKUP_S3_PATH_PREFIX" "root" .) | nindent 16 }}
+                {{- include "huly.envBackupSecret" (dict "name" "BACKUP_S3_ACCESS_KEY" "key" "BACKUP_S3_ACCESS_KEY" "root" .) | nindent 16 }}
+                {{- include "huly.envBackupSecret" (dict "name" "BACKUP_S3_SECRET_KEY" "key" "BACKUP_S3_SECRET_KEY" "root" .) | nindent 16 }}
+              command:
+                - sh
+                - -c
+                - |
+                  set -e
+
+                  # Parse STORAGE_CONFIG to extract source S3 details.
+                  # Format: s3|https://endpoint?accessKey=X&secretKey=Y&region=Z&rootBucket=B
+                  #     or: minio|minio?accessKey=X&secretKey=Y
+
+                  PROTO=$(echo "$STORAGE_CONFIG" | cut -d'|' -f1)
+                  REST=$(echo "$STORAGE_CONFIG" | cut -d'|' -f2)
+
+                  if [ "$PROTO" = "minio" ]; then
+                    # MinIO: host is "minio", creds in query string
+                    SRC_ENDPOINT="http://minio:9000"
+                    SRC_PROVIDER="Minio"
+                  else
+                    # External S3: endpoint is the URL before '?'
+                    SRC_ENDPOINT=$(echo "$REST" | cut -d'?' -f1)
+                    SRC_PROVIDER="Other"
+                  fi
+
+                  PARAMS=$(echo "$REST" | cut -d'?' -f2)
+                  SRC_ACCESS_KEY=$(echo "$PARAMS" | tr '&' '\n' | grep '^accessKey=' | cut -d= -f2)
+                  SRC_SECRET_KEY=$(echo "$PARAMS" | tr '&' '\n' | grep '^secretKey=' | cut -d= -f2)
+                  SRC_REGION=$(echo "$PARAMS" | tr '&' '\n' | grep '^region=' | cut -d= -f2)
+                  SRC_ROOT_BUCKET=$(echo "$PARAMS" | tr '&' '\n' | grep '^rootBucket=' | cut -d= -f2)
+                  SRC_BUCKET_PREFIX=$(echo "$PARAMS" | tr '&' '\n' | grep '^bucketPrefix=' | cut -d= -f2)
+
+                  # Configure source remote
+                  rclone config create source s3 \
+                    provider="$SRC_PROVIDER" \
+                    env_auth=false \
+                    access_key_id="$SRC_ACCESS_KEY" \
+                    secret_access_key="$SRC_SECRET_KEY" \
+                    endpoint="$SRC_ENDPOINT" \
+                    region="${SRC_REGION:-us-east-1}" \
+                    --non-interactive
+
+                  # Configure backup remote
+                  rclone config create backup s3 \
+                    provider=Other \
+                    env_auth=false \
+                    access_key_id="$BACKUP_S3_ACCESS_KEY" \
+                    secret_access_key="$BACKUP_S3_SECRET_KEY" \
+                    endpoint="$BACKUP_S3_ENDPOINT" \
+                    region="$BACKUP_S3_REGION" \
+                    --non-interactive
+
+                  # Determine source path
+                  if [ -n "$SRC_ROOT_BUCKET" ]; then
+                    SRC_PATH="source:${SRC_ROOT_BUCKET}"
+                  elif [ -n "$SRC_BUCKET_PREFIX" ]; then
+                    echo "Warning: bucketPrefix mode — syncing all buckets with prefix '${SRC_BUCKET_PREFIX}'"
+                    SRC_PATH="source:${SRC_BUCKET_PREFIX}"
+                  else
+                    echo "Error: cannot determine source bucket from STORAGE_CONFIG"
+                    exit 1
+                  fi
+
+                  DEST_PATH="backup:${BACKUP_S3_BUCKET}/${BACKUP_S3_PATH_PREFIX}/files/"
+
+                  echo "Syncing files from ${SRC_PATH} to ${DEST_PATH}..."
+                  rclone sync "$SRC_PATH" "$DEST_PATH" \
+                    --transfers 8 \
+                    --checkers 16 \
+                    --fast-list \
+                    -v
+
+                  echo "File sync complete."
+{{- end }}

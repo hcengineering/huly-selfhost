@@ -1,0 +1,87 @@
+{{- if .Values.redpanda.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redpanda
+  labels:
+    {{- include "huly.labels" . | nindent 4 }}
+    app: redpanda
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redpanda
+  template:
+    metadata:
+      labels:
+        {{- include "huly.labels" . | nindent 8 }}
+        app: redpanda
+    spec:
+      {{- include "huly.scheduling" . | nindent 6 }}
+      initContainers:
+        - name: set-datadir-ownership
+          image: busybox:1.36
+          command: ["sh", "-c", "chown -R 101:101 /var/lib/redpanda/data"]
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/redpanda/data
+      containers:
+        - name: redpanda
+          image: {{ .Values.redpanda.image }}
+          args:
+            - redpanda
+            - start
+            - --kafka-addr
+            - internal://0.0.0.0:9092,external://0.0.0.0:19092
+            - --advertise-kafka-addr
+            - internal://redpanda:9092,external://localhost:19092
+            - --pandaproxy-addr
+            - internal://0.0.0.0:8082,external://0.0.0.0:18082
+            - --advertise-pandaproxy-addr
+            - internal://redpanda:8082,external://localhost:18082
+            - --schema-registry-addr
+            - internal://0.0.0.0:8081,external://0.0.0.0:18081
+            - --rpc-addr
+            - 0.0.0.0:33145
+            - --advertise-rpc-addr
+            - redpanda:33145
+            - --mode
+            - dev-container
+            - --smp
+            - "1"
+            - --default-log-level=info
+          ports:
+            - name: kafka
+              containerPort: 9092
+            - name: rpc
+              containerPort: 33145
+          env:
+            - name: REDPANDA_SUPERUSER_USERNAME
+              value: superuser
+            - name: REDPANDA_SUPERUSER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "huly.secretName" . }}
+                  key: REDPANDA_SUPERUSER_PASSWORD
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          readinessProbe:
+            exec:
+              command: ["/bin/sh", "-c", "rpk cluster info"]
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 5
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/redpanda/data
+          {{- with .Values.redpanda.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: redpanda-data
+{{- end }}

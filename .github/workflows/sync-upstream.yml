@@ -1,0 +1,115 @@
+name: Sync Upstream
+
+on:
+  schedule:
+    # Check daily at 08:00 UTC
+    - cron: "0 8 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+env:
+  UPSTREAM_REPO: hcengineering/huly-selfhost
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Add upstream remote
+        run: |
+          git remote add upstream https://github.com/${{ env.UPSTREAM_REPO }}.git || true
+          git fetch upstream main --tags
+
+      - name: Check for new commits
+        id: check
+        run: |
+          LOCAL=$(git rev-parse origin/main)
+          UPSTREAM=$(git rev-parse upstream/main)
+
+          if [ "$LOCAL" = "$UPSTREAM" ]; then
+            echo "up_to_date=true" >> "$GITHUB_OUTPUT"
+            echo "No new upstream commits"
+          else
+            COMMITS=$(git log --oneline origin/main..upstream/main)
+            COUNT=$(echo "$COMMITS" | wc -l | tr -d ' ')
+            echo "up_to_date=false" >> "$GITHUB_OUTPUT"
+            echo "commit_count=$COUNT" >> "$GITHUB_OUTPUT"
+
+            # Extract version bump if any (e.g. "Update to version 382")
+            VERSION=$(echo "$COMMITS" | grep -oP 'version\s+\K[\d.]+' | head -1 || true)
+            echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+            # Save commit log for issue body
+            echo "$COMMITS" > /tmp/commits.txt
+          fi
+
+      - name: Check for new tags
+        id: tags
+        if: steps.check.outputs.up_to_date == 'false'
+        run: |
+          NEW_TAGS=$(git tag -l --sort=-v:refname | head -5)
+          LOCAL_TAGS=$(git tag -l --merged origin/main --sort=-v:refname | head -5)
+          echo "new_tags<<EOF" >> "$GITHUB_OUTPUT"
+          comm -23 <(echo "$NEW_TAGS" | sort) <(echo "$LOCAL_TAGS" | sort) >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
+      - name: Create sync issue
+        if: steps.check.outputs.up_to_date == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Check if an open sync issue already exists
+          EXISTING=$(gh issue list --label "upstream-sync" --state open --json number --jq '.[0].number // empty')
+          if [ -n "$EXISTING" ]; then
+            echo "Sync issue #$EXISTING already open, adding comment"
+            gh issue comment "$EXISTING" --body "$(cat <<EOF
+          **Daily check**: ${{ steps.check.outputs.commit_count }} new upstream commit(s) found.
+
+          \`\`\`
+          $(cat /tmp/commits.txt)
+          \`\`\`
+          EOF
+          )"
+            exit 0
+          fi
+
+          VERSION="${{ steps.check.outputs.version }}"
+          TITLE="Upstream sync: ${{ steps.check.outputs.commit_count }} new commit(s)"
+          if [ -n "$VERSION" ]; then
+            TITLE="Upstream sync: Huly version $VERSION available"
+          fi
+
+          gh issue create \
+            --title "$TITLE" \
+            --label "upstream-sync" \
+            --body "$(cat <<EOF
+          The upstream repo [\`${{ env.UPSTREAM_REPO }}\`](https://github.com/${{ env.UPSTREAM_REPO }}) has new commits since our last sync.
+
+          ## New commits
+          \`\`\`
+          $(cat /tmp/commits.txt)
+          \`\`\`
+
+          ## New tags
+          ${{ steps.tags.outputs.new_tags || 'None' }}
+
+          ## Action needed
+          1. Review upstream changes: \`git fetch upstream main && git log main..upstream/main\`
+          2. Merge or rebase: \`git merge upstream/main\`
+          3. Update \`hulyVersion\` in the Helm chart if a new version was released
+          4. Test and redeploy
+          EOF
+          )"
+
+      - name: Sync fork main branch
+        if: steps.check.outputs.up_to_date == 'false'
+        run: |
+          git checkout main
+          git merge upstream/main --no-edit
+          git push origin main
