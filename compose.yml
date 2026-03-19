@@ -7,6 +7,14 @@ services:
     restart: unless-stopped
     networks:
       - huly_net
+      - dokploy-network
+    labels:
+      - traefik.docker.network=dokploy-network
+      - traefik.http.routers.project-management-huly-czhnux-93-web.rule=Host(`huly.proxy.kcsgis.com`)
+      - traefik.http.routers.project-management-huly-czhnux-93-web.entrypoints=web
+      - traefik.http.services.project-management-huly-czhnux-93-web.loadbalancer.server.port=80
+      - traefik.http.routers.project-management-huly-czhnux-93-web.service=project-management-huly-czhnux-93-web
+      - traefik.enable=true
 
   cockroach:
     image: cockroachdb/cockroach:latest-v24.2
@@ -85,45 +93,6 @@ services:
     networks:
       - huly_net
 
-  # mongodb:
-  #   image: mongo:7-jammy
-  #   restart: unless-stopped
-  #   volumes:
-  #     - ${VOLUME_MONGO_PATH:-mongodb}:/data/db
-  #   networks:
-  #     - huly_net
-  #   # Required by aibot and calendar services
-
-  # redis:
-  #   image: redis:7-alpine
-  #   command: redis-server --maxmemory 512mb --maxmemory-policy allkeys-lru
-  #   restart: unless-stopped
-  #   networks:
-  #     - huly_net
-  #   # Required by HulyPulse (push notifications / real-time updates)
-
-  # hulypulse:
-  #   image: hardcoreeng/service_hulypulse:${HULY_PULSE_VERSION:-0.1.29}
-  #   ports:
-  #     - 8099:8099
-  #   environment:
-  #     - HULY_BIND_PORT=8099
-  #     - HULY_LOG=info
-  #     - HULY_TOKEN_SECRET=${SECRET}
-  #     - HULY_HEARTBEAT_TIMEOUT=60
-  #     - HULY_BACKEND=memory
-  #     # For Redis backend instead of in-memory (optional, e.g. multi-node setups):
-  #     # - HULY_BACKEND=redis
-  #     # - HULY_REDIS_MODE=direct
-  #     # - HULY_REDIS_URLS=redis://redis:6379
-  #   deploy:
-  #     resources:
-  #       limits:
-  #         memory: 512M
-  #   restart: unless-stopped
-  #   networks:
-  #     - huly_net
-
   rekoni:
     image: hardcoreeng/rekoni-service:${HULY_VERSION}
     environment:
@@ -143,7 +112,7 @@ services:
       - SERVER_SECRET=${SECRET}
       - DB_URL=${CR_DB_URL}
       - STORAGE_CONFIG=minio|minio?accessKey=minioadmin&secretKey=minioadmin
-      - FRONT_URL=http://localhost:8087
+      - FRONT_URL=https://huly.proxy.kcsgis.com
       - ACCOUNTS_URL=http://account:3000
       - FULLTEXT_URL=http://fulltext:4700
       - STATS_URL=http://stats:4900
@@ -267,10 +236,8 @@ services:
     restart: unless-stopped
     networks:
       - huly_net
-      
+
 volumes:
-  # These named volumes are used when custom volume paths are not specified
-  # If VOLUME_*_PATH variables are set, these volumes will be ignored
   elastic:
   files:
   cr_data:
@@ -280,3 +247,5 @@ volumes:
 
 networks:
   huly_net:
+  dokploy-network:
+    external: true
