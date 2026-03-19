@@ -149,6 +149,9 @@ services:
       - STATS_URL=http://stats:4900
       - LAST_NAME_FIRST=${LAST_NAME_FIRST:-true}
       - QUEUE_CONFIG=redpanda:9092
+      - WEBPUSH_VAPID_PUBLIC_KEY=${WEBPUSH_VAPID_PUBLIC_KEY}
+      - WEBPUSH_VAPID_PRIVATE_KEY=${WEBPUSH_VAPID_PRIVATE_KEY}
+      - WEBPUSH_VAPID_SUBJECT=${WEBPUSH_VAPID_SUBJECT}
     restart: unless-stopped
     networks:
       - huly_net
@@ -220,6 +223,8 @@ services:
       - DEFAULT_LANGUAGE=${DEFAULT_LANGUAGE:-en}
       - LAST_NAME_FIRST=${LAST_NAME_FIRST:-true}
       - DESKTOP_UPDATES_CHANNEL=${DESKTOP_CHANNEL}
+      - WEBPUSH_VAPID_PUBLIC_KEY=${WEBPUSH_VAPID_PUBLIC_KEY}
+      - WEBPUSH_VAPID_SUBJECT=${WEBPUSH_VAPID_SUBJECT}
     restart: unless-stopped
     networks:
       - huly_net
