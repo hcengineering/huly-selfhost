@@ -23,6 +23,39 @@ The Huly platform source code is available on GitHub: **[hcengineering/platform]
 > For self-hosted deployments, use production versions (`v*` tags). For example: `v0.7.310`, `v0.7.307`, `v0.6.501`
 > See all available versions on [GitHub Releases](https://github.com/hcengineering/platform/releases).
 
+## Updating to a new Huly version
+
+Before updating, **always review `MIGRATION.md`** in this repository:
+
+- **Open `MIGRATION.md`** and find the section for your target version (for example `v0.7.382`).
+- **If the section says "No changes required"**, you can upgrade just by updating container versions.
+- **If there are additional steps**, follow them carefully (backup, config changes, service additions/removals, etc.) **before** or **during** the update.
+- **If you are upgrading from any 0.6.x version to 0.7.x**, you **must** follow the dedicated migration steps in the `v0.7` section of `MIGRATION.md` (especially `v0.7.204`) instead of doing a direct in-place upgrade.
+
+To update an existing self-hosted deployment to a new Huly version:
+
+1. **Stop the stack (optional but recommended for major upgrades):**
+   ```bash
+   cd huly-selfhost
+   docker compose down
+   ```
+2. **Update the `huly-selfhost` repository:**
+   ```bash
+   git pull
+   ```
+3. **Set the new Huly version in `.env`:**
+   - Edit the `.env` file in the project root and update:
+     - `HULY_VERSION` to the desired platform version tag (for example `v0.7.382`)
+     - `DESKTOP_CHANNEL` to the same version without the leading `v` (for example `0.7.382`) if you use the desktop app.
+4. **Pull updated container images:**
+   ```bash
+   docker compose pull
+   ```
+5. **Start the updated stack:**
+   ```bash
+   docker compose up -d
+   ```
+
 ## Architecture Overview
 
 For detailed information about the Huly self-hosted architecture, services, and their interactions, see [ARCHITECTURE_OVERVIEW.md](ARCHITECTURE_OVERVIEW.md).
@@ -103,6 +136,26 @@ Now, launch your web browser and enjoy Huly! To stop all services, run `docker c
 
 > [!IMPORTANT]
 > Provided configrations include deployments of CockroachDB and Redpanda which might not be production-ready. Please inspect them carefully before using in production. For more information on the recommended deployment configurations, please refer to the [CockroachDB](https://www.cockroachlabs.com/docs/stable/recommended-production-settings) and [Redpanda](https://docs.redpanda.com/24.3/deploy/) documentation.
+
+## Troubleshooting
+
+### Huly opens, but user sign-up fails
+
+If the UI loads but sign-up fails, check logs for the `account` service first:
+
+```bash
+docker compose logs -f account
+```
+
+This usually reveals issues with account callbacks, URL configuration, or connectivity to dependent services.
+
+### SSL errors (for example: `SSL wrong version number`)
+
+This usually means HTTPS/WSS is enabled in configuration, but the endpoint is serving plain HTTP/WS or has invalid TLS setup.
+
+- Verify your Nginx TLS configuration and certificates (`ssl_certificate`, `ssl_certificate_key`).
+- Confirm your domain points to the correct host and that port `443` is reachable.
+- For local/testing deployments, disable secure mode by setting `SECURE=` in `huly_v7.conf`, then regenerate/reload config and restart containers.
 
 ## Volume Configuration
 
@@ -233,34 +286,33 @@ Add the public key into `compose.yaml` in section `services:front:environment`:
 ## Web Push Notifications
 
 > [!NOTE]
-> In version 0.7.x and later, the `ses` service has been replaced with the `notification` service for web push notifications and the `mail` service for sending emails using SES. The environment variables `SECRET_KEY`, `PUSH_PUBLIC_KEY`, and `PUSH_PRIVATE_KEY` are not required for web push notifications in 0.7.x.
+> In version 0.7.x and later, the legacy `ses` service has been replaced with the **`notification`** service for web push notifications and the `mail` service for sending emails using SES. New deployments should use the `notification` service.
 
-To enable web push notifications in Huly, you need to configure the SES service with the VAPID keys.
+To enable web push notifications in Huly, you need to configure the `notification` service with the VAPID keys and point `transactor` to it.
 
 ### Step 1: Configure the Transactor Service
 
-Add `WEB_PUSH_URL` to `transactor` container:
+Add `WEB_PUSH_URL` to the `transactor` container:
 
 ```yaml
 transactor:
   ...
   environment:
-    - WEB_PUSH_URL=http://ses:3335
+    - WEB_PUSH_URL=http://notification:8091
   ...
 ```
 
-### Step 2: Configure the SES Service
+### Step 2: Configure the Notification Service
 
-Add the `ses` container to your `docker-compose.yaml` file with the generated VAPID keys:
+Add the `notification` container to your `docker-compose.yaml` file with the generated VAPID keys:
 
 ```yaml
-ses:
-  image: hardcoreeng/ses:${HULY_VERSION}
+notification:
+  image: hardcoreeng/notification:${HULY_VERSION}
   environment:
-    - PORT=3335
+    - PORT=8091
     - SOURCE=mail@example.com
-    - ACCESS_KEY=none
-    - SECRET_KEY=none
+    - STATS_URL=http://stats:4900
     - PUSH_PUBLIC_KEY=${PUSH_PUBLIC_KEY}
     - PUSH_PRIVATE_KEY=${PUSH_PRIVATE_KEY}
   restart: unless-stopped
