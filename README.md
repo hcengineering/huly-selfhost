@@ -759,11 +759,11 @@ You can also configure a Huly instance to use GitHub OAuth for user authorizatio
 
 ### On the GitHub side
 1. Create a new GitHub OAuth application.
-   * Use `{huly_account_svc}/_account/auth/github/callback` as the sign-in redirect URI. The `huly_account_svc` is the hostname for the account service of the deployment, which should be accessible externally from the client/browser side.
+   * Use `{huly_account_svc}/_accounts/auth/github/callback` as the sign-in redirect URI. The `huly_account_svc` is the hostname for the account service of the deployment, which should be accessible externally from the client/browser side.
 
 
    **URI Example:**
-   - `http://huly.mydomain.com/_account/auth/github/callback`
+   - `http://huly.mydomain.com/_accounts/auth/github/callback`
 
 ### On the Huly side
 
