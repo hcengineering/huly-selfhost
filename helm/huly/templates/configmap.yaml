@@ -1,0 +1,60 @@
+{{- $proto := ternary "https" "http" (and .Values.ingress.enabled .Values.ingress.tls.enabled) -}}
+{{- $wsProto := ternary "wss" "ws" (and .Values.ingress.enabled .Values.ingress.tls.enabled) -}}
+
+{{- /* Resolve infra endpoints: built-in pod name or external URL */ -}}
+{{- $elasticUrl := ternary "http://elastic:9200" .Values.external.elastic .Values.elastic.enabled -}}
+{{- $queueConfig := ternary "redpanda:9092" .Values.external.redpanda .Values.redpanda.enabled -}}
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "huly.configName" . }}
+  labels:
+    {{- include "huly.labels" . | nindent 4 }}
+data:
+  # External URLs (via ingress)
+  ACCOUNTS_URL: "{{ $proto }}://{{ .Values.domain }}/_accounts"
+  COLLABORATOR_URL: "{{ $wsProto }}://{{ .Values.domain }}/_collaborator"
+  FRONT_URL: "{{ $proto }}://{{ .Values.domain }}"
+  REKONI_URL: "{{ $proto }}://{{ .Values.domain }}/_rekoni"
+  STATS_URL: "{{ $proto }}://{{ .Values.domain }}/_stats"
+  TRANSACTOR_URL: "ws://transactor:3333;{{ $wsProto }}://{{ .Values.domain }}/_transactor"
+
+  # Internal URLs (pod-to-pod)
+  ELASTIC_URL: {{ $elasticUrl | quote }}
+  ELASTIC_INDEX_NAME: "huly_storage_index"
+  FULLTEXT_URL: "http://fulltext:4700"
+  ACCOUNTS_URL_INTERNAL: "http://account:3000"
+  REKONI_URL_INTERNAL: "http://rekoni:4004"
+  STATS_URL_INTERNAL: "http://stats:4900"
+  QUEUE_CONFIG: {{ $queueConfig | quote }}
+
+  # App settings
+  MODEL_ENABLED: {{ .Values.appSettings.modelEnabled | quote }}
+  LAST_NAME_FIRST: {{ .Values.appSettings.lastNameFirst | quote }}
+  TITLE: {{ .Values.appSettings.title | quote }}
+  DEFAULT_LANGUAGE: {{ .Values.appSettings.defaultLanguage | quote }}
+  UPLOAD_URL: "/files"
+  DESKTOP_UPDATES_CHANNEL: {{ .Values.appSettings.desktopChannel | quote }}
+  {{- if .Values.appSettings.adminEmails }}
+  ADMIN_EMAILS: {{ .Values.appSettings.adminEmails | quote }}
+  {{- end }}
+  {{- if .Values.auth.disableSignup }}
+  DISABLE_SIGNUP: "true"
+  {{- end }}
+
+  # Optional integration URLs (required by front even if unused)
+  GMAIL_URL: "{{ $proto }}://{{ .Values.domain }}/_gmail"
+  TELEGRAM_URL: "{{ $proto }}://{{ .Values.domain }}/_telegram"
+  CALENDAR_URL: "{{ $proto }}://{{ .Values.domain }}/_calendar"
+  LOVE_ENDPOINT: "{{ $proto }}://{{ .Values.domain }}/_love"
+
+  {{- if .Values.githubIntegration.enabled }}
+  GITHUB_URL: "{{ $proto }}://{{ .Values.domain }}/_github"
+  {{- end }}
+
+  {{- if .Values.aibot.enabled }}
+  AI_URL: "{{ $proto }}://{{ .Values.domain }}/_aibot"
+  AI_BOT_URL: "http://aibot:4010"
+  MONGO_URL: {{ ternary "mongodb://mongodb:27017" .Values.external.mongodb .Values.mongodb.enabled | quote }}
+  {{- end }}

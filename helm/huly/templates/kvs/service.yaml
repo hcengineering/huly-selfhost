@@ -1,0 +1,16 @@
+{{- if .Values.kvs.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: kvs
+  labels:
+    {{- include "huly.labels" . | nindent 4 }}
+    app: kvs
+spec:
+  selector:
+    app: kvs
+  ports:
+    - name: http
+      port: 8094
+      targetPort: 8094
+{{- end }}

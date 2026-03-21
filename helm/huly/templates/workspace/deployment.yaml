@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: workspace
+  labels:
+    {{- include "huly.labels" . | nindent 4 }}
+    app: workspace
+spec:
+  replicas: {{ .Values.workspace.replicas }}
+  selector:
+    matchLabels:
+      app: workspace
+  template:
+    metadata:
+      annotations:
+        {{- include "huly.checksumAnnotations" . | nindent 8 }}
+      labels:
+        {{- include "huly.labels" . | nindent 8 }}
+        app: workspace
+    spec:
+      {{- include "huly.scheduling" . | nindent 6 }}
+      initContainers:
+        {{- include "huly.waitForCockroach" . | nindent 8 }}
+        {{- include "huly.waitForRedpanda" . | nindent 8 }}
+      containers:
+        - name: workspace
+          image: {{ .Values.hulyRegistry }}/workspace:{{ .Values.hulyVersion }}
+          env:
+            {{- include "huly.envSecret" (dict "name" "SERVER_SECRET" "key" "SERVER_SECRET" "root" .) | nindent 12 }}
+            {{- include "huly.envSecret" (dict "name" "DB_URL" "key" "CR_DB_URL" "root" .) | nindent 12 }}
+            {{- include "huly.envSecret" (dict "name" "ACCOUNTS_DB_URL" "key" "CR_DB_URL" "root" .) | nindent 12 }}
+            {{- include "huly.envSecret" (dict "name" "STORAGE_CONFIG" "key" "STORAGE_CONFIG" "root" .) | nindent 12 }}
+            {{- include "huly.envConfig" (dict "name" "ACCOUNTS_URL" "key" "ACCOUNTS_URL_INTERNAL" "root" .) | nindent 12 }}
+            {{- include "huly.envConfig" (dict "name" "STATS_URL" "key" "STATS_URL_INTERNAL" "root" .) | nindent 12 }}
+            {{- include "huly.envConfig" (dict "name" "TRANSACTOR_URL" "key" "TRANSACTOR_URL" "root" .) | nindent 12 }}
+            {{- include "huly.envConfig" (dict "name" "MODEL_ENABLED" "key" "MODEL_ENABLED" "root" .) | nindent 12 }}
+            {{- include "huly.envConfig" (dict "name" "QUEUE_CONFIG" "key" "QUEUE_CONFIG" "root" .) | nindent 12 }}
+          {{- with .Values.workspace.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}

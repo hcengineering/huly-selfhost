@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: account
+  labels:
+    {{- include "huly.labels" . | nindent 4 }}
+    app: account
+spec:
+  selector:
+    app: account
+  ports:
+    - name: http
+      port: 3000
+      targetPort: 3000

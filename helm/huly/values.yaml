@@ -1,0 +1,292 @@
+# ──────────────────────────────────────────────────────────────
+# REQUIRED — set this to your domain
+# ──────────────────────────────────────────────────────────────
+domain: huly.example
+
+# Override the chart name / full release name
+nameOverride: ""
+fullnameOverride: ""
+
+# ──────────────────────────────────────────────────────────────
+# Global image tag for all Huly services
+# ──────────────────────────────────────────────────────────────
+hulyVersion: v0.7.382
+
+# Docker registry prefix for Huly service images.
+# Default "hardcoreeng" pulls from Docker Hub (hardcoreeng/front, etc.).
+# Override to use a private registry, e.g. europe-west3-docker.pkg.dev/kendall-ledo/docker/huly
+hulyRegistry: hardcoreeng
+
+# ──────────────────────────────────────────────────────────────
+# Secrets — leave empty to auto-generate (persists across upgrades)
+# ──────────────────────────────────────────────────────────────
+secrets:
+  # Shared JWT signing secret (auto-generated if empty)
+  serverSecret: ""
+  # Full storage config string override.
+  # When empty, auto-derived from storage.type + storage.s3.* (or random MinIO creds).
+  # Format: s3|https://s3.example.com?accessKey=X&secretKey=Y&region=us-east-1&rootBucket=data
+  #     or: minio|minio?accessKey=<key>&secretKey=<secret>
+  storageConfig: ""
+  # CockroachDB password (auto-generated if empty)
+  cockroachPassword: ""
+  # Redpanda superuser password (auto-generated if empty)
+  redpandaPassword: ""
+  # CockroachDB connection URL (auto-derived from cockroachPassword if empty)
+  # Set this when using an external database (cockroach.enabled=false).
+  # Format: postgres://<user>:<pass>@<host>:26257/<db>
+  crDbUrl: ""
+  # OpenAI API key (required when aibot.enabled=true)
+  openaiApiKey: ""
+  # OpenAI base URL override (optional, e.g. for Azure OpenAI or proxies)
+  openaiBaseUrl: ""
+  # AI bot password (auto-generated if empty)
+  aibotPassword: ""
+
+# ──────────────────────────────────────────────────────────────
+# Authentication providers (set on the account service)
+# At least one provider should be configured for user login.
+# ──────────────────────────────────────────────────────────────
+auth:
+  # Google OAuth 2.0
+  google:
+    clientId: ""
+    clientSecret: ""
+  # GitHub OAuth
+  github:
+    clientId: ""
+    clientSecret: ""
+  # OpenID Connect (generic OIDC provider)
+  oidc:
+    clientId: ""
+    clientSecret: ""
+    issuer: ""       # e.g. https://accounts.google.com
+  # Set to true to prevent new user registration
+  disableSignup: false
+
+# ──────────────────────────────────────────────────────────────
+# Storage backend — built-in MinIO or external S3
+# ──────────────────────────────────────────────────────────────
+storage:
+  # "minio" = use built-in MinIO (default)
+  # "s3"    = use external S3-compatible storage (disables built-in MinIO)
+  type: minio
+  s3:
+    endpoint: ""       # e.g. https://s3.amazonaws.com
+    region: ""         # e.g. us-east-1
+    accessKey: ""
+    secretKey: ""
+    # rootBucket: store all workspaces as prefixes inside a single bucket
+    rootBucket: ""     # e.g. huly-data
+    # bucketPrefix: prefix prepended to per-workspace bucket names (only used if rootBucket is empty)
+    bucketPrefix: ""   # e.g. huly-
+
+# ──────────────────────────────────────────────────────────────
+# Ingress
+# ──────────────────────────────────────────────────────────────
+ingress:
+  enabled: true
+  className: nginx
+  # Extra annotations merged into every ingress resource
+  annotations: {}
+  tls:
+    enabled: true
+    clusterIssuer: letsencrypt-prod
+
+# ──────────────────────────────────────────────────────────────
+# App settings (ConfigMap)
+# ──────────────────────────────────────────────────────────────
+appSettings:
+  modelEnabled: "*"
+  lastNameFirst: "true"
+  title: "Huly Self Host"
+  defaultLanguage: "en"
+  # Comma-separated list of admin email addresses
+  adminEmails: ""
+  # Desktop update channel
+  desktopChannel: "selfhost"
+
+# ──────────────────────────────────────────────────────────────
+# Global pod settings (applied to all services)
+# ──────────────────────────────────────────────────────────────
+global:
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+# ──────────────────────────────────────────────────────────────
+# Infrastructure — set enabled: false to use external services
+#
+# When disabled, provide connection details via:
+#   cockroach:  secrets.crDbUrl
+#   redpanda:   external.redpanda
+#   elastic:    external.elastic
+#   minio:      storage.type=s3 + storage.s3.*
+#   mongodb:    external.mongodb (only when aibot.enabled=true)
+# ──────────────────────────────────────────────────────────────
+cockroach:
+  enabled: true
+  image: cockroachdb/cockroach:latest-v24.2
+  database: defaultdb
+  username: selfhost
+  storage: 10Gi
+  storageClassName: ""
+  resources: {}
+
+redpanda:
+  enabled: true
+  image: docker.redpanda.com/redpandadata/redpanda:v24.3.6
+  storage: 5Gi
+  storageClassName: ""
+  resources:
+    limits:
+      memory: 512Mi
+
+elastic:
+  enabled: true
+  image: elasticsearch:7.14.2
+  storage: 10Gi
+  storageClassName: ""
+  javaOpts: "-Xms1024m -Xmx1024m"
+  resources: {}
+
+minio:
+  # Automatically disabled when storage.type=s3
+  enabled: true
+  image: minio/minio
+  storage: 50Gi
+  storageClassName: ""
+  resources: {}
+
+mongodb:
+  # Built-in MongoDB — only deployed when aibot.enabled=true
+  enabled: true
+  image: mongo:7
+  storage: 5Gi
+  storageClassName: ""
+  resources: {}
+
+# ──────────────────────────────────────────────────────────────
+# External infrastructure endpoints
+# Used when the corresponding built-in service is disabled.
+# ──────────────────────────────────────────────────────────────
+external:
+  # Used when redpanda.enabled=false
+  redpanda: ""       # e.g. kafka.example.com:9092
+  # Used when elastic.enabled=false
+  elastic: ""        # e.g. https://elasticsearch.example.com:9200
+  # Used when mongodb.enabled=false (requires aibot.enabled=true)
+  mongodb: ""        # e.g. mongodb://user:pass@host:27017
+
+# ──────────────────────────────────────────────────────────────
+# Application services
+# ──────────────────────────────────────────────────────────────
+front:
+  replicas: 1
+  resources: {}
+
+account:
+  replicas: 1
+  resources:
+    limits:
+      memory: 512Mi
+
+transactor:
+  replicas: 1
+  resources: {}
+
+collaborator:
+  replicas: 1
+  resources:
+    limits:
+      memory: 512Mi
+
+workspace:
+  replicas: 1
+  resources:
+    limits:
+      memory: 512Mi
+
+fulltext:
+  replicas: 1
+  resources:
+    limits:
+      memory: 512Mi
+
+rekoni:
+  replicas: 1
+  resources:
+    limits:
+      memory: 500Mi
+
+stats:
+  replicas: 1
+  resources:
+    limits:
+      memory: 500Mi
+
+kvs:
+  enabled: true
+  replicas: 1
+  resources: {}
+
+githubIntegration:
+  # GitHub App integration — syncs issues, PRs, and comments with GitHub
+  enabled: false
+  replicas: 1
+  # Bot name shown on GitHub (must match the GitHub App's slug + [bot])
+  botName: ""
+  # GitHub App credentials (stored in the shared secret)
+  appId: ""
+  clientId: ""
+  clientSecret: ""
+  privateKey: ""        # PEM-encoded private key (use multiline YAML |)
+  webhookSecret: ""
+  resources:
+    limits:
+      memory: 512Mi
+
+aibot:
+  # AI bot service — requires OpenAI API key
+  enabled: false
+  replicas: 1
+  firstName: "Huly"
+  lastName: "AI"
+  # Override default models (leave empty for upstream defaults)
+  openaiModel: ""
+  openaiEmbeddingModel: ""
+  openaiTranslateModel: ""
+  openaiSummaryModel: ""
+  resources:
+    limits:
+      memory: 512Mi
+
+# ──────────────────────────────────────────────────────────────
+# Backup — nightly CronJobs to S3-compatible storage
+# ──────────────────────────────────────────────────────────────
+backup:
+  enabled: false
+  schedule: "0 2 * * *"           # 2 AM daily
+  retentionDays: 30
+  rcloneImage: rclone/rclone:latest
+  s3:
+    endpoint: ""                   # e.g. https://nbg1.your-objectstorage.com
+    region: ""
+    bucket: ""                     # e.g. ledo-backups
+    pathPrefix: ""                 # e.g. huly-ledo
+    accessKey: ""
+    secretKey: ""
+    # Secondary credentials for rotation (optional)
+    secondaryAccessKey: ""
+    secondarySecretKey: ""
+    # Which credential set is active: "primary" or "secondary"
+    activeCredential: "primary"
+  cockroachdb:
+    enabled: true
+    schedule: ""                   # override global schedule
+  files:
+    enabled: true
+    schedule: ""
+  mongodb:
+    enabled: true                  # only runs when aibot.enabled=true
+    schedule: ""

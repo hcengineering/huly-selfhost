@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: rekoni
+  labels:
+    {{- include "huly.labels" . | nindent 4 }}
+    app: rekoni
+spec:
+  selector:
+    app: rekoni
+  ports:
+    - name: http
+      port: 4004
+      targetPort: 4004

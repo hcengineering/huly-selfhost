@@ -1,0 +1,17 @@
+{{- if .Values.cockroach.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: cockroach-data
+  labels:
+    {{- include "huly.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  {{- if .Values.cockroach.storageClassName }}
+  storageClassName: {{ .Values.cockroach.storageClassName }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.cockroach.storage }}
+{{- end }}

@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stats
+  labels:
+    {{- include "huly.labels" . | nindent 4 }}
+    app: stats
+spec:
+  replicas: {{ .Values.stats.replicas }}
+  selector:
+    matchLabels:
+      app: stats
+  template:
+    metadata:
+      annotations:
+        {{- include "huly.checksumAnnotations" . | nindent 8 }}
+      labels:
+        {{- include "huly.labels" . | nindent 8 }}
+        app: stats
+    spec:
+      {{- include "huly.scheduling" . | nindent 6 }}
+      containers:
+        - name: stats
+          image: {{ .Values.hulyRegistry }}/stats:{{ .Values.hulyVersion }}
+          ports:
+            - name: http
+              containerPort: 4900
+          env:
+            - name: PORT
+              value: "4900"
+            {{- include "huly.envSecret" (dict "name" "SERVER_SECRET" "key" "SERVER_SECRET" "root" .) | nindent 12 }}
+          readinessProbe:
+            tcpSocket:
+              port: 4900
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 4900
+            initialDelaySeconds: 15
+            periodSeconds: 30
+          {{- with .Values.stats.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}

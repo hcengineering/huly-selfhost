@@ -1,0 +1,16 @@
+{{- if .Values.githubIntegration.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: github
+  labels:
+    {{- include "huly.labels" . | nindent 4 }}
+    app: github
+spec:
+  selector:
+    app: github
+  ports:
+    - name: http
+      port: 3500
+      targetPort: 3500
+{{- end }}

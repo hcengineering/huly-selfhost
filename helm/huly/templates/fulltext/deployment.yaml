@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fulltext
+  labels:
+    {{- include "huly.labels" . | nindent 4 }}
+    app: fulltext
+spec:
+  replicas: {{ .Values.fulltext.replicas }}
+  selector:
+    matchLabels:
+      app: fulltext
+  template:
+    metadata:
+      annotations:
+        {{- include "huly.checksumAnnotations" . | nindent 8 }}
+      labels:
+        {{- include "huly.labels" . | nindent 8 }}
+        app: fulltext
+    spec:
+      {{- include "huly.scheduling" . | nindent 6 }}
+      initContainers:
+        {{- include "huly.waitForCockroach" . | nindent 8 }}
+        {{- include "huly.waitForRedpanda" . | nindent 8 }}
+      containers:
+        - name: fulltext
+          image: {{ .Values.hulyRegistry }}/fulltext:{{ .Values.hulyVersion }}
+          ports:
+            - name: http
+              containerPort: 4700
+          env:
+            {{- include "huly.envSecret" (dict "name" "SERVER_SECRET" "key" "SERVER_SECRET" "root" .) | nindent 12 }}
+            {{- include "huly.envSecret" (dict "name" "DB_URL" "key" "CR_DB_URL" "root" .) | nindent 12 }}
+            {{- include "huly.envSecret" (dict "name" "STORAGE_CONFIG" "key" "STORAGE_CONFIG" "root" .) | nindent 12 }}
+            {{- include "huly.envConfig" (dict "name" "FULLTEXT_DB_URL" "key" "ELASTIC_URL" "root" .) | nindent 12 }}
+            {{- include "huly.envConfig" (dict "name" "ELASTIC_INDEX_NAME" "key" "ELASTIC_INDEX_NAME" "root" .) | nindent 12 }}
+            {{- include "huly.envConfig" (dict "name" "REKONI_URL" "key" "REKONI_URL_INTERNAL" "root" .) | nindent 12 }}
+            {{- include "huly.envConfig" (dict "name" "ACCOUNTS_URL" "key" "ACCOUNTS_URL_INTERNAL" "root" .) | nindent 12 }}
+            {{- include "huly.envConfig" (dict "name" "STATS_URL" "key" "STATS_URL_INTERNAL" "root" .) | nindent 12 }}
+            {{- include "huly.envConfig" (dict "name" "QUEUE_CONFIG" "key" "QUEUE_CONFIG" "root" .) | nindent 12 }}
+          readinessProbe:
+            tcpSocket:
+              port: 4700
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 4700
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          {{- with .Values.fulltext.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}

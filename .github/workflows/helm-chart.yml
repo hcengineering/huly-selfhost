@@ -1,0 +1,52 @@
+name: Helm Chart
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "helm/**"
+  pull_request:
+    paths:
+      - "helm/**"
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  CHART_PATH: helm/huly
+  OCI_REGISTRY: oci://ghcr.io/${{ github.repository_owner }}/charts
+
+jobs:
+  lint:
+    name: Lint & Template
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: azure/setup-helm@v4
+      - run: helm lint ${{ env.CHART_PATH }}
+      - run: helm template huly ${{ env.CHART_PATH }} --set domain=ci.example.com
+
+  publish:
+    name: Package & Push OCI
+    needs: lint
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: azure/setup-helm@v4
+
+      - name: Extract chart version
+        id: chart
+        run: |
+          version=$(grep '^version:' ${{ env.CHART_PATH }}/Chart.yaml | awk '{print $2}')
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Login to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | helm registry login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Package chart
+        run: helm package ${{ env.CHART_PATH }} -d /tmp/charts
+
+      - name: Push to OCI registry
+        run: helm push /tmp/charts/huly-${{ steps.chart.outputs.version }}.tgz ${{ env.OCI_REGISTRY }}

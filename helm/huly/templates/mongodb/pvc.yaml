@@ -1,0 +1,17 @@
+{{- if and .Values.aibot.enabled .Values.mongodb.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongodb-data
+  labels:
+    {{- include "huly.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  {{- if .Values.mongodb.storageClassName }}
+  storageClassName: {{ .Values.mongodb.storageClassName }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.mongodb.storage }}
+{{- end }}

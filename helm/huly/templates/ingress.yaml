@@ -1,0 +1,98 @@
+{{- if .Values.ingress.enabled -}}
+{{- $fullname := include "huly.fullname" . -}}
+{{- $domain := .Values.domain -}}
+{{- $tlsEnabled := .Values.ingress.tls.enabled -}}
+{{- $clusterIssuer := .Values.ingress.tls.clusterIssuer -}}
+{{- $className := .Values.ingress.className -}}
+{{- $extraAnnotations := .Values.ingress.annotations -}}
+
+{{- /* Backend services exposed via path-based routing */ -}}
+{{- $backends := list
+  (dict "name" "accounts"     "svc" "account"      "port" 3000 "ws" false)
+  (dict "name" "transactor"   "svc" "transactor"   "port" 3333 "ws" true)
+  (dict "name" "collaborator" "svc" "collaborator" "port" 3078 "ws" true)
+  (dict "name" "rekoni"       "svc" "rekoni"       "port" 4004 "ws" false)
+  (dict "name" "stats"        "svc" "stats"        "port" 4900 "ws" false)
+-}}
+{{- if .Values.aibot.enabled }}
+{{- $backends = append $backends (dict "name" "aibot" "svc" "aibot" "port" 4010 "ws" true) }}
+{{- end -}}
+{{- if .Values.githubIntegration.enabled }}
+{{- $backends = append $backends (dict "name" "github" "svc" "github" "port" 3500 "ws" false) }}
+{{- end -}}
+
+{{- range $backends }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $fullname }}-{{ .name }}
+  labels:
+    {{- include "huly.labels" $ | nindent 4 }}
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    {{- if .ws }}
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-http-version: "1.1"
+    {{- end }}
+    {{- with $extraAnnotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  ingressClassName: {{ $className }}
+  {{- if $tlsEnabled }}
+  tls:
+    - hosts:
+        - {{ $domain }}
+      secretName: {{ $fullname }}-tls
+  {{- end }}
+  rules:
+    - host: {{ $domain }}
+      http:
+        paths:
+          - path: /_{{ .name }}(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: {{ .svc }}
+                port:
+                  number: {{ .port }}
+{{- end }}
+
+---
+# Front catch-all — also owns the TLS certificate
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $fullname }}-front
+  labels:
+    {{- include "huly.labels" . | nindent 4 }}
+  annotations:
+    {{- if $tlsEnabled }}
+    cert-manager.io/cluster-issuer: {{ $clusterIssuer }}
+    {{- end }}
+    {{- with $extraAnnotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  ingressClassName: {{ $className }}
+  {{- if $tlsEnabled }}
+  tls:
+    - hosts:
+        - {{ $domain }}
+      secretName: {{ $fullname }}-tls
+  {{- end }}
+  rules:
+    - host: {{ $domain }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: front
+                port:
+                  number: 8080
+{{- end }}
