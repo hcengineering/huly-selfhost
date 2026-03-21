@@ -1,0 +1,16 @@
+{{- if .Values.elastic.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: elastic
+  labels:
+    {{- include "huly.labels" . | nindent 4 }}
+    app: elastic
+spec:
+  selector:
+    app: elastic
+  ports:
+    - name: http
+      port: 9200
+      targetPort: 9200
+{{- end }}

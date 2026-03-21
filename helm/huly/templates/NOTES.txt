@@ -1,0 +1,19 @@
+Huly has been installed!
+
+{{- $proto := ternary "https" "http" (and .Values.ingress.enabled .Values.ingress.tls.enabled) }}
+
+Your Huly instance will be available at:
+
+  {{ $proto }}://{{ .Values.domain }}
+
+{{- if .Values.ingress.enabled }}
+
+Ingress is enabled with class "{{ .Values.ingress.className }}".
+{{- if .Values.ingress.tls.enabled }}
+TLS is enabled via cluster-issuer "{{ .Values.ingress.tls.clusterIssuer }}".
+{{- end }}
+{{- end }}
+
+To check the rollout status:
+
+  kubectl get pods -l app.kubernetes.io/part-of=huly -n {{ .Release.Namespace }}

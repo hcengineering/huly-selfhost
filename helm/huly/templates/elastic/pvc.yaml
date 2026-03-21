@@ -1,0 +1,17 @@
+{{- if .Values.elastic.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: elastic-data
+  labels:
+    {{- include "huly.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  {{- if .Values.elastic.storageClassName }}
+  storageClassName: {{ .Values.elastic.storageClassName }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.elastic.storage }}
+{{- end }}
