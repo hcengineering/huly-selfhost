@@ -1,0 +1,61 @@
+{{- if .Values.githubIntegration.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: github
+  labels:
+    {{- include "huly.labels" . | nindent 4 }}
+    app: github
+spec:
+  replicas: {{ .Values.githubIntegration.replicas }}
+  selector:
+    matchLabels:
+      app: github
+  template:
+    metadata:
+      annotations:
+        {{- include "huly.checksumAnnotations" . | nindent 8 }}
+      labels:
+        {{- include "huly.labels" . | nindent 8 }}
+        app: github
+    spec:
+      {{- include "huly.scheduling" . | nindent 6 }}
+      containers:
+        - name: github
+          image: {{ .Values.hulyRegistry }}/github:{{ .Values.hulyVersion }}
+          ports:
+            - name: http
+              containerPort: 3500
+          env:
+            - name: PORT
+              value: "3500"
+            {{- include "huly.envSecret" (dict "name" "SERVER_SECRET" "key" "SERVER_SECRET" "root" .) | nindent 12 }}
+            {{- include "huly.envSecret" (dict "name" "STORAGE_CONFIG" "key" "STORAGE_CONFIG" "root" .) | nindent 12 }}
+            {{- include "huly.envSecret" (dict "name" "APP_ID" "key" "GITHUB_APP_ID" "root" .) | nindent 12 }}
+            {{- include "huly.envSecret" (dict "name" "CLIENT_ID" "key" "GITHUB_APP_CLIENT_ID" "root" .) | nindent 12 }}
+            {{- include "huly.envSecret" (dict "name" "CLIENT_SECRET" "key" "GITHUB_APP_CLIENT_SECRET" "root" .) | nindent 12 }}
+            {{- include "huly.envSecret" (dict "name" "PRIVATE_KEY" "key" "GITHUB_APP_PRIVATE_KEY" "root" .) | nindent 12 }}
+            {{- include "huly.envSecret" (dict "name" "WEBHOOK_SECRET" "key" "GITHUB_APP_WEBHOOK_SECRET" "root" .) | nindent 12 }}
+            {{- include "huly.envConfig" (dict "name" "ACCOUNTS_URL" "key" "ACCOUNTS_URL" "root" .) | nindent 12 }}
+            {{- include "huly.envConfig" (dict "name" "FRONT_URL" "key" "FRONT_URL" "root" .) | nindent 12 }}
+            {{- include "huly.envConfig" (dict "name" "COLLABORATOR_URL" "key" "COLLABORATOR_URL" "root" .) | nindent 12 }}
+            {{- include "huly.envConfig" (dict "name" "QUEUE_CONFIG" "key" "QUEUE_CONFIG" "root" .) | nindent 12 }}
+            - name: BOT_NAME
+              value: {{ .Values.githubIntegration.botName | quote }}
+            - name: SERVICE_ID
+              value: "github-service"
+          readinessProbe:
+            tcpSocket:
+              port: 3500
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 3500
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          {{- with .Values.githubIntegration.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+{{- end }}

@@ -49,6 +49,10 @@ data:
   CALENDAR_URL: "{{ $proto }}://{{ .Values.domain }}/_calendar"
   LOVE_ENDPOINT: "{{ $proto }}://{{ .Values.domain }}/_love"
 
+  {{- if .Values.githubIntegration.enabled }}
+  GITHUB_URL: "{{ $proto }}://{{ .Values.domain }}/_github"
+  {{- end }}
+
   {{- if .Values.aibot.enabled }}
   AI_URL: "{{ $proto }}://{{ .Values.domain }}/_aibot"
   AI_BOT_URL: "http://aibot:4010"

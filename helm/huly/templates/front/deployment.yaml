@@ -45,6 +45,9 @@ spec:
             {{- include "huly.envConfig" (dict "name" "GMAIL_URL" "key" "GMAIL_URL" "root" .) | nindent 12 }}
             {{- include "huly.envConfig" (dict "name" "TELEGRAM_URL" "key" "TELEGRAM_URL" "root" .) | nindent 12 }}
             {{- include "huly.envConfig" (dict "name" "LOVE_ENDPOINT" "key" "LOVE_ENDPOINT" "root" .) | nindent 12 }}
+            {{- if .Values.githubIntegration.enabled }}
+            {{- include "huly.envConfig" (dict "name" "GITHUB_URL" "key" "GITHUB_URL" "root" .) | nindent 12 }}
+            {{- end }}
             {{- if .Values.aibot.enabled }}
             {{- include "huly.envConfig" (dict "name" "AI_URL" "key" "AI_URL" "root" .) | nindent 12 }}
             {{- end }}

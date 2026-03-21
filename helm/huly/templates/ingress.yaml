@@ -17,6 +17,9 @@
 {{- if .Values.aibot.enabled }}
 {{- $backends = append $backends (dict "name" "aibot" "svc" "aibot" "port" 4010 "ws" true) }}
 {{- end -}}
+{{- if .Values.githubIntegration.enabled }}
+{{- $backends = append $backends (dict "name" "github" "svc" "github" "port" 3500 "ws" false) }}
+{{- end -}}
 
 {{- range $backends }}
 ---

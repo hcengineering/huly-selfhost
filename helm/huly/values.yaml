@@ -230,6 +230,22 @@ kvs:
   replicas: 1
   resources: {}
 
+githubIntegration:
+  # GitHub App integration — syncs issues, PRs, and comments with GitHub
+  enabled: false
+  replicas: 1
+  # Bot name shown on GitHub (must match the GitHub App's slug + [bot])
+  botName: ""
+  # GitHub App credentials (stored in the shared secret)
+  appId: ""
+  clientId: ""
+  clientSecret: ""
+  privateKey: ""        # PEM-encoded private key (use multiline YAML |)
+  webhookSecret: ""
+  resources:
+    limits:
+      memory: 512Mi
+
 aibot:
   # AI bot service — requires OpenAI API key
   enabled: false
