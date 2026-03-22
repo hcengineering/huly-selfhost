@@ -816,11 +816,12 @@ Please refer to [GitHub Apps documentation](https://docs.github.com/en/apps/crea
 
 During registration of the GitHub app, the following secrets should be obtained:
 
-- `GITHUB_APPID` - An application ID number (e.g., 123456), which can be found in General/About in the GitHub UI.
-- `GITHUB_APPNAME` - The name of the app, the slug of the app, which can be found in General/About in the GitHub UI.
-- `GITHUB_CLIENTID` - A client ID, an identifier from the same page (e.g., Iv1.11a1aaa11aa11111).
-- `GITHUB_CLIENT_SECRET` - A client secret that can be generated in the client secrets section of the General GitHub App UI page.
-- `GITHUB_PRIVATE_KEY` - A private key for authentication. GitHub will generate and download a PEM file, this is a RSA key that contains multiple lines of text and should be copied into the environment variable AS IS otherwise it will not work.
+- `GITHUB_APPID` - The application ID number (e.g., `123456`), found under **General → About** in the GitHub App settings.
+- `GITHUB_APP_SLUG` - The app slug from its public URL: `github.com/apps/<slug>`. For example, if the URL is `github.com/apps/my-huly-dev`, the slug is `my-huly-dev`.
+- `GITHUB_CLIENTID` - The client ID shown on the same page (e.g., `Iv1.11a1aaa11aa11111`).
+- `GITHUB_CLIENT_SECRET` - A client secret generated in the **Client secrets** section of the General page.
+- `GITHUB_PRIVATE_KEY` - A private key for authentication. GitHub will generate and download a `.pem` file. This is an RSA key containing multiple lines — copy the entire content into the environment variable as-is.
+- `GITHUB_WEBHOOK_SECRET` - The webhook secret you set when configuring the webhook URL (see step 5 below).
 
 ### Configure Permissions
 
@@ -867,9 +868,9 @@ github:
     - CLIENT_SECRET=${GITHUB_CLIENT_SECRET}
     - PRIVATE_KEY=${GITHUB_PRIVATE_KEY}
     - COLLABORATOR_URL=ws${SECURE:+s}://${HOST_ADDRESS}/_collaborator
-    - WEBHOOK_SECRET=secret
+    - WEBHOOK_SECRET=${GITHUB_WEBHOOK_SECRET}
     - FRONT_URL=http${SECURE:+s}://${HOST_ADDRESS}
-    - BOT_NAME=${yourAppName}[bot]
+    - BOT_NAME=${GITHUB_APP_SLUG}[bot]
   restart: unless-stopped
   networks:
     - huly_net
@@ -883,7 +884,7 @@ github:
    environment:
     # this should be available outside of the cluster
     - GITHUB_URL=http${SECURE:+s}://${HOST_ADDRESS}/_github
-    - GITHUB_APP=${GITHUB_APPNAME}
+    - GITHUB_APP=${GITHUB_APP_SLUG}
     - GITHUB_CLIENTID=${GITHUB_CLIENTID}
    ...
 ```
@@ -892,7 +893,7 @@ github:
 
 4. Configure Callback URL and Setup URL (with redirect on update set) to your host: `http${SECURE:+s}://${HOST_ADDRESS}/github`
 
-5. Configure Webhook URL to `http${SECURE:+s}://${HOST_ADDRESS}/_github/api/webhook` with the secret `secret`
+5. Configure Webhook URL to `http${SECURE:+s}://${HOST_ADDRESS}/_github/api/webhook` and set a webhook secret (use the same value as `GITHUB_WEBHOOK_SECRET` above)
 
 ## Telegram Bot Service
 
