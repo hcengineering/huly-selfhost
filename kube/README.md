@@ -74,13 +74,11 @@ kubectl create namespace huly
 
 # 3. Create secrets
 SERVER_SECRET=$(openssl rand -hex 32)
-CR_PASS=$(openssl rand -hex 16)
 RP_PASS=$(openssl rand -hex 16)
 
 kubectl -n huly create secret generic huly-secret \
   --from-literal=SERVER_SECRET="$SERVER_SECRET" \
   --from-literal=STORAGE_CONFIG='minio|minio?accessKey=minioadmin&secretKey=minioadmin' \
-  --from-literal=COCKROACH_PASSWORD="$CR_PASS" \
   --from-literal=REDPANDA_SUPERUSER_PASSWORD="$RP_PASS" \
   --from-literal=CR_DB_URL='postgres://root@cockroach:26257/defaultdb?sslmode=disable' \
   --from-literal=GOOGLE_CLIENT_ID='<your-google-client-id>' \
@@ -116,6 +114,19 @@ HULY_VERSION=v0.7.382 \
 3. Add authorized redirect URI: `https://<your-domain>/_accounts/auth/google/callback`
 4. Set `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` in `huly-secret`
 
+### GitHub OAuth (optional)
+
+1. Create a GitHub OAuth App at https://github.com/settings/developers
+2. Set callback URL: `https://<your-domain>/_accounts/auth/github/callback`
+3. Add `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET` to `huly-secret`
+
+### OpenID Connect (optional)
+
+Add the following keys to `huly-secret`:
+- `OPENID_CLIENT_ID`
+- `OPENID_CLIENT_SECRET`
+- `OPENID_ISSUER` (e.g. `https://accounts.google.com`)
+
 ### Admin bootstrap
 
 The first user to sign up creates their workspace and becomes the workspace owner.
@@ -137,7 +148,7 @@ kubectl apply -k kube/overlays/my-site/
 ## Verify
 
 ```bash
-# All 12 pods should be Running
+# All 13 pods should be Running (including kvs)
 kubectl -n huly get pods
 
 # Front responds
@@ -172,6 +183,7 @@ kubectl -n huly port-forward svc/cockroach 8080:8080
 | collaborator | 3078 | WebSocket | - | - |
 | workspace | - | background | yes | yes |
 | fulltext | 4700 | HTTP | yes | yes |
+| kvs | 8094 | HTTP | yes | - |
 | rekoni | 4004 | HTTP | - | - |
 | stats | 4900 | HTTP | - | - |
 

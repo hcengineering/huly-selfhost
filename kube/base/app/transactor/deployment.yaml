@@ -76,6 +76,8 @@ spec:
                 configMapKeyRef:
                   name: huly-config
                   key: LAST_NAME_FIRST
+            - name: SERVER_CURSOR_MAXTIMEMS
+              value: "30000"
           resources:
             requests:
               cpu: 100m
@@ -85,5 +87,10 @@ spec:
           readinessProbe:
             tcpSocket:
               port: ws
-            initialDelaySeconds: 15
+            initialDelaySeconds: 5
             periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: ws
+            initialDelaySeconds: 30
+            periodSeconds: 30

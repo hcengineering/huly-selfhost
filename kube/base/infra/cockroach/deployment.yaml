@@ -45,6 +45,12 @@ spec:
               port: http
             initialDelaySeconds: 10
             periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 30
       volumes:
         - name: data
           persistentVolumeClaim:

@@ -36,13 +36,11 @@ kubectl create namespace "$HULY_NAMESPACE" --dry-run=client -o yaml | kubectl ap
 
 # 2. Create/update secret
 SERVER_SECRET=$(openssl rand -hex 32)
-CR_PASS=$(openssl rand -hex 16)
 RP_PASS=$(openssl rand -hex 16)
 
 kubectl -n "$HULY_NAMESPACE" create secret generic huly-secret \
   --from-literal=SERVER_SECRET="$SERVER_SECRET" \
   --from-literal=STORAGE_CONFIG='minio|minio?accessKey=minioadmin&secretKey=minioadmin' \
-  --from-literal=COCKROACH_PASSWORD="$CR_PASS" \
   --from-literal=REDPANDA_SUPERUSER_PASSWORD="$RP_PASS" \
   --from-literal=CR_DB_URL='postgres://root@cockroach:26257/defaultdb?sslmode=disable' \
   --from-literal=GOOGLE_CLIENT_ID="$GOOGLE_CLIENT_ID" \
@@ -72,6 +70,8 @@ images:
   - name: hardcoreeng/rekoni-service
     newTag: "$HULY_VERSION"
   - name: hardcoreeng/stats
+    newTag: "$HULY_VERSION"
+  - name: hardcoreeng/hulykvs
     newTag: "$HULY_VERSION"
 patches:
   - target:

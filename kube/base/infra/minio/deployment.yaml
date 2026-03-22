@@ -42,6 +42,12 @@ spec:
               port: api
             initialDelaySeconds: 10
             periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /minio/health/live
+              port: api
+            initialDelaySeconds: 30
+            periodSeconds: 20
       volumes:
         - name: data
           persistentVolumeClaim:

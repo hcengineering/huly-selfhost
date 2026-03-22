@@ -17,12 +17,6 @@ spec:
       labels:
         app.kubernetes.io/name: elastic
     spec:
-      initContainers:
-        - name: sysctl
-          image: busybox:1.36
-          command: ["sh", "-c", "sysctl -w vm.max_map_count=262144 || true"]
-          securityContext:
-            privileged: true
       securityContext:
         fsGroup: 1000
         runAsUser: 1000
@@ -45,11 +39,15 @@ spec:
             - name: discovery.type
               value: "single-node"
             - name: ES_JAVA_OPTS
-              value: "-Xms512m -Xmx512m"
+              value: "-Xms1024m -Xmx1024m"
             - name: http.cors.enabled
               value: "true"
             - name: http.cors.allow-origin
-              value: "*"
+              value: "http://localhost:8082"
+            - name: BITNAMI_DEBUG
+              value: "true"
+            - name: ELASTICSEARCH_PORT_NUMBER
+              value: "9200"
           volumeMounts:
             - name: data
               mountPath: /usr/share/elasticsearch/data
@@ -60,11 +58,22 @@ spec:
             limits:
               memory: 1536Mi
           readinessProbe:
-            httpGet:
-              path: /_cluster/health
-              port: http
+            exec:
+              command:
+                - sh
+                - -c
+                - 'curl -sf http://localhost:9200/_cluster/health | grep -vq ''"status":"red"'''
             initialDelaySeconds: 30
             periodSeconds: 10
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - 'curl -sf http://localhost:9200/_cluster/health | grep -vq ''"status":"red"'''
+            initialDelaySeconds: 60
+            periodSeconds: 20
+            failureThreshold: 10
       volumes:
         - name: data
           persistentVolumeClaim:

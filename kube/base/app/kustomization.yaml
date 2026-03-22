@@ -16,3 +16,5 @@ resources:
   - rekoni/service.yaml
   - stats/deployment.yaml
   - stats/service.yaml
+  - kvs/deployment.yaml
+  - kvs/service.yaml

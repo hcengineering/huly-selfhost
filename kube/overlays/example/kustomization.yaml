@@ -26,6 +26,9 @@ images:
     newTag: latest
   - name: hardcoreeng/stats
     newTag: latest
+  # hulykvs does not publish a :latest tag — pin explicitly
+  - name: hardcoreeng/hulykvs
+    newTag: s0.7.392
 
 # Uncomment and set your domain to override the placeholder (huly.example).
 # This replaces the ConfigMap values and Ingress hosts/TLS.

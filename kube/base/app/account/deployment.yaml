@@ -96,6 +96,42 @@ spec:
                   name: huly-config
                   key: ADMIN_EMAILS
                   optional: true
+            - name: GITHUB_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: huly-secret
+                  key: GITHUB_CLIENT_ID
+                  optional: true
+            - name: GITHUB_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: huly-secret
+                  key: GITHUB_CLIENT_SECRET
+                  optional: true
+            - name: OPENID_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: huly-secret
+                  key: OPENID_CLIENT_ID
+                  optional: true
+            - name: OPENID_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: huly-secret
+                  key: OPENID_CLIENT_SECRET
+                  optional: true
+            - name: OPENID_ISSUER
+              valueFrom:
+                secretKeyRef:
+                  name: huly-secret
+                  key: OPENID_ISSUER
+                  optional: true
+            - name: DISABLE_SIGNUP
+              valueFrom:
+                configMapKeyRef:
+                  name: huly-config
+                  key: DISABLE_SIGNUP
+                  optional: true
           resources:
             requests:
               cpu: 50m
@@ -105,5 +141,10 @@ spec:
           readinessProbe:
             tcpSocket:
               port: http
-            initialDelaySeconds: 15
+            initialDelaySeconds: 5
             periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 30

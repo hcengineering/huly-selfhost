@@ -30,3 +30,4 @@ data:
   TELEGRAM_URL: "https://huly.example/_telegram"
   CALENDAR_URL: "https://huly.example/_calendar"
   LOVE_ENDPOINT: "https://huly.example/_love"
+  DESKTOP_UPDATES_CHANNEL: "selfhost"

@@ -47,8 +47,13 @@ spec:
           readinessProbe:
             tcpSocket:
               port: ws
-            initialDelaySeconds: 15
+            initialDelaySeconds: 5
             periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: ws
+            initialDelaySeconds: 30
+            periodSeconds: 30
           resources:
             requests:
               cpu: 50m
