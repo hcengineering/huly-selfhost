@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cockroach
+  labels:
+    app.kubernetes.io/name: cockroach
+    app.kubernetes.io/part-of: huly
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: cockroach
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: cockroach
+    spec:
+      containers:
+        - name: cockroach
+          image: cockroachdb/cockroach:latest-v24.2
+          command: ["cockroach"]
+          args: ["start-single-node", "--insecure"]
+          ports:
+            - name: sql
+              containerPort: 26257
+            - name: http
+              containerPort: 8080
+          env:
+            - name: COCKROACH_DATABASE
+              value: "defaultdb"
+          volumeMounts:
+            - name: data
+              mountPath: /cockroach/cockroach-data
+          resources:
+            requests:
+              cpu: 200m
+              memory: 512Mi
+            limits:
+              memory: 2Gi
+          readinessProbe:
+            httpGet:
+              path: /health?ready=1
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: cockroach-data

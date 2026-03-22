@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: account
+  labels:
+    app.kubernetes.io/name: account
+    app.kubernetes.io/part-of: huly
+spec:
+  selector:
+    app.kubernetes.io/name: account
+  ports:
+    - name: http
+      port: 3000
+      targetPort: http

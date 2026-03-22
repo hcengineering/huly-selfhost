@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rekoni
+  labels:
+    app.kubernetes.io/name: rekoni
+    app.kubernetes.io/part-of: huly
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: rekoni
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: rekoni
+    spec:
+      containers:
+        - name: rekoni
+          image: hardcoreeng/rekoni-service:latest
+          ports:
+            - name: http
+              containerPort: 4004
+          env:
+            - name: SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: huly-secret
+                  key: SERVER_SECRET
+          readinessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              memory: 512Mi
