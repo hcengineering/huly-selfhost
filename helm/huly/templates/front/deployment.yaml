@@ -47,6 +47,9 @@ spec:
             {{- include "huly.envConfig" (dict "name" "LOVE_ENDPOINT" "key" "LOVE_ENDPOINT" "root" .) | nindent 12 }}
             {{- if .Values.githubIntegration.enabled }}
             {{- include "huly.envConfig" (dict "name" "GITHUB_URL" "key" "GITHUB_URL" "root" .) | nindent 12 }}
+            {{- include "huly.envSecret" (dict "name" "GITHUB_CLIENTID" "key" "GITHUB_APP_CLIENT_ID" "root" .) | nindent 12 }}
+            - name: GITHUB_APP
+              value: {{ .Values.githubIntegration.appSlug | quote }}
             {{- end }}
             {{- if .Values.aibot.enabled }}
             {{- include "huly.envConfig" (dict "name" "AI_URL" "key" "AI_URL" "root" .) | nindent 12 }}

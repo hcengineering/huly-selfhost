@@ -236,6 +236,8 @@ githubIntegration:
   replicas: 1
   # Bot name shown on GitHub (must match the GitHub App's slug + [bot])
   botName: ""
+  # GitHub App slug (from the app URL: github.com/apps/<slug>)
+  appSlug: ""
   # GitHub App credentials (stored in the shared secret)
   appId: ""
   clientId: ""
