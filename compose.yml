@@ -181,7 +181,6 @@ services:
       - ACCOUNTS_URL=http${SECURE:+s}://${HOST_ADDRESS}/_accounts
       - ACCOUNT_PORT=3000
       - QUEUE_CONFIG=redpanda:9092
-      - MAX_FAILED_LOGIN_ATTEMPTS: 0
     restart: unless-stopped
     networks:
       - huly_net
