@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: cockroach
+  labels:
+    app.kubernetes.io/name: cockroach
+    app.kubernetes.io/part-of: huly
+spec:
+  clusterIP: None
+  selector:
+    app.kubernetes.io/name: cockroach
+  ports:
+    - name: sql
+      port: 26257
+      targetPort: sql
+    - name: http
+      port: 8080
+      targetPort: http

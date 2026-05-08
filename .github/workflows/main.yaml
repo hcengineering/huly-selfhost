@@ -24,7 +24,7 @@ jobs:
             [ $(uname -m) = aarch64 ] && curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.26.0/kind-linux-arm64
             chmod +x ./kind
             sudo mv ./kind /usr/local/bin/kind
- 
+
         - name: "Setup k8s cluster"
           run: |
             cat <<EOF | kind create cluster --wait=3m --config=-
@@ -62,22 +62,25 @@ jobs:
           working-directory: ${{ github.workspace }}/src/github.com/${{ github.repository }}/kube
           run: |
             echo 127.0.0.1 huly.example | sudo tee -a /etc/hosts
-            echo 127.0.0.1 account.huly.example | sudo tee -a /etc/hosts
-            echo 127.0.0.1 transactor.huly.example | sudo tee -a /etc/hosts
-            echo 127.0.0.1 collaborator.huly.example | sudo tee -a /etc/hosts
-            kubectl apply -R -f .
-            kubectl wait --for=condition=Available deployment/cockroachdb-single-node --timeout 3m
-            kubectl wait --for=condition=Available deployment/transactor --timeout 3m
-            kubectl delete pod -l app=account
-            kubectl wait --for=condition=Available deployment/account --timeout 3m
+            kubectl create namespace huly || true
+            kubectl -n huly create secret generic huly-secret \
+              --from-literal=SERVER_SECRET=secret \
+              --from-literal=STORAGE_CONFIG='minio|minio?accessKey=minioadmin&secretKey=minioadmin' \
+              --from-literal=REDPANDA_SUPERUSER_PASSWORD=redpanda \
+              --from-literal=CR_DB_URL='postgres://root@cockroach:26257/defaultdb?sslmode=disable'
+            kubectl apply -k overlays/example -n huly
+            kubectl -n huly wait --for=condition=Available deployment/cockroach --timeout 3m
+            kubectl -n huly wait --for=condition=Available deployment/transactor --timeout 3m
+            kubectl -n huly delete pod -l app.kubernetes.io/name=account
+            kubectl -n huly wait --for=condition=Available deployment/account --timeout 3m
         - name: "Check login"
           run: |
             token=$(curl -v -H 'Content-Type: application/json' \
             -d '{"method": "signUp","params": {"email": "user3","password": "1234","firstName": "Test","lastName": "User"}}' \
             -X POST \
-            http://account.huly.example/ | jq -r '.result.token')
+            http://huly.example/_accounts/ | jq -r '.result.token')
 
-            curl -v http://account.huly.example/ \
+            curl -v http://huly.example/_accounts/ \
               -X POST \
               -d '{"method":"getUserWorkspaces","params":[]}' \
               -H 'Content-Type: application/json' \
@@ -87,5 +90,5 @@ jobs:
         - name: Cleanup resources
           if: ${{ success() || failure() || cancelled() }}
           run: |
-            kubectl describe pods
+            kubectl -n huly describe pods
             kind delete cluster

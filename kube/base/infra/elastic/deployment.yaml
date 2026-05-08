@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: elastic
+  labels:
+    app.kubernetes.io/name: elastic
+    app.kubernetes.io/part-of: huly
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: elastic
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: elastic
+    spec:
+      securityContext:
+        fsGroup: 1000
+        runAsUser: 1000
+        runAsGroup: 1000
+      containers:
+        - name: elasticsearch
+          image: elasticsearch:7.14.2
+          command:
+            - sh
+            - -c
+            - |
+              if ! /usr/share/elasticsearch/bin/elasticsearch-plugin list | grep -q ingest-attachment; then
+                /usr/share/elasticsearch/bin/elasticsearch-plugin install --batch ingest-attachment
+              fi
+              exec /usr/local/bin/docker-entrypoint.sh eswrapper
+          ports:
+            - name: http
+              containerPort: 9200
+          env:
+            - name: discovery.type
+              value: "single-node"
+            - name: ES_JAVA_OPTS
+              value: "-Xms1024m -Xmx1024m"
+            - name: http.cors.enabled
+              value: "true"
+            - name: http.cors.allow-origin
+              value: "http://localhost:8082"
+            - name: BITNAMI_DEBUG
+              value: "true"
+            - name: ELASTICSEARCH_PORT_NUMBER
+              value: "9200"
+          volumeMounts:
+            - name: data
+              mountPath: /usr/share/elasticsearch/data
+          resources:
+            requests:
+              cpu: 200m
+              memory: 768Mi
+            limits:
+              memory: 1536Mi
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - 'curl -sf http://localhost:9200/_cluster/health | grep -vq ''"status":"red"'''
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - 'curl -sf http://localhost:9200/_cluster/health | grep -vq ''"status":"red"'''
+            initialDelaySeconds: 60
+            periodSeconds: 20
+            failureThreshold: 10
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: elastic-data
