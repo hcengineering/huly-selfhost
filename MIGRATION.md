@@ -13,6 +13,26 @@ WARNING: if you are migrating from v6 see [v0.7.204](#v07204) for details.
 > [!CAUTION]
 > Do not upgrade directly from v6 to v7. Direct upgrades will lock your deployment with MongoDB-specific data, making the future migration significantly more complex. Follow the migration instructions below instead.
 
+### Next release (TBD)
+
+#### Print Service
+
+`FRONT_URL` is now required for the `print` service. If you have the optional `print` service deployed, add `FRONT_URL` to its environment:
+
+```yaml
+print:
+  ...
+  environment:
+    ...
+    - FRONT_URL=http${SECURE:+s}://${HOST_ADDRESS}
+```
+
+After updating, recreate the container:
+
+```bash
+docker compose up -d --force-recreate print
+```
+
 ### v0.7.382
 
 No changes required.

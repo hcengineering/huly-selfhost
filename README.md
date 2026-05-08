@@ -576,6 +576,7 @@ Redis can be used as an alternative backend for HulyPulse – for example, in mu
           - STATS_URL=http://stats:4900
           - SECRET=${SECRET}
           - ACCOUNTS_URL=http://account:3000
+          - FRONT_URL=http${SECURE:+s}://${HOST_ADDRESS}
         restart: unless-stopped
         networks:
           - huly_net
