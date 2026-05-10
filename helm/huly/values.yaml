@@ -10,7 +10,7 @@ fullnameOverride: ""
 # ──────────────────────────────────────────────────────────────
 # Global image tag for all Huly services
 # ──────────────────────────────────────────────────────────────
-hulyVersion: v0.7.382
+hulyVersion: v0.7.423
 
 # Docker registry prefix for Huly service images.
 # Default "hardcoreeng" pulls from Docker Hub (hardcoreeng/front, etc.).

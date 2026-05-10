@@ -314,7 +314,7 @@ All app services share these overridable keys: `<svc>.replicas`, `<svc>.resource
 
 | Key | Description | Default |
 |-----|-------------|---------|
-| `hulyVersion` | Image tag for all Huly services | `v0.7.382` |
+| `hulyVersion` | Image tag for all Huly services | `v0.7.423` |
 | `kvs.enabled` | Deploy KVS (key-value store) service | `true` |
 
 ### GitHub Integration

@@ -27,7 +27,7 @@ The Huly platform source code is available on GitHub: **[hcengineering/platform]
 
 Before updating, **always review `MIGRATION.md`** in this repository:
 
-- **Open `MIGRATION.md`** and find the section for your target version (for example `v0.7.382`).
+- **Open `MIGRATION.md`** and find the section for your target version (for example `v0.7.423`).
 - **If the section says "No changes required"**, you can upgrade just by updating container versions.
 - **If there are additional steps**, follow them carefully (backup, config changes, service additions/removals, etc.) **before** or **during** the update.
 - **If you are upgrading from any 0.6.x version to 0.7.x**, you **must** follow the dedicated migration steps in the `v0.7` section of `MIGRATION.md` (especially `v0.7.204`) instead of doing a direct in-place upgrade.
@@ -45,8 +45,8 @@ To update an existing self-hosted deployment to a new Huly version:
    ```
 3. **Set the new Huly version in `.env`:**
    - Edit the `.env` file in the project root and update:
-     - `HULY_VERSION` to the desired platform version tag (for example `v0.7.382`)
-     - `DESKTOP_CHANNEL` to the same version without the leading `v` (for example `0.7.382`) if you use the desktop app.
+     - `HULY_VERSION` to the desired platform version tag (for example `v0.7.423`)
+     - `DESKTOP_CHANNEL` to the same version without the leading `v` (for example `0.7.423`) if you use the desktop app.
 4. **Pull updated container images:**
    ```bash
    docker compose pull
