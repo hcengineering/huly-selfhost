@@ -1,0 +1,306 @@
+workspace:
+  name: Praut
+  purpose: Interni operacni system pro softwarovy startup, AI buildery a technologicky tym z Chebu.
+  language: cs
+  timezone: Europe/Prague
+  currency: CZK
+  work_week: Monday-Friday
+  rule: Kazda prace ma vlastnika, stav, prioritu, dalsi krok, ocekavany vystup a vazbu na projekt, produkt nebo interni oblast.
+
+modules:
+  - original: Karty
+    name: Backlog a pracovni karty
+    workflow: [Napad, K trideni, K analyze, Pripraveno, V reseni, V review, K testovani, Hotovo, Archivovano]
+  - original: Kontakty
+    name: Kontakty a externi vztahy
+    workflow: [Novy, Aktivni vztah, Ceka na dalsi krok, Uzavreno, Archivovano]
+  - original: Chat
+    name: Interni komunikace
+    workflow: [Diskuze, Zaver, Karta/ADR/Incident/Dokument, Uzavreno]
+  - original: Nabor
+    name: Nabor a spolupracovnici
+    workflow: [Novy kandidat, Predvyber, Prvni kontakt, Technicke overeni, Pohovor, Testovaci ukol, Nabidka, Onboarding, Aktivni spoluprace, Zamitnuto, Talent pool]
+  - original: Leady (beta)
+    name: Prilezitosti
+    workflow: [Nove, Kvalifikace, Uvodni call, Analyza, Navrh reseni, Odhad, Nabidka, Vyhrano, Prohrano, Odlozeno, Archivovano]
+  - original: Lidske zdroje (beta)
+    name: Lide a kapacity
+    workflow: [Aktivni, Pretizeny, Ceka na onboarding, Ceka access review, Archivovano]
+  - original: Prehled
+    name: Startup cockpit
+    workflow: [Denni priorita, Blokery, Release readiness, Rizika, Rozhodnuti]
+  - original: Dokumenty
+    name: Knowledge base a dokumentace
+    workflow: [Navrh, V review, Schvaleno, K aktualizaci, Archivovano]
+  - original: Tym
+    name: Tym Praut
+    workflow: [Aktivni, Onboarding, Ceka revize, Offboarding, Archiv]
+  - original: Procesy
+    name: Playbooky a SOP
+    workflow: [Navrh, Pouziva se, K revizi, Archivovano]
+  - original: Disk
+    name: Soubory a assety
+    workflow: [Nove, Pouzivane, K archivaci, Archiv]
+  - original: Rizene dokumenty
+    name: Standardy a rizene dokumenty
+    workflow: [Draft, Review, Schvaleno, Platne, K revizi, Nahrazeno]
+  - original: Skoleni
+    name: Interni skoleni
+    workflow: [Pripraveno, Prirazeno, Probiha, Splneno, K obnove]
+  - original: Sprava testu (beta)
+    name: QA a test management
+    workflow: [Navrh, Pripraveno, Spusteno, Passed, Failed, Blocked, Archivovano]
+  - original: Pruzkum (beta)
+    name: Feedback a retrospektivy
+    workflow: [Nove, Sber odpovedi, Vyhodnoceni, Akcni kroky, Uzavreno]
+
+spaces:
+  - Startup Cockpit
+  - Backlog
+  - Vyvoj
+  - AI Buildy
+  - Produkty
+  - Projekty
+  - Integrace
+  - QA
+  - Releasy
+  - Incidenty
+  - Dokumentace
+  - Playbooky
+  - Tym
+  - Nabor
+  - Externiste
+  - Operations
+  - Leady a prilezitosti
+  - Skoleni
+  - Archiv
+
+classes:
+  - Workspace User
+  - Clen tymu
+  - Externista
+  - Kandidat
+  - Kontakt
+  - Lead
+  - Prilezitost
+  - Produkt
+  - Projekt
+  - Epic
+  - Feature
+  - Ukol
+  - Subtask
+  - Bug
+  - AI Agent
+  - Prompt
+  - Automatizace
+  - Integrace
+  - API Endpoint
+  - Software Component
+  - Software Asset
+  - Prostredi
+  - Test Case
+  - Test Run
+  - Release
+  - Incident
+  - Dokument
+  - Rozhodnuti
+  - Proces
+  - Skoleni
+  - Onboarding
+  - Riziko
+  - Blokator
+  - Feedback
+  - Retrospektiva
+
+roles:
+  - name: Owner
+    access: vse
+  - name: Admin
+    access: sprava workspace, clenove, konfigurace, integrace
+  - name: Founder
+    access: cockpit, projekty, vybrane finance, leady, tym
+  - name: Operations
+    access: operations, tym, onboarding, procesy
+  - name: Product Manager
+    access: produkty, projekty, backlog, dokumentace
+  - name: Project Manager
+    access: projekty, sprinty, releasy, rizika
+  - name: Tech Lead
+    access: vyvoj, incidenty, integrace, standardy
+  - name: Developer
+    access: vyvoj, backlog, dokumentace k praci
+  - name: AI Builder
+    access: AI buildy, prompt dokumentace, testy
+  - name: QA
+    access: QA, bugy, releasy
+  - name: Designer
+    access: design, produkty, projekty
+  - name: Sales
+    access: prilezitosti, kontakty, vybrane projekty
+  - name: Recruiter
+    access: nabor, kandidati, onboarding
+  - name: Externista
+    access: pouze nutne prostory, ukoly a dokumenty
+  - name: Auditor
+    access: read-only vymezene oblasti
+
+enums:
+  stav_prace: [Napad, Nove, K trideni, K analyze, Pripraveno, V reseni, Ceka na vstup, Blokovano, V review, K testovani, V testovani, Pripraveno k release, Nasazeno, K dokumentaci, Hotovo, Pozastaveno, Zruseno, Archivovano]
+  priorita: [Kriticka, Vysoka, Stredni, Nizka, Backlog, Pozdeji, Experiment]
+  typ_prace: [Feature, Bug, Task, Subtask, Research, Spike, AI Agent, AI Workflow, Prompt, Automatizace, Integrace, API, Backend, Frontend, Databaze, Infrastruktura, DevOps, Security, QA, Dokumentace, Design, Product, Operations, Nabor, Lead, Incident, Release, Technicky dluh, Interni proces, Skoleni, Onboarding]
+  typ_projektu: [Interni system, Produkt, MVP, Automatizace, Integrace, AI build, Research, Operations]
+  typ_produktu: [SaaS, Interni nastroj, API, AI agent, Automatizace, Komponenta, Prototyp]
+  faze_produktu: [Napad, Discovery, MVP, Pilot, Aktivni vyvoj, Produkce, Udrzba, Archiv]
+  stav_release: [Planovano, Pripraveno, Ceka QA, Schvaleno, Nasazeno, Rollback, Uzavreno]
+  stav_testu: [Navrh, Pripraveno, Probiha, Passed, Failed, Blocked, Skipped]
+  zavaznost_bugu: [Kriticka, Vysoka, Stredni, Nizka, Kosmeticka]
+  typ_prostredi: [Development, Staging, Production, Sandbox, Test, Demo]
+  typ_integrace: [API, Webhook, ETL, OAuth, E-mail, Calendar, CI/CD, Monitoring, CRM, Fakturace]
+  typ_ai_agenta: [Chat agent, Workflow agent, Research agent, Coding agent, Ops agent, QA agent, Data agent]
+  typ_promptu: [System, Developer, User template, Evaluation, Tool instruction, Guardrail]
+  rizikovost: [Nizka, Stredni, Vysoka, Kriticka]
+  citlivost_dat: [Verejne, Interni, Duverne, Citlive, Tajne]
+  viditelnost: [Interni, Tymova, Projektova, Externista omezene, Auditor read-only]
+  seniorita: [Junior, Medior, Senior, Lead, Principal, Advisor]
+  stav_onboardingu: [Nepripraveno, Pripraveno, Probiha, Ceka kontrola, Dokonceno, Pozastaveno]
+  stav_dokumentu: [Draft, V review, Schvaleno, Platne, K revizi, Nahrazeno, Archiv]
+  stav_kandidata: [Novy, Predvyber, Prvni kontakt, Technicke overeni, Pohovor, Testovaci ukol, Nabidka, Onboarding, Zamitnuto, Talent pool]
+  typ_externisty: [Freelancer, Agenturni spolupracovnik, Auditor, Konzultant, Kandidat s testem]
+  typ_incidentu: [Produkcni, Bezpecnostni, Datovy, Integracni, AI agent, Infrastrukturni, Procesni]
+  sla_interni_priority: [P0 ihned, P1 dnes, P2 tento tyden, P3 planovane, P4 backlog]
+
+relationships:
+  - Produkt ma Projekty
+  - Projekt ma Epicy
+  - Epic ma Feature
+  - Feature ma Ukoly
+  - Ukol ma Subtasky
+  - Ukol ma Testy
+  - Ukol ma Dokumentaci
+  - Bug souvisi s Feature
+  - Release obsahuje Ukoly a Bugy
+  - AI Agent ma Prompty
+  - AI Agent ma Testy
+  - AI Agent ma Dokumentaci
+  - Integrace ma API Endpointy
+  - Integrace ma Prostredi
+  - Prostredi patri k Produktu nebo Projektu
+  - Incident patri k Produktu, Projektu nebo Prostredi
+  - Rozhodnuti souvisi s Dokumentem, Projektem nebo Feature
+  - Externista ma prirazene Projekty a Ukoly
+  - Kandidat muze byt preveden na Externistu nebo Clena tymu
+  - Lead muze byt preveden na Prilezitost nebo Projekt
+  - Pracovni karta muze blokovat jinou pracovni kartu
+  - Pracovni karta muze vyzadovat review, test nebo dokumentaci
+
+dashboards:
+  - Startup cockpit
+  - Dnesni priority
+  - Backlog
+  - Aktivni sprint
+  - Blokery
+  - Kriticke bugy
+  - AI buildy
+  - Integrace
+  - Releasy
+  - Incidenty
+  - QA stav
+  - Dokumentace k revizi
+  - Kapacity tymu
+  - Externiste
+  - Nabor pipeline
+  - Leady a prilezitosti
+  - Overdue prace
+  - Rizika
+  - Onboarding zamestnancu
+  - Onboarding externistu
+  - Access review
+
+label_taxonomies:
+  technologie: [Python, TypeScript, Django, React, Node.js, PostgreSQL, Docker, n8n, OpenAI, Azure, Huly]
+  oblast_produktu: [AI, Backend, Frontend, Data, Integrace, UX, Operations, Security]
+  typ_prace: [Feature, Bug, Research, Spike, Release, Incident, Dokumentace]
+  priorita: [Kriticka, Vysoka, Stredni, Nizka, Experiment]
+  riziko: [Data risk, Security risk, Vendor risk, Capacity risk, Delivery risk]
+  seniorita: [Junior, Medior, Senior, Lead]
+  tym: [Product, Engineering, AI Builders, QA, Ops, Sales]
+  prostredi: [Dev, Staging, Prod, Sandbox]
+  stav_release: [Ready, QA needed, Approved, Released, Rollback]
+  citlivost_dat: [Interni, Duverne, Citlive, Tajne]
+  ai_oblast: [Agent, Prompt, Eval, RAG, Automation, Tooling]
+  typ_integrace: [REST API, Webhook, OAuth, ETL, Monitoring, CI/CD]
+  zdroj_leadu: [Inbound, Referral, Outbound, Partner, Existing contact]
+  typ_externisty: [Freelancer, Auditor, Konzultant, Kandidat]
+  provozni_oblast: [Access, Finance, Legal, Infrastructure, Onboarding]
+
+automations:
+  - trigger: Nova karta bez vlastnika
+    action: Upozornit Operations/Admina
+  - trigger: Ukol po terminu
+    action: Upozornit vlastnika
+  - trigger: Blocker
+    action: Upozornit odpovednou roli
+  - trigger: Kriticky bug
+    action: Vytvorit incident nebo urgentni notifikaci
+  - trigger: Karta ve stavu K testovani
+    action: Vyzadovat test
+  - trigger: Karta ve stavu Hotovo
+    action: Vyzadovat vyplneny vysledek
+  - trigger: Release
+    action: Vytvorit release checklist
+  - trigger: Incident
+    action: Vytvorit postmortem dokument
+  - trigger: Novy externista
+    action: Vytvorit onboarding checklist
+  - trigger: Externista bez aktivity X dni
+    action: Zaradit do access review
+  - trigger: Vyhrany lead
+    action: Vytvorit projekt
+  - trigger: AI agent bez dokumentace
+    action: Nepovolit oznaceni Hotovo
+
+security_rules:
+  - Povinne 2FA pro interni uzivatele a externisty, pokud image podporuje vynuceni.
+  - Princip nejnizsiho pristupu.
+  - Zakaz sdilenych uctu.
+  - Zakaz ukladani API klicu do bezne dokumentace.
+  - Password manager jako doporuceny standard.
+  - Oddelena prava pro interni uzivatele a externisty.
+  - Access review pro externisty a citlive role.
+  - Odebrani pristupu pri ukonceni spoluprace.
+  - Integrace musi mit vlastnika, ucel, prostredi, ulozeni klicu, pravidla pristupu, dokumentaci, test rezim, fallback a postup obnovy.
+
+emoji:
+  - "🚀"
+  - "🧠"
+  - "🤖"
+  - "🔌"
+  - "🧪"
+  - "🐞"
+  - "🔥"
+  - "⏳"
+  - "✅"
+  - "📄"
+  - "🔐"
+  - "🧱"
+  - "🎨"
+  - "🧭"
+  - "🛠"
+  - "🧯"
+  - "🧑‍💻"
+  - "📦"
+  - "🧩"
+
+exports:
+  - backlog
+  - sprint report
+  - release report
+  - test report
+  - incident report
+  - prace externisty
+  - timesheet
+  - dokumentace
+  - access audit
+  - nabor pipeline
+  - lead pipeline
+  - zaloha konfigurace

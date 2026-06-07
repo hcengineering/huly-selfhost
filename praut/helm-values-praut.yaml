@@ -1,0 +1,11 @@
+# Optional Helm overlay for a Praut deployment.
+# Use with: helm upgrade --install huly ./helm/huly -f helm/huly/values.yaml -f praut/helm-values-praut.yaml
+
+appSettings:
+  title: "Praut"
+  defaultLanguage: "cs"
+  lastNameFirst: "false"
+
+auth:
+  # Set to true only after the initial admin account exists.
+  disableSignup: false

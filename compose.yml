@@ -45,7 +45,7 @@ services:
       - REDPANDA_SUPERUSER_USERNAME=${REDPANDA_ADMIN_USER}
       - REDPANDA_SUPERUSER_PASSWORD=${REDPANDA_ADMIN_PWD}
     healthcheck:
-      test: ['CMD', 'rpk', 'cluster', 'info', '-X', 'user=${REDPANDA_ADMIN_USER}', '-X', 'pass=${REDPANDA_ADMIN_PWD}']
+      test: ['CMD', 'rpk', 'cluster', 'info']
       interval: 10s
       timeout: 5s
       retries: 10
@@ -105,7 +105,7 @@ services:
   #   # Required by HulyPulse (push notifications / real-time updates)
 
   # hulypulse:
-  #   image: hardcoreeng/service_hulypulse:${HULY_PULSE_VERSION:-0.1.29}
+  #   image: ${HULY_IMAGE_REGISTRY:-hardcoreeng}/service_hulypulse:${HULY_PULSE_VERSION:-0.1.29}
   #   ports:
   #     - 8099:8099
   #   environment:
@@ -127,7 +127,7 @@ services:
   #     - huly_net
 
   rekoni:
-    image: hardcoreeng/rekoni-service:${HULY_VERSION}
+    image: ${HULY_IMAGE_REGISTRY:-hardcoreeng}/rekoni-service:${HULY_VERSION}
     environment:
       - SECRET=${SECRET}
     deploy:
@@ -139,24 +139,25 @@ services:
       - huly_net
 
   transactor:
-    image: hardcoreeng/transactor:${HULY_VERSION}
+    image: ${HULY_IMAGE_REGISTRY:-hardcoreeng}/transactor:${HULY_VERSION}
     environment:
+      - TZ=${TZ:-Europe/Prague}
       - SERVER_PORT=3333
       - SERVER_SECRET=${SECRET}
       - DB_URL=${CR_DB_URL}
       - STORAGE_CONFIG=minio|minio?accessKey=minioadmin&secretKey=minioadmin
-      - FRONT_URL=http://localhost:8087
+      - FRONT_URL=http${SECURE:+s}://${HOST_ADDRESS}
       - ACCOUNTS_URL=http://account:3000
       - FULLTEXT_URL=http://fulltext:4700
       - STATS_URL=http://stats:4900
-      - LAST_NAME_FIRST=${LAST_NAME_FIRST:-true}
+      - LAST_NAME_FIRST=${LAST_NAME_FIRST:-false}
       - QUEUE_CONFIG=redpanda:9092
     restart: unless-stopped
     networks:
       - huly_net
 
   collaborator:
-    image: hardcoreeng/collaborator:${HULY_VERSION}
+    image: ${HULY_IMAGE_REGISTRY:-hardcoreeng}/collaborator:${HULY_VERSION}
     environment:
       - COLLABORATOR_PORT=3078
       - SECRET=${SECRET}
@@ -168,8 +169,9 @@ services:
       - huly_net
 
   account:
-    image: hardcoreeng/account:${HULY_VERSION}
+    image: ${HULY_IMAGE_REGISTRY:-hardcoreeng}/account:${HULY_VERSION}
     environment:
+      - TZ=${TZ:-Europe/Prague}
       - SERVER_PORT=3000
       - SERVER_SECRET=${SECRET}
       - DB_URL=${CR_DB_URL}
@@ -181,13 +183,15 @@ services:
       - ACCOUNTS_URL=http${SECURE:+s}://${HOST_ADDRESS}/_accounts
       - ACCOUNT_PORT=3000
       - QUEUE_CONFIG=redpanda:9092
+      - DISABLE_SIGNUP=${DISABLE_SIGNUP:-}
     restart: unless-stopped
     networks:
       - huly_net
 
   workspace:
-    image: hardcoreeng/workspace:${HULY_VERSION}
+    image: ${HULY_IMAGE_REGISTRY:-hardcoreeng}/workspace:${HULY_VERSION}
     environment:
+      - TZ=${TZ:-Europe/Prague}
       - SERVER_SECRET=${SECRET}
       - DB_URL=${CR_DB_URL}
       - TRANSACTOR_URL=ws://transactor:3333;ws${SECURE:+s}://${HOST_ADDRESS}/_transactor
@@ -203,8 +207,9 @@ services:
       - huly_net
 
   front:
-    image: hardcoreeng/front:${HULY_VERSION}
+    image: ${HULY_IMAGE_REGISTRY:-hardcoreeng}/front:${HULY_VERSION}
     environment:
+      - TZ=${TZ:-Europe/Prague}
       - SERVER_PORT=8080
       - SERVER_SECRET=${SECRET}
       - LOVE_ENDPOINT=http${SECURE:+s}://${HOST_ADDRESS}/_love
@@ -219,17 +224,18 @@ services:
       - ELASTIC_URL=http://elastic:9200
       - COLLABORATOR_URL=ws${SECURE:+s}://${HOST_ADDRESS}/_collaborator
       - STORAGE_CONFIG=minio|minio?accessKey=minioadmin&secretKey=minioadmin
-      - TITLE=${TITLE:-Huly Self Host}
-      - DEFAULT_LANGUAGE=${DEFAULT_LANGUAGE:-en}
-      - LAST_NAME_FIRST=${LAST_NAME_FIRST:-true}
+      - TITLE=${TITLE:-Praut}
+      - DEFAULT_LANGUAGE=${DEFAULT_LANGUAGE:-cs}
+      - LAST_NAME_FIRST=${LAST_NAME_FIRST:-false}
       - DESKTOP_UPDATES_CHANNEL=${DESKTOP_CHANNEL}
       - DISABLED_FEATURES=auto-translate,mailboxes
+      - DISABLE_SIGNUP=${DISABLE_SIGNUP:-}
     restart: unless-stopped
     networks:
       - huly_net
 
   fulltext:
-    image: hardcoreeng/fulltext:${HULY_VERSION}
+    image: ${HULY_IMAGE_REGISTRY:-hardcoreeng}/fulltext:${HULY_VERSION}
     environment:
       - SERVER_SECRET=${SECRET}
       - DB_URL=${CR_DB_URL}
@@ -245,7 +251,7 @@ services:
       - huly_net
 
   stats:
-    image: hardcoreeng/stats:${HULY_VERSION}
+    image: ${HULY_IMAGE_REGISTRY:-hardcoreeng}/stats:${HULY_VERSION}
     environment:
       - PORT=4900
       - SERVER_SECRET=${SECRET}
@@ -254,7 +260,7 @@ services:
       - huly_net
 
   kvs:
-    image: hardcoreeng/hulykvs:${HULY_VERSION}
+    image: ${HULY_IMAGE_REGISTRY:-hardcoreeng}/hulykvs:${HULY_VERSION}
     depends_on:
       cockroach:
         condition: service_started

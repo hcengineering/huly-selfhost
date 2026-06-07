@@ -19,6 +19,27 @@ Huly is resource-heavy. Use a server that meets or exceeds the following:
 
 The Huly platform source code is available on GitHub: **[hcengineering/platform](https://github.com/hcengineering/platform)**
 
+Praut uses the fork **[PrautAutomation/HulyPrautplatform](https://github.com/PrautAutomation/HulyPrautplatform)** as the platform source, with `develop` as the default integration branch. The self-host stack does not run platform source code directly; it pulls Docker images built from that source.
+
+This repository records the platform source in:
+
+```bash
+PLATFORM_REPOSITORY=https://github.com/PrautAutomation/HulyPrautplatform.git
+PLATFORM_REF=develop
+```
+
+To run images built from the Praut platform fork, publish those images to a registry and set:
+
+```bash
+HULY_IMAGE_REGISTRY=ghcr.io/prautautomation/hulyprautplatform
+```
+
+Until the Praut fork publishes compatible images, the safe default remains:
+
+```bash
+HULY_IMAGE_REGISTRY=hardcoreeng
+```
+
 > [!NOTE]
 > For self-hosted deployments, use production versions (`v*` tags). For example: `v0.7.310`, `v0.7.307`, `v0.6.501`
 > See all available versions on [GitHub Releases](https://github.com/hcengineering/platform/releases).
