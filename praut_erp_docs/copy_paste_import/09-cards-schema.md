@@ -5,7 +5,7 @@ Tyto typy Cards zaloz po importu dokumentu. Nepridavej dalsi typy pred revizi da
 ## Typy Cards
 
 ### Firma
-- **Ucel:** Centralni evidence organizace, klienta nebo partnera.
+- **Ucel:** Legacy/test Cards typ. Kanonicka evidence organizace, klienta nebo partnera je Contacts -> Companies.
 - **Povinna pole:** nazev, ICO, web, segment, stav vztahu, vlastnik, citlivost
 - **Stavy:** novy, aktivni, strategicky, neaktivni, archiv
 - **Lidska kontrola:** Povinna pri dopadu na cenu, klienta, opravneni, reputaci, citliva data, audit nebo externi komunikaci.
@@ -20,7 +20,7 @@ Tyto typy Cards zaloz po importu dokumentu. Nepridavej dalsi typy pred revizi da
 - **Ucel:** Zachyceni nove obchodni poptavky a jeji kvalifikace.
 - **Povinna pole:** zdroj, firma, kontakt, potreba, rozpocet, termin, priorita, stav, dalsi krok
 - **Stavy:** novy, kontaktovat, kvalifikace, prevedeno, odmitnuto, archiv
-- **Lidska kontrola:** Povinna pri dopadu na cenu, klienta, opravneni, reputaci, citliva data, audit nebo externi komunikaci.
+- **Lidska kontrola:** Pole firma musi vybirat Contacts -> Companies (`contact:class:Organization`), ne Cards -> Firma.
 
 ### Obchodni prilezitost
 - **Ucel:** Rizeni obchodu od kvalifikace po vyhru nebo prohru.

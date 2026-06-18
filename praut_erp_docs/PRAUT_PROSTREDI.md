@@ -3,9 +3,11 @@
 Tento dokument popisuje cílový stav ERP prostředí PRAUT v Huly. Slouží jako referenční specifikace pro kolegu, který prostředí zakládá — říká, CO má existovat a jak má vypadat hotový výsledek. Jak data do Huly dostat (skripty, import, ruční kopírování) je popsáno v ostatních souborech tohoto balíčku.
 
 **Základní pravidlo systému:**
-- Karty = strukturovaná data, vztahy a reporting
+- Tracker issues = práce s vlastníkem, prioritou, termínem a stavem
+- GitHub PR = kódová změna, review a historie změn navázaná na issue
+- Contacts = firmy a lidé
+- Karty = strukturovaná obchodní/provozní evidence, vztahy, rizika, fakturace a reporting
 - Dokumenty = metodiky, pravidla, šablony a delší text
-- Úkoly a akční položky = práce s vlastníkem, termínem a stavem
 - AI = poradce a přípravná vrstva, ne autorita pro riziková rozhodnutí
 
 ---
@@ -31,9 +33,40 @@ Dokumenty jsou připraveny ve složce `huly_unified_import/` v Huly Unified Impo
 
 ---
 
-## 2. Typy karet (Cards)
+## 2. Operativni rizeni prace
+
+Hlavni provozni prehled tymu je Huly Tracker. Vse, co ma nekdo udelat, musi byt Tracker issue s vlastnikem, prioritou, terminem nebo jasnym duvodem bez terminu a stavem.
+
+Minimalni stavy Trackeru:
+
+- `Backlog`
+- `Todo`
+- `In Progress`
+- `Review`
+- `Blocked`
+- `Done`
+- `Cancelled`
+
+Minimalni sablony issue:
+
+- `Feature`
+- `Bug`
+- `Client request`
+- `Sales follow-up`
+- `Review/QA`
+- `Ops/Admin`
+
+GitHub zustava zdroj pravdy pro kod, PR a review. Kazda vyvojova vetev a PR obsahuje Huly issue key, napr. `TSK-2`; PR title ma tvar `[TSK-2] kratky popis`; Huly issue obsahuje odkaz na PR. Pokud integrace nefunguje, rucni PR link v issue je platny fallback.
+
+Cards nejsou hlavni misto pro denni koordinaci prace. Pouzivaji se az tam, kde je potreba strukturovana evidence, obchodni pipeline, reporting, rizika nebo fakturace.
+
+---
+
+## 3. Typy karet (Cards)
 
 V Huly existuje 22 typů karet. Zakládej je v `Settings → TYPES`, ne jako instance v kartách. Zavádět ve dvou vlnách — nejprve ověř obchod a zakázky, pak přidej zbytek.
+
+Pro novy CRM workflow se firmy zakladaji v `Contacts -> Companies`. `Cards -> Firma` zustava jen legacy/test typ, dokud nebude datovy model vazeb zjednoduseny.
 
 ### První vlna — obchod, zakázky, zákaznická péče
 
@@ -71,7 +104,7 @@ Po zavedení první vlny vytvoř jeden testovací záznam pro každý typ a ově
 
 ---
 
-## 3. Vazby mezi kartami
+## 4. Vazby mezi kartami
 
 Toto jsou povinné vztahy — bez nich procesní toky nefungují:
 
@@ -88,7 +121,7 @@ Toto jsou povinné vztahy — bez nich procesní toky nefungují:
 
 ---
 
-## 4. Hlavní procesní toky
+## 5. Hlavní procesní toky
 
 9 klíčových procesů, které musí v prostředí fungovat end-to-end:
 
@@ -108,23 +141,25 @@ Detailní popis každého procesu (které karty, které dokumenty, která rozhod
 
 ---
 
-## 5. Kritická pravidla — musí být implementována
+## 6. Kritická pravidla — musí být implementována
 
 Tato pravidla nejsou volitelná. Bez nich prostředí neplní svůj účel:
 
-1. **Nabídka má schvalovatele.** Cena, sleva a obchodní podmínky nesmí zůstat jen v chatu nebo v e-mailu — musí být jako pole v kartě Nabídka a schválení musí být evidováno.
+1. **Tracker je hlavni prehled prace.** Prace bez issue neni planovana prace. Karta, dokument, chat ani PR samy o sobe nenahrazuji issue s vlastnikem, terminem a stavem.
 
-2. **AI nesmí sama rozhodovat.** AI funkce může připravit návrh, ale nesmí sama odesílat klientskou komunikaci, měnit ceny, upravovat oprávnění ani uzavírat zakázky nebo incidenty.
+2. **Nabídka má schvalovatele.** Cena, sleva a obchodní podmínky nesmí zůstat jen v chatu nebo v e-mailu — musí být jako pole v kartě Nabídka a schválení musí být evidováno.
 
-3. **Incident s dopadem na klienta = lidské schválení komunikace.** Každá zpráva směrem ke klientovi při aktivním incidentu prochází schválením odpovědné osoby.
+3. **AI nesmí sama rozhodovat.** AI funkce může připravit návrh, ale nesmí sama odesílat klientskou komunikaci, měnit ceny, upravovat oprávnění ani uzavírat zakázky nebo incidenty.
 
-4. **Předání práce musí být potvrzeno.** Karta Předání se nepřesouvá do stavu „dokončeno" automaticky — vyžaduje potvrzení přijímající role.
+4. **Incident s dopadem na klienta = lidské schválení komunikace.** Každá zpráva směrem ke klientovi při aktivním incidentu prochází schválením odpovědné osoby.
 
-5. **Důležitá rozhodnutí ze schůzek mají záznam.** Zápis ze schůzky musí mít vyplněná pole Rozhodnutí a Akční položky. Akční položka, která nemá vlastníka a termín, není akční položka.
+5. **Předání práce musí být potvrzeno.** Karta Předání se nepřesouvá do stavu „dokončeno" automaticky — vyžaduje potvrzení přijímající role.
+
+6. **Důležitá rozhodnutí ze schůzek mají záznam.** Zápis ze schůzky musí mít vyplněná pole Rozhodnutí a Akční položky. Akční položka, která nemá vlastníka a termín, není akční položka.
 
 ---
 
-## 6. Povinné pohledy (views) v kartách
+## 7. Povinné pohledy (views) v kartách
 
 Každý typ karty musí mít tyto filtry/pohledy nastaveny:
 
@@ -139,7 +174,7 @@ Každý typ karty musí mít tyto filtry/pohledy nastaveny:
 
 ---
 
-## 7. Hotovo — acceptance kritéria
+## 8. Hotovo — acceptance kritéria
 
 Prostředí je hotové, když projdou všechny tyto body:
 
@@ -149,20 +184,24 @@ Prostředí je hotové, když projdou všechny tyto body:
 - [ ] Existuje všech 22 typů karet s povinnými poli, stavy a šesti pohledy
 
 **Procesy:**
+- [ ] Existuje jeden hlavni Tracker projekt pro tymovou operativu nebo jasne urcene Tracker projekty podle oblasti
+- [ ] Tracker ma minimalni stavy `Backlog`, `Todo`, `In Progress`, `Review`, `Blocked`, `Done`, `Cancelled`
+- [ ] Existuji sablony `Feature`, `Bug`, `Client request`, `Sales follow-up`, `Review/QA`, `Ops/Admin`
+- [ ] Vyvojove PR obsahuje Huly issue key a Huly issue obsahuje PR link
 - [ ] Nabídka nelze odeslat bez schvalovatele (pole je povinné)
 - [ ] Předání se nedá uzavřít bez potvrzení přijímající role
 - [ ] AI funkce má stav `povoleno se schválením` nebo `zakázáno` pro riziková rozhodnutí
 
 **Tři kontrolní scénáře end-to-end (projít ručně):**
-- [ ] **Scénář 1:** Lead → Příležitost → Nabídka (se schválením) → Zakázka → Projekt → první Milník
-- [ ] **Scénář 2:** Zákaznický požadavek → Eskalace → Incident → Znalostní článek (navázaný na původní požadavek)
-- [ ] **Scénář 3:** Zápis ze schůzky → Akční položky → Úkoly s vlastníkem a termínem → Časový report navázaný na projekt
+- [ ] **Scénář 1:** Nový klient → Contacts Company → Tracker issue s vlastníkem a deadline → bez duplicitní `Cards -> Firma`
+- [ ] **Scénář 2:** Huly issue → GitHub branch/PR s issue key → PR link v issue → Review → Done
+- [ ] **Scénář 3:** Otevření Trackeru ukáže, kdo co dělá, co je blocked, co čeká na review a co je po termínu
 
 Každý scénář musí projít bez ztráty vazeb a bez rozhodnutí, které zůstane jen v chatu nebo komentáři.
 
 ---
 
-## 8. Kde najít podklady
+## 9. Kde najít podklady
 
 | Potřeba | Soubor |
 |---|---|
@@ -174,5 +213,6 @@ Každý scénář musí projít bez ztráty vazeb a bez rozhodnutí, které zůs
 | Nastavení karet krok za krokem | `copy_paste_import/11-cards-setup-guide.md` |
 | Procesní mapa — detailní karty a dokumenty | `PROCESY_PRO_PREDANI.md` |
 | Kontrolní scénáře pro testování | `copy_paste_import/10-control-scenarios.md` |
+| Zjednoduseny operativni model | `OPERATIVNI_MODEL_HULY_TRACKER_GITHUB.md` |
 | Podrobný 9fázový importní checklist | `IMPORT_CHECKLIST.md` |
 | Návody pro zaměstnance po spuštění | `zamestnanecke_navody/` (14 souborů) |

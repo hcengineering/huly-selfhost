@@ -4,7 +4,7 @@ properties:
   - label: zdroj
     type: TypeString
   - label: firma
-    refTo: "./Firma.yaml"
+    refClass: "contact:class:Organization"
   - label: kontakt
     refTo: "./Kontakt.yaml"
   - label: potreba

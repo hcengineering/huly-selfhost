@@ -12,3 +12,12 @@ huly_v7.conf
 .rp.secret
 backup-praut/
 .idea
+
+# macOS AppleDouble resource-fork junk
+._*
+
+# Ad-hoc tooling backups (kept out of git, real backups live in backup-praut/)
+*.bak
+*.bak-*
+*.before-*
+praut_erp_docs.backup-*/

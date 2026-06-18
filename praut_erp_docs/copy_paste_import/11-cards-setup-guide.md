@@ -53,7 +53,7 @@ Tyto typy zaloz az po tom, co prvni vlna dava smysl a mas otestovane vazby:
 
 ### Firma
 - **Zalozit v prostoru:** podle hlavniho pouziti karty; kdyz si nejsi jisty, pouzij prostor `01_system` jen pro systemove typy a obchodni typy dej do `02_sales_crm`.
-- **Ucel:** Centralni evidence organizace, klienta nebo partnera.
+- **Ucel:** Legacy/test Cards typ. Pro novy CRM workflow zaloz firmu v Contacts -> Companies.
 - **Pole a typy:**
 - `nazev` - text
 - `ICO` - text
@@ -86,7 +86,7 @@ Tyto typy zaloz az po tom, co prvni vlna dava smysl a mas otestovane vazby:
 - **Ucel:** Zachyceni nove obchodni poptavky a jeji kvalifikace.
 - **Pole a typy:**
 - `zdroj` - text
-- `firma` - reference
+- `firma` - reference na Contacts -> Companies (`contact:class:Organization`)
 - `kontakt` - reference
 - `potreba` - long text
 - `rozpocet` - money

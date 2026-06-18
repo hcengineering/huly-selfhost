@@ -10,7 +10,7 @@ Stavove procesy ukolu popisuje, jak ma PRAUT pouzivat ERP/Huly v dane oblasti ta
 PM, tym, admin.
 
 ## Doporuceny objekt v Huly
-nastaveni workflow + pravidlovy dokument.
+nastaveni Tracker workflow + pravidlovy dokument.
 
 ## Povinna pole / atributy
 - stav
@@ -33,13 +33,14 @@ nastaveni workflow + pravidlovy dokument.
 - 67. Sablony ukolu a tiketu
 
 ## Prakticky postup
-1. Over, ze informace patri do tohoto typu objektu a neni vhodnejsi pouzit souvisejici dokument nebo kartu.
-2. Zaloz nebo aktualizuj objekt v doporucenem Huly typu a vypln povinna pole.
-3. Propoj objekt s klientem, projektem, ukolem, dokumentem nebo rozhodnutim podle vazeb vyse.
-4. Prirad vlastnika a dalsi odpovedne osoby.
-5. Pokud vznikne akce, zaloz ukol nebo akcni polozku a nech ji projit stavovym procesem.
-6. Pri zmene s dopadem na klienta, cenu, termin, data, opravneni nebo reputaci vyzadej lidske schvaleni.
-7. Po dokonceni uloz vysledek, rozhodnuti a pripadne pouceni do auditovatelne historie.
+1. V hlavnim pracovnim Tracker projektu nastav stavy `Backlog`, `Todo`, `In Progress`, `Review`, `Blocked`, `Done`, `Cancelled`.
+2. `Backlog` pouzij pro neschvalenou nebo neupresnenou praci; `Todo` pro praci pripravenou k reseni.
+3. `In Progress` znamena, ze na issue nekdo aktivne pracuje.
+4. `Review` znamena, ze vystup ceka na kontrolu, QA, klientskou kontrolu nebo GitHub review.
+5. `Blocked` musi mit popis blokace, vlastnika odblokovani a dalsi krok.
+6. `Done` vyzaduje vysledek, odkaz na vystup a uzavrene navazne PR nebo jasny duvod, proc PR nebylo potreba.
+7. `Cancelled` vyzaduje duvod zruseni.
+8. Pri zmene s dopadem na klienta, cenu, termin, data, opravneni nebo reputaci vyzadej lidske schvaleni.
 
 ## Automatizace
 - Automaticky vytvorit navazujici ukol, upozorneni nebo checklist, pokud objekt prejde do stavu, ktery vyzaduje dalsi akci.
@@ -52,7 +53,7 @@ nastaveni workflow + pravidlovy dokument.
 - U citlivych dat musi byt AI vystup overen clovekem a musi zustat dohledatelne, z jakych vstupu vychazel.
 
 ## Lidska kontrola a schvalovani
-Stavy Under review, Blocked, Cancelled a Done u kritickych ukolu vyzaduji lidskou kontrolu.
+Stavy `Review`, `Blocked`, `Cancelled` a `Done` u kritickych ukolu vyzaduji lidskou kontrolu.
 
 Povinne lidske schvaleni plati vzdy pro cenu, smluvni nebo obchodni zavazek, pravne citlivy text, reputacni riziko, externi sdileni, zmenu opravneni, incident s dopadem na klienta a AI vystup pouzity jako zaklad duleziteho rozhodnuti.
 

@@ -10,7 +10,7 @@ Sablony ukolu a tiketu popisuje, jak ma PRAUT pouzivat ERP/Huly v dane oblasti t
 cely tym.
 
 ## Doporuceny objekt v Huly
-sada Huly sablon pro task tracker.
+sada Huly sablon pro Tracker issues.
 
 ## Povinna pole / atributy
 - typ
@@ -37,13 +37,14 @@ sada Huly sablon pro task tracker.
 - 69. Incidenty a provozni chyby
 
 ## Prakticky postup
-1. Over, ze informace patri do tohoto typu objektu a neni vhodnejsi pouzit souvisejici dokument nebo kartu.
-2. Zaloz nebo aktualizuj objekt v doporucenem Huly typu a vypln povinna pole.
-3. Propoj objekt s klientem, projektem, ukolem, dokumentem nebo rozhodnutim podle vazeb vyse.
-4. Prirad vlastnika a dalsi odpovedne osoby.
-5. Pokud vznikne akce, zaloz ukol nebo akcni polozku a nech ji projit stavovym procesem.
-6. Pri zmene s dopadem na klienta, cenu, termin, data, opravneni nebo reputaci vyzadej lidske schvaleni.
-7. Po dokonceni uloz vysledek, rozhodnuti a pripadne pouceni do auditovatelne historie.
+1. V Trackeru vytvor minimalne sablony `Feature`, `Bug`, `Client request`, `Sales follow-up`, `Review/QA`, `Ops/Admin`.
+2. Kazda sablona musi vest uzivatele k vyplneni vlastnika, priority, terminu nebo duvodu bez terminu a ocekavaneho vysledku.
+3. `Feature` a `Bug` musi obsahovat pole pro GitHub branch/PR link nebo misto pro rucni doplneni PR odkazu.
+4. `Client request` a `Sales follow-up` musi obsahovat vazbu na Contacts Company a dalsi krok.
+5. `Review/QA` musi obsahovat reviewera, predmet kontroly a vysledek.
+6. `Ops/Admin` musi obsahovat dopad, rollback/fallback a schvaleni, pokud meni opravneni, data nebo provozni nastaveni.
+7. Cards pouzij jen pokud issue vytvari strukturovanou evidenci pro pipeline, reporting, riziko nebo fakturaci.
+8. Pri zmene s dopadem na klienta, cenu, termin, data, opravneni nebo reputaci vyzadej lidske schvaleni.
 
 ## Automatizace
 - Automaticky vytvorit navazujici ukol, upozorneni nebo checklist, pokud objekt prejde do stavu, ktery vyzaduje dalsi akci.

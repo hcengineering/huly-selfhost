@@ -10,7 +10,7 @@ Sprava kontaktu a firem popisuje, jak ma PRAUT pouzivat ERP/Huly v dane oblasti 
 obchod, account management, podpora, vedeni.
 
 ## Doporuceny objekt v Huly
-karty Firma a Kontakt.
+Contacts -> Companies pro firmy a Contacts -> People pro kontaktni osoby. Cards -> Firma je jen legacy/test typ a pro novy CRM workflow se nepouziva.
 
 ## Povinna pole / atributy
 - firma
@@ -36,13 +36,14 @@ karty Firma a Kontakt.
 - 56. Mereni spokojenosti zakazniku
 
 ## Prakticky postup
-1. Over, ze informace patri do tohoto typu objektu a neni vhodnejsi pouzit souvisejici dokument nebo kartu.
-2. Zaloz nebo aktualizuj objekt v doporucenem Huly typu a vypln povinna pole.
-3. Propoj objekt s klientem, projektem, ukolem, dokumentem nebo rozhodnutim podle vazeb vyse.
-4. Prirad vlastnika a dalsi odpovedne osoby.
-5. Pokud vznikne akce, zaloz ukol nebo akcni polozku a nech ji projit stavovym procesem.
-6. Pri zmene s dopadem na klienta, cenu, termin, data, opravneni nebo reputaci vyzadej lidske schvaleni.
-7. Po dokonceni uloz vysledek, rozhodnuti a pripadne pouceni do auditovatelne historie.
+1. Firmu zaloz nebo aktualizuj jednou v Contacts -> Companies.
+2. Kontaktni osobu zaloz v Contacts -> People a propoj ji s firmou.
+3. V CRM kartach, napr. Lead/Poptavka, vybiraj firmu z Contacts; nezakladej duplicitni Cards -> Firma.
+4. Propoj objekt s klientem, projektem, ukolem, dokumentem nebo rozhodnutim podle vazeb vyse.
+5. Prirad vlastnika a dalsi odpovedne osoby.
+6. Pokud vznikne akce, zaloz ukol nebo akcni polozku a nech ji projit stavovym procesem.
+7. Pri zmene s dopadem na klienta, cenu, termin, data, opravneni nebo reputaci vyzadej lidske schvaleni.
+8. Po dokonceni uloz vysledek, rozhodnuti a pripadne pouceni do auditovatelne historie.
 
 ## Automatizace
 - Automaticky vytvorit navazujici ukol, upozorneni nebo checklist, pokud objekt prejde do stavu, ktery vyzaduje dalsi akci.

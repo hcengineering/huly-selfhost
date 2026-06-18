@@ -1,0 +1,7 @@
+# PRAUT Huly scheduled backup.
+# Runs daily at 02:30 Europe/Prague time and keeps scheduled backups for 14 days.
+SHELL=/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+TZ=Europe/Prague
+
+30 2 * * * cd /root/huly-selfhost && PRAUT_BACKUP_RETENTION_DAYS=14 scripts/praut-scheduled-backup.sh >/dev/null 2>&1

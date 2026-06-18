@@ -13,7 +13,7 @@ Sprava kontaktu a firem popisuje, jak ma PRAUT pouzivat ERP/Huly v dane oblasti 
 obchod, account management, podpora, vedeni.
 
 ## Doporuceny objekt v Huly
-karty Firma a Kontakt.
+Contacts -> Companies pro firmy a Contacts -> People pro kontaktni osoby. Cards -> Firma je jen legacy/test typ a pro novy CRM workflow se nepouziva.
 
 ## Povinna pole / atributy
 - firma
