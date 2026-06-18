@@ -1,0 +1,60 @@
+---
+@META
+dir: .
+updated: 2026-06-12
+files: 100+
+stack: Markdown, Huly, ERP docs, unified import, Cards, workflow
+
+@EXPORTS
+README.md: ProjectOrientation - PRAUT ERP/Huly documentation entrypoint
+KOLEGA_START_HERE.md: ColleagueStart - first handoff document and 15min orientation
+PRAUT_OPERATIONS_RUNBOOK.md: OperationsRunbook - health checks, backup, restore smoke, safety invariants
+PRAUT_REMAINING_WORK.md: RemainingWork - open items after full rollout
+PRAUT_PROSTREDI.md: TargetStateSpec - 8 spaces, 80 docs, 22 Cards, processes, acceptance
+IMPORT_CHECKLIST.md: ImportChecklist - step-by-step Huly setup checklist
+HULY_IMPORT_RUNBOOK.md: ImportRunbook - executable import guidance
+HULY_VPS_POC_RUNBOOK.md: VPSPoCRunbook - human-readable execution runbook for test VPS deployment
+PREDANI_KOLEGOVI.md: ColleagueHandoff - handoff guide for the next operator/colleague
+PROCESY_PRO_PREDANI.md: ProcessMap - handoff process map
+00_index.md: DocumentCatalog - catalog of 80 documents
+AGENT_STATE.md: AgentMemory - persistent agent state and resume instructions
+PRAUT_CONTINUITY_STATUS.md: ContinuityStatus - current phase, blockers, next actions
+HULY_SETUP_PROGRESS.md: SetupProgress - setup checklist status
+HULY_VALIDATION_LOG.md: ValidationLog - dated validation results
+HULY_DECISIONS_AND_DEVIATIONS.md: DecisionLog - decisions and approved deviations
+HULY_MANUAL_CLEANUP.md: CleanupLog - manual cleanup and incomplete items
+VYVOJOVY_DENIK.md: HumanDiary - non-technical Czech handoff diary for owners, leadership, and employees
+
+@PROCESSES
+HulyPRAUTSetup: docs/import package -> Huly workspace -> spaces/cards/views/automations -> validation
+HulyVpsPoC: secret inputs outside repo -> test VPS -> HTTPS Huly -> invite-only -> backup/restore -> Core ERP PoC
+ColleagueHandoff: read KOLEGA_START_HERE.md -> add colleague SSH key -> use PREDANI_KOLEGOVI.md -> continue runbook
+AgentResume: read .aiDoc -> read AGENT_STATE.md -> read continuity docs -> inspect git status -> continue next safe action
+InviteOnlyDecision: self-host Huly -> DISABLE_SIGNUP account/front -> invite links -> validation
+HumanHandoff: after each meaningful phase -> update VYVOJOVY_DENIK.md in plain Czech without secrets
+
+@INTERFACES
+WorkspaceSpec: { spaces:8, documents:80, cardTypes:22, views:6, automationRules:7 }
+CardSetup: { type:string, requiredFields:string[], workflow:string[], views:string[], controls:string[] }
+ValidationRecord: { date:string, actor:string, area:string, action:string, result:string, evidence:string, next:string }
+DecisionRecord: { date:string, decision:string, rationale:string, impact:string, owner:string, supersedes:string }
+
+@DEPENDENCIES
+internal: README.md, PRAUT_PROSTREDI.md, IMPORT_CHECKLIST.md, PROCESY_PRO_PREDANI.md, copy_paste_import/*, huly_unified_import/*
+external: Huly, hcengineering/huly-selfhost, hcengineering/platform, docs.huly.io
+
+@STANDARDS
+Use Cards for structured data, documents for methodology, tasks/actions for owned work.
+AI is advisory only; risky decisions require human approval.
+Never store secrets, tokens, passwords, session values, or full credentialed URLs in docs.
+Every meaningful future step updates AGENT_STATE.md and relevant progress/log file.
+Every meaningful implementation phase also updates VYVOJOVY_DENIK.md as the human-readable handoff.
+Use production v* Huly tags for deployment decisions; development tags only for dev work.
+
+@WARNINGS
+No secrets allowed in persistent memory.
+No secrets allowed in VYVOJOVY_DENIK.md.
+Public signup must stay disabled for production invite-only use.
+Read MIGRATION.md before Huly upgrades.
+Bundled self-host databases need production backup and rollback validation.
+---

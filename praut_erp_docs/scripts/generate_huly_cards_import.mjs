@@ -65,7 +65,7 @@ const cards = [
     workflow: ['novy', 'kontaktovat', 'kvalifikace', 'prevedeno', 'odmitnuto', 'archiv'],
     fields: [
       ['zdroj', 'text'],
-      ['firma', { ref: 'Firma.yaml' }],
+      ['firma', { refClass: 'contact:class:Organization' }],
       ['kontakt', { ref: 'Kontakt.yaml' }],
       ['potreba', 'long'],
       ['rozpocet', 'money'],
@@ -355,7 +355,7 @@ const cards = [
 
 const associations = [
   ['Firma.yaml', 'Kontakt.yaml', 'kontakty', 'firma', '1:N'],
-  ['Firma.yaml', 'Lead Poptavka.yaml', 'leady', 'firma', '1:N'],
+  null, // Former Firma -> Lead/Poptavka legacy association; Lead/Poptavka.firma now points to Contacts Organization.
   ['Firma.yaml', 'Obchodni prilezitost.yaml', 'prilezitosti', 'firma', '1:N'],
   ['Firma.yaml', 'Zakazka.yaml', 'zakazky', 'klient', '1:N'],
   ['Firma.yaml', 'Zakaznicky pozadavek.yaml', 'zakaznickePozadavky', 'klient', '1:N'],
@@ -407,6 +407,9 @@ function renderCard (card) {
       lines.push(`    type: ${primitive[spec]}`)
     } else if (spec.ref !== undefined) {
       lines.push(`    refTo: ${JSON.stringify(`./${spec.ref}`)}`)
+      if (spec.isArray === true) lines.push('    isArray: true')
+    } else if (spec.refClass !== undefined) {
+      lines.push(`    refClass: ${JSON.stringify(spec.refClass)}`)
       if (spec.isArray === true) lines.push('    isArray: true')
     } else if (spec.enum !== undefined) {
       lines.push(`    enumOf: ${JSON.stringify(`./${enumFileName(spec.enum)}`)}`)
@@ -464,15 +467,18 @@ for (const card of cards) {
 }
 
 associations.forEach((association, index) => {
+  if (association === null) return
   writeFileSync(join(outDir, `association-${String(index + 1).padStart(2, '0')}.yaml`), renderAssociation(association))
 })
 
+const activeAssociations = associations.filter((association) => association !== null)
+
 const importableLimitations = [
-  'Unified importer supports Card type properties, enums, references and associations.',
+  'Unified importer supports Card type properties, enums, local references, direct class references and associations.',
   'Required-field enforcement is not represented in this Unified import schema and must be checked in Huly Settings -> TYPES after import.',
   'Saved Card views are not represented in this Unified import schema and must be configured manually: Aktivni, Bez vlastnika, Ke schvaleni, Riziko, Obnovy do 60 dni, Moje.',
   'Workflow/status values are imported as enum-backed attributes where the source schema exposes stav/faze/stav vztahu/health/trend.',
-  'Person/date/url/email/phone fields are represented as strings because this importer schema accepts only TypeString, TypeNumber, TypeBoolean, enumOf and refTo.'
+  'Person/date/url/email/phone fields are represented as strings because this importer schema accepts only TypeString, TypeNumber, TypeBoolean, enumOf, refTo and refClass.'
 ]
 
 const report = [
@@ -489,7 +495,7 @@ const report = [
   'Generated artifacts:',
   `- ${cards.length} Card type YAML files`,
   `- ${collectEnums().size} enum YAML files`,
-  `- ${associations.length} association YAML files`,
+  `- ${activeAssociations.length} association YAML files`,
   '',
   'Card types:',
   ...cards.map((card) => `- ${card.title}: ${card.fields.length} fields`),
@@ -510,4 +516,4 @@ const report = [
 
 writeFileSync(reportPath, report)
 
-console.log(`Generated ${cards.length} card types, ${collectEnums().size} enums and ${associations.length} associations.`)
+console.log(`Generated ${cards.length} card types, ${collectEnums().size} enums and ${activeAssociations.length} associations.`)

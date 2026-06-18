@@ -32,13 +32,14 @@ KB dokument / rozhodovaci pravidlo.
 - 32. Pravidla tvorby dokumentace
 
 ## Prakticky postup
-1. Over, ze informace patri do tohoto typu objektu a neni vhodnejsi pouzit souvisejici dokument nebo kartu.
-2. Zaloz nebo aktualizuj objekt v doporucenem Huly typu a vypln povinna pole.
-3. Propoj objekt s klientem, projektem, ukolem, dokumentem nebo rozhodnutim podle vazeb vyse.
-4. Prirad vlastnika a dalsi odpovedne osoby.
-5. Pokud vznikne akce, zaloz ukol nebo akcni polozku a nech ji projit stavovym procesem.
-6. Pri zmene s dopadem na klienta, cenu, termin, data, opravneni nebo reputaci vyzadej lidske schvaleni.
-7. Po dokonceni uloz vysledek, rozhodnuti a pripadne pouceni do auditovatelne historie.
+1. Pokud jde o praci, dalsi krok, odpovednost, termin nebo stav, pouzij Tracker issue.
+2. Pokud jde o kodovou zmenu, review nebo historii zmen, pouzij GitHub PR navazany na Huly issue.
+3. Pokud jde o firmu nebo cloveka, pouzij Contacts.
+4. Pokud jde o pravidlo, rozhodnuti, navod, zapis nebo delsi text, pouzij Documents.
+5. Pokud jde o strukturovanou evidenci pro obchod, reporting, rizika, fakturaci nebo provozni metriky, pouzij Cards.
+6. Nezakladej Cards jen proto, ze nekdo ma neco udelat; na to patri Tracker issue.
+7. Pri zmene s dopadem na klienta, cenu, termin, data, opravneni nebo reputaci vyzadej lidske schvaleni.
+8. Po dokonceni uloz vysledek, rozhodnuti a pripadne pouceni do auditovatelne historie.
 
 ## Automatizace
 - Automaticky vytvorit navazujici ukol, upozorneni nebo checklist, pokud objekt prejde do stavu, ktery vyzaduje dalsi akci.
@@ -61,7 +62,7 @@ Povinne lidske schvaleni plati vzdy pro cenu, smluvni nebo obchodni zavazek, pra
 - Pokud je vstup nejasny nebo citlivy, system nesmi pokracovat bez cloveka.
 
 ## Metriky uspechu
-- pocet prevedenych dokumentu na karty
+- pocet praci bez Tracker issue
 - duplicity
 - uspesnost vyhledani
 

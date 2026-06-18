@@ -1,6 +1,6 @@
 # Huly Cards import report
 
-Generated: 2026-06-09T11:39:07.442Z
+Generated: 2026-06-16T22:42:35.504Z
 
 Source of truth:
 - PRAUT_PROSTREDI.md
@@ -11,7 +11,7 @@ Source of truth:
 Generated artifacts:
 - 22 Card type YAML files
 - 30 enum YAML files
-- 24 association YAML files
+- 23 association YAML files
 
 Card types:
 - Firma: 7 fields
@@ -38,11 +38,11 @@ Card types:
 - KPI: 7 fields
 
 Importer limitations / manual follow-up:
-- Unified importer supports Card type properties, enums, references and associations.
+- Unified importer supports Card type properties, enums, local references, direct class references and associations.
 - Required-field enforcement is not represented in this Unified import schema and must be checked in Huly Settings -> TYPES after import.
 - Saved Card views are not represented in this Unified import schema and must be configured manually: Aktivni, Bez vlastnika, Ke schvaleni, Riziko, Obnovy do 60 dni, Moje.
 - Workflow/status values are imported as enum-backed attributes where the source schema exposes stav/faze/stav vztahu/health/trend.
-- Person/date/url/email/phone fields are represented as strings because this importer schema accepts only TypeString, TypeNumber, TypeBoolean, enumOf and refTo.
+- Person/date/url/email/phone fields are represented as strings because this importer schema accepts only TypeString, TypeNumber, TypeBoolean, enumOf, refTo and refClass.
 
 Validation checklist after actual Huly import:
 - 8 document teamspaces exist.

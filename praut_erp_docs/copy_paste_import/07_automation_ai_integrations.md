@@ -758,12 +758,15 @@ GitHub integrace popisuje, jak ma PRAUT pouzivat ERP/Huly v dane oblasti tak, ab
 vyvojari, PM, QA, admin.
 
 ## Doporuceny objekt v Huly
-technicko-procesni dokument.
+technicko-procesni dokument + Huly Tracker issue pro kazdou vyvojovou praci.
 
 ## Povinna pole / atributy
 - repo
 - Huly projekt
+- Huly issue key
 - issue typ
+- branch
+- PR URL
 - PR stav
 - reviewer
 - assignee
@@ -773,7 +776,7 @@ technicko-procesni dokument.
 ## Stavovy proces
 - autorizace
 - sync aktivni
-- under review
+- Review
 - ready to merge
 - merged
 - cancelled
@@ -789,13 +792,14 @@ technicko-procesni dokument.
 - 69. Incidenty a provozni chyby
 
 ## Prakticky postup
-1. Over, ze informace patri do tohoto typu objektu a neni vhodnejsi pouzit souvisejici dokument nebo kartu.
-2. Zaloz nebo aktualizuj objekt v doporucenem Huly typu a vypln povinna pole.
-3. Propoj objekt s klientem, projektem, ukolem, dokumentem nebo rozhodnutim podle vazeb vyse.
-4. Prirad vlastnika a dalsi odpovedne osoby.
-5. Pokud vznikne akce, zaloz ukol nebo akcni polozku a nech ji projit stavovym procesem.
-6. Pri zmene s dopadem na klienta, cenu, termin, data, opravneni nebo reputaci vyzadej lidske schvaleni.
-7. Po dokonceni uloz vysledek, rozhodnuti a pripadne pouceni do auditovatelne historie.
+1. Pred zacatkem vyvojove prace zaloz nebo najdi Huly Tracker issue.
+2. Vetev pojmenuj s issue key, napr. `TSK-2-fix-login`.
+3. PR title pis ve formatu `[TSK-2] kratky popis`.
+4. Do Huly issue vloz odkaz na PR; pokud integrace funguje automaticky, zkontroluj, ze vazba opravdu vznikla.
+5. Stav issue drz podle prace: `In Progress` pri vyvoji, `Review` pri PR/QA review, `Done` po merge a overeni.
+6. PR bez Huly issue je vyjimka; issue se musi dopsat zpetne a PR na ni navazat.
+7. Pri zmene s dopadem na klienta, cenu, termin, data, opravneni nebo reputaci vyzadej lidske schvaleni.
+8. Po dokonceni uloz vysledek, rozhodnuti a pripadne pouceni do auditovatelne historie.
 
 ## Automatizace
 - Automaticky vytvorit navazujici ukol, upozorneni nebo checklist, pokud objekt prejde do stavu, ktery vyzaduje dalsi akci.
@@ -814,11 +818,13 @@ Povinne lidske schvaleni plati vzdy pro cenu, smluvni nebo obchodni zavazek, pra
 
 ## Rizika a fallback
 - Riziko: nevyplnena pole, chybejici vlastnik, izolovana informace bez vazeb, rozhodnuti ponechane pouze v chatu, neovereny AI vystup.
-- Fallback: zastavit dalsi automaticky krok, zalozit eskalacni ukol, doplnit chybejici data a vyzadat potvrzeni vlastnika.
+- Fallback: pokud Huly GitHub integrace nejde zapnout hned, vloz PR link rucne do Huly issue. Integraci dodelej jako dalsi Tracker issue, neblokuj kvuli tomu jednoduchou dohledatelnost.
 - Pokud je vstup nejasny nebo citlivy, system nesmi pokracovat bez cloveka.
 
 ## Metriky uspechu
 - sync issue/PR
+- PR bez Huly issue key
+- Huly issue bez PR odkazu u vyvojove prace
 - doba review
 - PR bez review
 - sync chyby
@@ -835,7 +841,6 @@ Povinne lidske schvaleni plati vzdy pro cenu, smluvni nebo obchodni zavazek, pra
 - Existuji metriky, podle kterych lze poznat, zda proces PRAUTu setri cas, snizuje chyby nebo zlepsuje rozhodovani.
 
 COPY END
-
 ---
 
 ## HULY DOCUMENT TITLE: 66. Test management
@@ -949,7 +954,7 @@ Sablony ukolu a tiketu popisuje, jak ma PRAUT pouzivat ERP/Huly v dane oblasti t
 cely tym.
 
 ## Doporuceny objekt v Huly
-sada Huly sablon pro task tracker.
+sada Huly sablon pro Tracker issues.
 
 ## Povinna pole / atributy
 - typ
@@ -976,13 +981,14 @@ sada Huly sablon pro task tracker.
 - 69. Incidenty a provozni chyby
 
 ## Prakticky postup
-1. Over, ze informace patri do tohoto typu objektu a neni vhodnejsi pouzit souvisejici dokument nebo kartu.
-2. Zaloz nebo aktualizuj objekt v doporucenem Huly typu a vypln povinna pole.
-3. Propoj objekt s klientem, projektem, ukolem, dokumentem nebo rozhodnutim podle vazeb vyse.
-4. Prirad vlastnika a dalsi odpovedne osoby.
-5. Pokud vznikne akce, zaloz ukol nebo akcni polozku a nech ji projit stavovym procesem.
-6. Pri zmene s dopadem na klienta, cenu, termin, data, opravneni nebo reputaci vyzadej lidske schvaleni.
-7. Po dokonceni uloz vysledek, rozhodnuti a pripadne pouceni do auditovatelne historie.
+1. V Trackeru vytvor minimalne sablony `Feature`, `Bug`, `Client request`, `Sales follow-up`, `Review/QA`, `Ops/Admin`.
+2. Kazda sablona musi vest uzivatele k vyplneni vlastnika, priority, terminu nebo duvodu bez terminu a ocekavaneho vysledku.
+3. `Feature` a `Bug` musi obsahovat pole pro GitHub branch/PR link nebo misto pro rucni doplneni PR odkazu.
+4. `Client request` a `Sales follow-up` musi obsahovat vazbu na Contacts Company a dalsi krok.
+5. `Review/QA` musi obsahovat reviewera, predmet kontroly a vysledek.
+6. `Ops/Admin` musi obsahovat dopad, rollback/fallback a schvaleni, pokud meni opravneni, data nebo provozni nastaveni.
+7. Cards pouzij jen pokud issue vytvari strukturovanou evidenci pro pipeline, reporting, riziko nebo fakturaci.
+8. Pri zmene s dopadem na klienta, cenu, termin, data, opravneni nebo reputaci vyzadej lidske schvaleni.
 
 ## Automatizace
 - Automaticky vytvorit navazujici ukol, upozorneni nebo checklist, pokud objekt prejde do stavu, ktery vyzaduje dalsi akci.
@@ -1023,7 +1029,6 @@ Povinne lidske schvaleni plati vzdy pro cenu, smluvni nebo obchodni zavazek, pra
 - Existuji metriky, podle kterych lze poznat, zda proces PRAUTu setri cas, snizuje chyby nebo zlepsuje rozhodovani.
 
 COPY END
-
 ---
 
 ## HULY DOCUMENT TITLE: 68. Sprava zmenovych pozadavku
@@ -1449,13 +1454,13 @@ dokument osnovy + karty Skolici modul.
 - 71. Onboarding noveho uzivatele
 
 ## Prakticky postup
-1. Over, ze informace patri do tohoto typu objektu a neni vhodnejsi pouzit souvisejici dokument nebo kartu.
-2. Zaloz nebo aktualizuj objekt v doporucenem Huly typu a vypln povinna pole.
-3. Propoj objekt s klientem, projektem, ukolem, dokumentem nebo rozhodnutim podle vazeb vyse.
-4. Prirad vlastnika a dalsi odpovedne osoby.
-5. Pokud vznikne akce, zaloz ukol nebo akcni polozku a nech ji projit stavovym procesem.
+1. Zacni zakladnim pravidlem: Tracker issue je prace, GitHub PR je kod a review, Contacts je firma/clovek, Documents jsou pravidla, Cards jsou strukturovana evidence.
+2. Prakticky nacvic zalozeni issue z noveho klienta nebo schuzky: vlastnik, priorita, termin, stav, popis vysledku.
+3. Potom nacvic GitHub vazbu: branch/PR s issue key, PR title `[TSK-2] kratky popis`, PR link v Huly issue.
+4. Az potom vysvetli Contacts a Cards: firma se zaklada v Contacts; Cards se pouzivaji pro pipeline, reporting, rizika a fakturaci.
+5. Ukaz, ze follow-up, review, QA, admin prace i klientsky pozadavek maji vlastni Tracker issue.
 6. Pri zmene s dopadem na klienta, cenu, termin, data, opravneni nebo reputaci vyzadej lidske schvaleni.
-7. Po dokonceni uloz vysledek, rozhodnuti a pripadne pouceni do auditovatelne historie.
+7. Po dokonceni skoleni nech uzivatele projit kontrolni scenare z `copy_paste_import/10-control-scenarios.md`.
 
 ## Automatizace
 - Automaticky vytvorit navazujici ukol, upozorneni nebo checklist, pokud objekt prejde do stavu, ktery vyzaduje dalsi akci.

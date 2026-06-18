@@ -213,13 +213,13 @@ services:
       - TZ=${TZ:-Europe/Prague}
       - SERVER_PORT=8080
       - SERVER_SECRET=${SECRET}
-      - LOVE_ENDPOINT=http${SECURE:+s}://${HOST_ADDRESS}/_love
+      - LOVE_ENDPOINT=${LOVE_ENDPOINT:-}
       - ACCOUNTS_URL=http${SECURE:+s}://${HOST_ADDRESS}/_accounts
       - ACCOUNTS_URL_INTERNAL=http://account:3000
       - REKONI_URL=http${SECURE:+s}://${HOST_ADDRESS}/_rekoni
-      - CALENDAR_URL=http${SECURE:+s}://${HOST_ADDRESS}/_calendar
-      - GMAIL_URL=http${SECURE:+s}://${HOST_ADDRESS}/_gmail
-      - TELEGRAM_URL=http${SECURE:+s}://${HOST_ADDRESS}/_telegram
+      - CALENDAR_URL=${CALENDAR_URL:-}
+      - GMAIL_URL=${GMAIL_URL:-}
+      - TELEGRAM_URL=${TELEGRAM_URL:-}
       - STATS_URL=http${SECURE:+s}://${HOST_ADDRESS}/_stats
       - UPLOAD_URL=/files
       - ELASTIC_URL=http://elastic:9200
@@ -266,7 +266,7 @@ services:
       cockroach:
         condition: service_started
     ports:
-      - 8094:8094
+      - 127.0.0.1:8094:8094
     environment:
       - HULY_DB_CONNECTION=${CR_DB_URL}
       - HULY_TOKEN_SECRET=${SECRET}

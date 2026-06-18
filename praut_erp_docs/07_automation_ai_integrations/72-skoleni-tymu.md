@@ -34,13 +34,13 @@ dokument osnovy + karty Skolici modul.
 - 71. Onboarding noveho uzivatele
 
 ## Prakticky postup
-1. Over, ze informace patri do tohoto typu objektu a neni vhodnejsi pouzit souvisejici dokument nebo kartu.
-2. Zaloz nebo aktualizuj objekt v doporucenem Huly typu a vypln povinna pole.
-3. Propoj objekt s klientem, projektem, ukolem, dokumentem nebo rozhodnutim podle vazeb vyse.
-4. Prirad vlastnika a dalsi odpovedne osoby.
-5. Pokud vznikne akce, zaloz ukol nebo akcni polozku a nech ji projit stavovym procesem.
+1. Zacni zakladnim pravidlem: Tracker issue je prace, GitHub PR je kod a review, Contacts je firma/clovek, Documents jsou pravidla, Cards jsou strukturovana evidence.
+2. Prakticky nacvic zalozeni issue z noveho klienta nebo schuzky: vlastnik, priorita, termin, stav, popis vysledku.
+3. Potom nacvic GitHub vazbu: branch/PR s issue key, PR title `[TSK-2] kratky popis`, PR link v Huly issue.
+4. Az potom vysvetli Contacts a Cards: firma se zaklada v Contacts; Cards se pouzivaji pro pipeline, reporting, rizika a fakturaci.
+5. Ukaz, ze follow-up, review, QA, admin prace i klientsky pozadavek maji vlastni Tracker issue.
 6. Pri zmene s dopadem na klienta, cenu, termin, data, opravneni nebo reputaci vyzadej lidske schvaleni.
-7. Po dokonceni uloz vysledek, rozhodnuti a pripadne pouceni do auditovatelne historie.
+7. Po dokonceni skoleni nech uzivatele projit kontrolni scenare z `copy_paste_import/10-control-scenarios.md`.
 
 ## Automatizace
 - Automaticky vytvorit navazujici ukol, upozorneni nebo checklist, pokud objekt prejde do stavu, ktery vyzaduje dalsi akci.

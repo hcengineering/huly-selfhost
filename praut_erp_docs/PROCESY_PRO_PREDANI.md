@@ -5,18 +5,23 @@ Tento dokument je predavaci mapa pro kolegu, ktery bude v Huly rucne skladat pro
 ## Jak s tim pracovat
 
 1. Nejdriv zaloz prostory a dokumenty podle `IMPORT_CHECKLIST.md`.
-2. Potom zaloz typy Cards podle `copy_paste_import/11-cards-setup-guide.md`.
-3. Procesy pripravuj postupne: obchod, zakazky, fakturace, podpora, incidenty, zmeny, reporting.
-4. U kazdeho procesu nastav minimalne vlastnika, stavy, povinna pole, vazby a kontrolni pohledy.
-5. Po nastaveni projdi kontrolni scenare v `copy_paste_import/10-control-scenarios.md`.
+2. Nastav hlavni operativni Tracker projekt pro denni praci tymu.
+3. Potom zaloz typy Cards podle `copy_paste_import/11-cards-setup-guide.md`, ale Cards nepouzivej jako hlavni misto pro denni koordinaci ukolu.
+4. Procesy pripravuj postupne: obchod, zakazky, fakturace, podpora, incidenty, zmeny, reporting.
+5. U kazdeho procesu nastav minimalne vlastnika, stavy, povinna pole, vazby a kontrolni pohledy.
+6. Po nastaveni projdi kontrolni scenare v `copy_paste_import/10-control-scenarios.md`.
+
+## Operativni pravidlo
+
+Kazda prace pro konkretni osobu patri do Tracker issue. Cards slouzi pro strukturovanou evidenci, pipeline, reporting, rizika a fakturaci. Contacts jsou zdroj pravdy pro firmy a lidi. GitHub je zdroj pravdy pro kod, PR a review, ale kazde PR ma vazbu na Huly issue.
+
+Minimalni Tracker stavy jsou `Backlog`, `Todo`, `In Progress`, `Review`, `Blocked`, `Done`, `Cancelled`. Minimalni sablony jsou `Feature`, `Bug`, `Client request`, `Sales follow-up`, `Review/QA`, `Ops/Admin`.
 
 ## 1. Obchodni proces
 
 **Tok:** `Firma/Kontakt -> Lead/Poptavka -> Obchodni prilezitost -> Nabidka -> Zakazka -> Faktura`
 
 **Cards:**
-- Firma
-- Kontakt
 - Lead/Poptavka
 - Obchodni prilezitost
 - Nabidka
@@ -24,6 +29,16 @@ Tento dokument je predavaci mapa pro kolegu, ktery bude v Huly rucne skladat pro
 - Faktura
 - Zapis ze schuzky
 - Predani
+
+**Contacts:**
+- Company
+- Person
+
+**Tracker issues:**
+- dalsi obchodni krok
+- follow-up
+- priprava nabidky
+- interni review
 
 **Dokumenty:**
 - `02_sales_crm/11-sprava-kontaktu-a-firem.md`
@@ -36,6 +51,8 @@ Tento dokument je predavaci mapa pro kolegu, ktery bude v Huly rucne skladat pro
 - `02_sales_crm/20-prechod-z-obchodu-do-realizace.md`
 
 **Dulezite kontroly:**
+- Firma se pro novy CRM workflow zaklada v `Contacts -> Companies`, ne jako duplicitni `Cards -> Firma`.
+- Kazdy follow-up ma Tracker issue s vlastnikem a terminem.
 - Nabidka musi mit schvalovatele.
 - Cena, sleva a obchodni podminky nesmi zustat jen v chatu.
 - Vyhrana nabidka musi mit vazbu na Zakazku.
@@ -54,7 +71,7 @@ Tento dokument je predavaci mapa pro kolegu, ktery bude v Huly rucne skladat pro
 - Faktura
 - Riziko
 - Incident
-- ukoly / action items
+- Tracker issues / action items
 
 **Dokumenty:**
 - `03_projects_tasks/21-zalozeni-nove-zakazky.md`
@@ -68,7 +85,7 @@ Tento dokument je predavaci mapa pro kolegu, ktery bude v Huly rucne skladat pro
 
 **Dulezite kontroly:**
 - Kazda Zakazka ma PM, termin, datum obnovy, typ spoluprace, stav a vazbu na klienta.
-- Projekt ma vlastnika, aktivni ukoly a alespon zakladni milniky.
+- Projekt ma vlastnika, aktivni Tracker issues a alespon zakladni milniky.
 - Predani prace musi byt potvrzene prijimajici roli.
 - Fakturacni stav nesmi zustat jen v komentari nebo chatu.
 
@@ -103,7 +120,7 @@ Tento dokument je predavaci mapa pro kolegu, ktery bude v Huly rucne skladat pro
 **Cards a objekty:**
 - Zapis ze schuzky
 - Predani
-- ukoly / action items
+- Tracker issues / action items
 - souvisejici Firma, Zakazka nebo Projekt
 
 **Dokumenty:**
@@ -116,7 +133,7 @@ Tento dokument je predavaci mapa pro kolegu, ktery bude v Huly rucne skladat pro
 
 **Dulezite kontroly:**
 - Dulezite rozhodnuti nesmi zustat pouze v chatu.
-- Akcni polozka ma vlastnika, termin a stav.
+- Akcni polozka ma vlastnika, termin a stav a pokud jde o praci pro konkretni osobu, existuje jako Tracker issue.
 - Zapis ze schuzky je navazany na klienta, projekt nebo zakazku.
 
 ## 5. Marketingovy proces

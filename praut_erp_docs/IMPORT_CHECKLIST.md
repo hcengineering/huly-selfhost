@@ -129,10 +129,10 @@ Typy Cards zakladej v `Settings -> TYPES`, ne v hlavnim seznamu Cards. Nejdrive 
 - [ ] Omylem vytvorene Cards instance nemazat automaticky; zapsat je jako manual cleanup.
 
 ### Firma
-- **Ucel:** Centralni evidence organizace, klienta nebo partnera.
+- **Ucel:** Legacy/test Cards typ. Kanonicka evidence organizace, klienta nebo partnera je Contacts -> Companies.
 - **Povinna pole:** nazev, ICO, web, segment, stav vztahu, vlastnik, citlivost
 - **Stavy:** novy, aktivni, strategicky, neaktivni, archiv
-- **Kontrola:** Pokud ma zaznam dopad na cenu, klienta, opravneni, reputaci, data nebo audit, musi ho potvrdit odpovedny clovek.
+- **Kontrola:** Pro novy CRM workflow nezakladej Cards -> Firma. Firmu zaloz jednou v Contacts -> Companies.
 
 ### Kontakt
 - **Ucel:** Evidence osoby a jeji role ve firme nebo zakazce.
@@ -144,7 +144,7 @@ Typy Cards zakladej v `Settings -> TYPES`, ne v hlavnim seznamu Cards. Nejdrive 
 - **Ucel:** Zachyceni nove obchodni poptavky a jeji kvalifikace.
 - **Povinna pole:** zdroj, firma, kontakt, potreba, rozpocet, termin, priorita, stav, dalsi krok
 - **Stavy:** novy, kontaktovat, kvalifikace, prevedeno, odmitnuto, archiv
-- **Kontrola:** Pokud ma zaznam dopad na cenu, klienta, opravneni, reputaci, data nebo audit, musi ho potvrdit odpovedny clovek.
+- **Kontrola:** Pole firma musi vybirat Contacts -> Companies (`contact:class:Organization`), ne Cards -> Firma.
 
 ### Obchodni prilezitost
 - **Ucel:** Rizeni obchodu od kvalifikace po vyhru nebo prohru.
@@ -283,7 +283,7 @@ Typy Cards zakladej v `Settings -> TYPES`, ne v hlavnim seznamu Cards. Nejdrive 
 ## Faze 5: Stavove procesy
 - [ ] Pro obchod pouzit tok `novy -> kvalifikace -> nabidka -> vyjednavani -> vyhrano/prohrano`.
 - [ ] Pro zakazky pouzit tok `navrh -> pripraveno -> aktivni -> pozastaveno -> dokonceno -> archiv`.
-- [ ] Pro ukoly pouzit tok `backlog -> to do -> in progress -> under review -> blocked -> done/cancelled`.
+- [ ] Pro Tracker issues pouzit tok `Backlog -> Todo -> In Progress -> Review -> Blocked -> Done/Cancelled`.
 - [ ] Pro podporu pouzit tok `novy -> triage -> reseni -> ceka na klienta -> vyreseno -> uzavreno`.
 - [ ] Pro rizika pouzit tok `nove -> vyhodnoceno -> mitigace -> monitoring -> uzavreno`.
 - [ ] Pro zmeny pouzit tok `navrh -> analyza -> schvaleno -> implementace -> test -> nasazeno/rollback`.

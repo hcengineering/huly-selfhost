@@ -5,7 +5,6 @@ title: "3. Pravidla pouzivani ERP"
 # 3. Pravidla pouzivani ERP
 
 **Oblast:** Zaklad systemu
-
 ## Ucel
 Pravidla pouzivani ERP popisuje, jak ma PRAUT pouzivat ERP/Huly v dane oblasti tak, aby byl proces dohledatelny, meritelny a prakticky pouzitelny. Dokument prevadi principy PRAUT na konkretni provozni pravidla: co evidovat, kdo za to odpovida, co smi delat system, kde muze pomoct AI a kde musi rozhodnout clovek.
 
@@ -38,13 +37,14 @@ KB dokument / governance pravidlo.
 - 71. Onboarding noveho uzivatele
 
 ## Prakticky postup
-1. Over, ze informace patri do tohoto typu objektu a neni vhodnejsi pouzit souvisejici dokument nebo kartu.
-2. Zaloz nebo aktualizuj objekt v doporucenem Huly typu a vypln povinna pole.
-3. Propoj objekt s klientem, projektem, ukolem, dokumentem nebo rozhodnutim podle vazeb vyse.
-4. Prirad vlastnika a dalsi odpovedne osoby.
-5. Pokud vznikne akce, zaloz ukol nebo akcni polozku a nech ji projit stavovym procesem.
-6. Pri zmene s dopadem na klienta, cenu, termin, data, opravneni nebo reputaci vyzadej lidske schvaleni.
-7. Po dokonceni uloz vysledek, rozhodnuti a pripadne pouceni do auditovatelne historie.
+1. Pokud z informace plyne prace pro konkretni osobu, zaloz nebo aktualizuj Tracker issue.
+2. Issue musi mit vlastnika, prioritu, termin nebo jasny duvod bez terminu, stav a popis ocekavaneho vysledku.
+3. Firmu nebo klienta over v `Contacts -> Companies`; nezakladej duplicitni `Cards -> Firma`.
+4. Cards pouzij jen pro strukturovanou obchodni/provozni evidenci, reporting, rizika nebo fakturaci.
+5. Dokument pouzij pro pravidlo, rozhodnuti, navod, zapis nebo delsi text.
+6. GitHub PR pouzij pro kodovou zmenu a navaz ho na Huly issue.
+7. Pri zmene s dopadem na klienta, cenu, termin, data, opravneni nebo reputaci vyzadej lidske schvaleni.
+8. Po dokonceni uloz vysledek, rozhodnuti a pripadne pouceni do auditovatelne historie.
 
 ## Automatizace
 - Automaticky vytvorit navazujici ukol, upozorneni nebo checklist, pokud objekt prejde do stavu, ktery vyzaduje dalsi akci.

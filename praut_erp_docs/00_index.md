@@ -5,6 +5,7 @@ Kompletni katalog 80 dokumentu pro import nebo rucni zalozeni v ERP/Huly.
 - [Importni checklist pro Huly](IMPORT_CHECKLIST.md)
 - [Copy-paste import do Huly](copy_paste_import/00-import-order.md)
 - [Mapa zdrojovych prepisu](99_sources/source-map.md)
+- [Operativni model Huly Tracker + GitHub](OPERATIVNI_MODEL_HULY_TRACKER_GITHUB.md)
 
 ## Zaklad systemu
 
@@ -21,7 +22,7 @@ Kompletni katalog 80 dokumentu pro import nebo rucni zalozeni v ERP/Huly.
 
 ## Obchod a CRM
 
-- [11. Sprava kontaktu a firem](02_sales_crm/11-sprava-kontaktu-a-firem.md) - `karty Firma a Kontakt`
+- [11. Sprava kontaktu a firem](02_sales_crm/11-sprava-kontaktu-a-firem.md) - `Contacts -> Companies a Contacts -> People`
 - [12. Evidence leadu a poptavek](02_sales_crm/12-evidence-leadu-a-poptavek.md) - `karta Lead/Poptavka`
 - [13. Obchodni pipeline](02_sales_crm/13-obchodni-pipeline.md) - `karta Obchodni prilezitost`
 - [14. Kvalifikace a scoring leadu](02_sales_crm/14-kvalifikace-a-scoring-leadu.md) - `metodicky dokument + pole na kartach Lead`
@@ -36,7 +37,7 @@ Kompletni katalog 80 dokumentu pro import nebo rucni zalozeni v ERP/Huly.
 
 - [21. Zalozeni nove zakazky](03_projects_tasks/21-zalozeni-nove-zakazky.md) - `karta Zakazka + projektovy prostor`
 - [22. Projektove rizeni v PRAUT](03_projects_tasks/22-projektove-rizeni-v-praut.md) - `projektovy tracker + karta Projekt`
-- [23. Prace s ukoly podukoly a prirazenim](03_projects_tasks/23-prace-s-ukoly-podukoly-a-prirazenim.md) - `Huly issue/task + sub-issue`
+- [23. Prace s ukoly podukoly a prirazenim](03_projects_tasks/23-prace-s-ukoly-podukoly-a-prirazenim.md) - `Huly Tracker issue + sub-issue`
 - [24. Stavove procesy ukolu](03_projects_tasks/24-stavove-procesy-ukolu.md) - `nastaveni workflow + pravidlovy dokument`
 - [25. Milniky projektu](03_projects_tasks/25-milniky-projektu.md) - `karta Milnik + milnik v trackeru`
 - [26. Planovani prace v osobnim planovaci](03_projects_tasks/26-planovani-prace-v-osobnim-planovaci.md) - `osobni planovac + akcni polozka`

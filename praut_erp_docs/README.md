@@ -13,6 +13,7 @@ Tento adresar obsahuje provozni Markdown balicek pro zalozeni dokumentace v ERP/
 - `IMPORT_CHECKLIST.md` je prakticky postup pro zalozeni workspace, dokumentu, Cards, vazeb a kontrolnich scenaru v Huly.
 - `PROCESY_PRO_PREDANI.md` je mapa hlavnich procesu, ktere ma kolega rucne poskladat v Huly po zalozeni dokumentu a Cards.
 - `zamestnanecke_navody/` je samostatna vrstva praktickych navodu pro bezne zamestnance. Nejde o importni ani instalacni dokumentaci.
+- `OPERATIVNI_MODEL_HULY_TRACKER_GITHUB.md` je aktualni zjednodusene pravidlo pro denni provoz: Tracker ridi praci, GitHub ridi kod a review, Contacts drzi firmy, Cards zustavaji pro strukturovanou evidenci/reporting.
 - `huly_unified_import/` je primarni balicek pro oficialni Huly Import Tool.
 - `copy_paste_import/00-import-order.md` je fallback pro rucni import do Huly.
 - `copy_paste_import/11-cards-setup-guide.md` je prakticky navod pro nastaveni Cards, poli, workflow a pohledu.

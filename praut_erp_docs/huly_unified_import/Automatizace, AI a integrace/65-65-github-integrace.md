@@ -5,7 +5,6 @@ title: "65. GitHub integrace"
 # 65. GitHub integrace
 
 **Oblast:** Automatizace, AI a integrace
-
 ## Ucel
 GitHub integrace popisuje, jak ma PRAUT pouzivat ERP/Huly v dane oblasti tak, aby byl proces dohledatelny, meritelny a prakticky pouzitelny. Dokument prevadi principy PRAUT na konkretni provozni pravidla: co evidovat, kdo za to odpovida, co smi delat system, kde muze pomoct AI a kde musi rozhodnout clovek.
 
@@ -13,12 +12,15 @@ GitHub integrace popisuje, jak ma PRAUT pouzivat ERP/Huly v dane oblasti tak, ab
 vyvojari, PM, QA, admin.
 
 ## Doporuceny objekt v Huly
-technicko-procesni dokument.
+technicko-procesni dokument + Huly Tracker issue pro kazdou vyvojovou praci.
 
 ## Povinna pole / atributy
 - repo
 - Huly projekt
+- Huly issue key
 - issue typ
+- branch
+- PR URL
 - PR stav
 - reviewer
 - assignee
@@ -28,7 +30,7 @@ technicko-procesni dokument.
 ## Stavovy proces
 - autorizace
 - sync aktivni
-- under review
+- Review
 - ready to merge
 - merged
 - cancelled
@@ -44,13 +46,14 @@ technicko-procesni dokument.
 - 69. Incidenty a provozni chyby
 
 ## Prakticky postup
-1. Over, ze informace patri do tohoto typu objektu a neni vhodnejsi pouzit souvisejici dokument nebo kartu.
-2. Zaloz nebo aktualizuj objekt v doporucenem Huly typu a vypln povinna pole.
-3. Propoj objekt s klientem, projektem, ukolem, dokumentem nebo rozhodnutim podle vazeb vyse.
-4. Prirad vlastnika a dalsi odpovedne osoby.
-5. Pokud vznikne akce, zaloz ukol nebo akcni polozku a nech ji projit stavovym procesem.
-6. Pri zmene s dopadem na klienta, cenu, termin, data, opravneni nebo reputaci vyzadej lidske schvaleni.
-7. Po dokonceni uloz vysledek, rozhodnuti a pripadne pouceni do auditovatelne historie.
+1. Pred zacatkem vyvojove prace zaloz nebo najdi Huly Tracker issue.
+2. Vetev pojmenuj s issue key, napr. `TSK-2-fix-login`.
+3. PR title pis ve formatu `[TSK-2] kratky popis`.
+4. Do Huly issue vloz odkaz na PR; pokud integrace funguje automaticky, zkontroluj, ze vazba opravdu vznikla.
+5. Stav issue drz podle prace: `In Progress` pri vyvoji, `Review` pri PR/QA review, `Done` po merge a overeni.
+6. PR bez Huly issue je vyjimka; issue se musi dopsat zpetne a PR na ni navazat.
+7. Pri zmene s dopadem na klienta, cenu, termin, data, opravneni nebo reputaci vyzadej lidske schvaleni.
+8. Po dokonceni uloz vysledek, rozhodnuti a pripadne pouceni do auditovatelne historie.
 
 ## Automatizace
 - Automaticky vytvorit navazujici ukol, upozorneni nebo checklist, pokud objekt prejde do stavu, ktery vyzaduje dalsi akci.
@@ -69,11 +72,13 @@ Povinne lidske schvaleni plati vzdy pro cenu, smluvni nebo obchodni zavazek, pra
 
 ## Rizika a fallback
 - Riziko: nevyplnena pole, chybejici vlastnik, izolovana informace bez vazeb, rozhodnuti ponechane pouze v chatu, neovereny AI vystup.
-- Fallback: zastavit dalsi automaticky krok, zalozit eskalacni ukol, doplnit chybejici data a vyzadat potvrzeni vlastnika.
+- Fallback: pokud Huly GitHub integrace nejde zapnout hned, vloz PR link rucne do Huly issue. Integraci dodelej jako dalsi Tracker issue, neblokuj kvuli tomu jednoduchou dohledatelnost.
 - Pokud je vstup nejasny nebo citlivy, system nesmi pokracovat bez cloveka.
 
 ## Metriky uspechu
 - sync issue/PR
+- PR bez Huly issue key
+- Huly issue bez PR odkazu u vyvojove prace
 - doba review
 - PR bez review
 - sync chyby

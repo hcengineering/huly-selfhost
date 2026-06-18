@@ -41,11 +41,11 @@ karta Lead/Poptavka.
 - 47. Sprava kampani
 
 ## Prakticky postup
-1. Over, ze informace patri do tohoto typu objektu a neni vhodnejsi pouzit souvisejici dokument nebo kartu.
-2. Zaloz nebo aktualizuj objekt v doporucenem Huly typu a vypln povinna pole.
-3. Propoj objekt s klientem, projektem, ukolem, dokumentem nebo rozhodnutim podle vazeb vyse.
-4. Prirad vlastnika a dalsi odpovedne osoby.
-5. Pokud vznikne akce, zaloz ukol nebo akcni polozku a nech ji projit stavovym procesem.
+1. Pokud firma jeste neexistuje, zaloz ji v Contacts -> Companies.
+2. Zaloz kartu Lead/Poptavka.
+3. V poli firma vyber firmu z Contacts; nezakladej novou Cards -> Firma.
+4. Vypln kontakt, potrebu, prioritu, stav a dalsi krok.
+5. Zaloz ukol pro dalsi konkretni krok, napr. Zjistit rozpocet.
 6. Pri zmene s dopadem na klienta, cenu, termin, data, opravneni nebo reputaci vyzadej lidske schvaleni.
 7. Po dokonceni uloz vysledek, rozhodnuti a pripadne pouceni do auditovatelne historie.
 

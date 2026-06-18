@@ -10,7 +10,7 @@ Prace s ukoly podukoly a prirazenim popisuje, jak ma PRAUT pouzivat ERP/Huly v d
 cely tym, PM, QA.
 
 ## Doporuceny objekt v Huly
-Huly issue/task + sub-issue.
+Huly Tracker issue + sub-issue. Tracker je hlavni provozni prehled prace tymu.
 
 ## Povinna pole / atributy
 - nazev
@@ -24,13 +24,13 @@ Huly issue/task + sub-issue.
 - odhad
 
 ## Stavovy proces
-- backlog
-- to do
-- in progress
-- under review
-- blocked
-- done
-- cancelled
+- Backlog
+- Todo
+- In Progress
+- Review
+- Blocked
+- Done
+- Cancelled
 
 ## Vazby na jine dokumenty a karty
 - 22. Projektove rizeni v PRAUT
@@ -41,13 +41,14 @@ Huly issue/task + sub-issue.
 - 65. GitHub integrace
 
 ## Prakticky postup
-1. Over, ze informace patri do tohoto typu objektu a neni vhodnejsi pouzit souvisejici dokument nebo kartu.
-2. Zaloz nebo aktualizuj objekt v doporucenem Huly typu a vypln povinna pole.
-3. Propoj objekt s klientem, projektem, ukolem, dokumentem nebo rozhodnutim podle vazeb vyse.
-4. Prirad vlastnika a dalsi odpovedne osoby.
-5. Pokud vznikne akce, zaloz ukol nebo akcni polozku a nech ji projit stavovym procesem.
-6. Pri zmene s dopadem na klienta, cenu, termin, data, opravneni nebo reputaci vyzadej lidske schvaleni.
-7. Po dokonceni uloz vysledek, rozhodnuti a pripadne pouceni do auditovatelne historie.
+1. Kazdou praci pro konkretni osobu zaloz jako Tracker issue.
+2. Vypln vlastnika/assignee, prioritu, termin nebo jasny duvod bez terminu, popis ocekavaneho vysledku a vazbu na klienta/projekt/dokument/Card.
+3. Pokud jde o vyvoj, zaloz vetev a PR s issue key, napr. `TSK-2`, a vloz PR link zpet do issue.
+4. Sub-issue pouzij jen kdyz cast prace ma samostatneho vlastnika, termin nebo kontrolu.
+5. Stav udrzuj aktualni: `Blocked` musi obsahovat blokaci a dalsi krok; `Review` musi mit reviewera.
+6. Cards pouzij az pro obchodni/provozni evidenci, reporting, riziko nebo fakturaci, ne misto issue.
+7. Pri zmene s dopadem na klienta, cenu, termin, data, opravneni nebo reputaci vyzadej lidske schvaleni.
+8. Po dokonceni uloz vysledek a odkazy do issue; pokud vzniklo rozhodnuti, zapiš ho i do dokumentu nebo relevantni karty.
 
 ## Automatizace
 - Automaticky vytvorit navazujici ukol, upozorneni nebo checklist, pokud objekt prejde do stavu, ktery vyzaduje dalsi akci.
@@ -72,6 +73,8 @@ Povinne lidske schvaleni plati vzdy pro cenu, smluvni nebo obchodni zavazek, pra
 ## Metriky uspechu
 - ukoly bez vlastnika
 - blokovane ukoly
+- issue bez terminu nebo bez duvodu bez terminu
+- PR bez Huly issue key
 - reopen rate
 - prumerny cas dokonceni
 
