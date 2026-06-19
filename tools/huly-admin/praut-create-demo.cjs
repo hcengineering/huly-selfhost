@@ -21,6 +21,8 @@ const { createClient, getAccountClient } = require('@hcengineering/server-client
 const APPLY = process.argv.includes('--apply')
 const DELETE = process.argv.includes('--delete')
 const SPACE = 'card:space:Default'
+// Schůzky CardSpace — vytvořen skriptem praut-create-spaces.cjs
+const SCHUZKY_SPACE = '6a35824737b43c4db539494a'
 const DEMO_PREFIX = 'DEMO - '
 
 // ─── Konstanty z typemapy ────────────────────────────────────────────────────
@@ -107,10 +109,10 @@ function env (file) {
   return out
 }
 
-async function createCard (client, typeId, title, attrs, dryRun) {
+async function createCard (client, typeId, title, attrs, dryRun, space) {
   const data = { title, ...attrs }
   if (!dryRun) {
-    const id = await client.createDoc(typeId, SPACE, data)
+    const id = await client.createDoc(typeId, space || SPACE, data)
     return id
   }
   return 'dry-run-id'
@@ -237,7 +239,9 @@ async function main () {
   }, dryRun)
   console.log(`✅ Projekt: "DEMO - Projekt: Implementace AI agenta" (${projId})`)
 
-  // 8. Zápis ze schůzky — kick-off
+  // 8-10. Záznamy ze schůzek → jdou do CardSpace "Schůzky" (ne Default)
+  const schSpace = dryRun ? SCHUZKY_SPACE : SCHUZKY_SPACE
+
   await createCard(client, T.ZapisSch, 'DEMO - Schůzka: Kick-off AI Customer Service Agent (2026-07-01)', {
     [ATTR.sch_citlivost]: 'interni',
     [ATTR.sch_stav]: 'akcni kroky otevrene',
@@ -245,10 +249,9 @@ async function main () {
     [ATTR.sch_klient]: 'AI spol. s r.o. — Zakázka Z-2026-01',
     [ATTR.sch_rozhodnuti]: 'Projekt spouštíme 2026-07-01, PM je Štěpán, deliverable do 2026-10-31.',
     [ATTR.sch_akcni]: '1. Štěpán: nastavit GitHub repo do 2026-07-03 | 2. AI spol.: dodat přístup do CRM do 2026-07-05',
-  }, dryRun)
-  console.log('✅ Zápis ze schůzky: "DEMO - Schůzka: Kick-off..." (akcni kroky otevrene)')
+  }, dryRun, schSpace)
+  console.log('✅ Zápis ze schůzky: "DEMO - Schůzka: Kick-off..." → space: Schůzky')
 
-  // 9. Zápis ze schůzky — konzultace s ekonomem
   await createCard(client, T.ZapisSch, 'DEMO - Schůzka: Konzultace s ekonomem (2026-07-10)', {
     [ATTR.sch_citlivost]: 'citlive',
     [ATTR.sch_stav]: 'ke kontrole',
@@ -256,10 +259,9 @@ async function main () {
     [ATTR.sch_klient]: 'Interní — ekonomický poradce',
     [ATTR.sch_rozhodnuti]: 'Mzdové náklady zmrazeny do konce Q3. Nákupy nad 50 tis. Kč schvaluje Štěpán.',
     [ATTR.sch_akcni]: '1. Štěpán: zaslat ekonomovi Q2 výkazy do 2026-07-15 | 2. Ekonom: připravit Q3 plán do 2026-07-30',
-  }, dryRun)
-  console.log('✅ Zápis ze schůzky: "DEMO - Schůzka: Konzultace s ekonomem..." (citlive, ke kontrole)')
+  }, dryRun, schSpace)
+  console.log('✅ Zápis ze schůzky: "DEMO - Schůzka: Konzultace s ekonomem..." → space: Schůzky')
 
-  // 10. Zápis ze schůzky — interní operativa
   await createCard(client, T.ZapisSch, 'DEMO - Schůzka: Interní operativní schůzka (2026-07-08)', {
     [ATTR.sch_citlivost]: 'interni',
     [ATTR.sch_stav]: 'potvrzeno',
@@ -267,8 +269,8 @@ async function main () {
     [ATTR.sch_klient]: 'Interní — týmová operativa',
     [ATTR.sch_rozhodnuti]: 'Týdenní operativní meeting každé úterý 10:00. Záznamy jdou jako Zapis ze schuzky v Huly.',
     [ATTR.sch_akcni]: '1. Všichni: doplnit stavy zakázek do Huly do pátku | 2. Štěpán: sdílet odkaz na Huly všem',
-  }, dryRun)
-  console.log('✅ Zápis ze schůzky: "DEMO - Schůzka: Interní operativní schůzka..." (interni, potvrzeno)')
+  }, dryRun, schSpace)
+  console.log('✅ Zápis ze schůzky: "DEMO - Schůzka: Interní operativní schůzka..." → space: Schůzky')
 
   // ── Shrnutí ──────────────────────────────────────────────────────────────────
   console.log('\n=== SHRNUTÍ ===')

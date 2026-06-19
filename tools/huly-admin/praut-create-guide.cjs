@@ -21,7 +21,7 @@ const { createClient, getAccountClient } = require('@hcengineering/server-client
 
 const APPLY = process.argv.includes('--apply')
 
-const CHEAT_TITLE = 'Cheat Sheet — Kde co v Huly'
+const CHEAT_TITLE = 'PRAUT Huly — 4 věci které potřebuješ znát'
 const GUIDE_TITLE = 'Jak pracovat v Huly — průvodce pro tým PRAUT'
 
 function env (file) {
@@ -34,81 +34,43 @@ function env (file) {
 }
 
 const CHEAT_CONTENT = `
-<h1>Cheat Sheet — Kde co v Huly</h1>
+<h1>PRAUT Huly — 4 věci které potřebuješ znát</h1>
 
-<p>Rychlý přehled pro každodenní použití. Aktualizováno červen 2026.</p>
+<p>Tohle je vše co potřebuješ. Nic víc.</p>
 
 <table>
-  <tr><th>#</th><th>Chci…</th><th>Kam jít</th><th>Přesný postup</th></tr>
+  <tr><th>Chci…</th><th>Kam jít</th><th>Jak</th></tr>
   <tr>
-    <td>1</td>
-    <td><strong>Zapsat schůzku</strong></td>
-    <td>Cards → +</td>
-    <td>Typ: <strong>Zapis ze schuzky</strong> → vyplň název, datum, klient, rozhodnutí, akční kroky → nastav citlivost (interni/citlive)</td>
+    <td><strong>1. SCHŮZKA</strong><br/>Zapsat novou schůzku nebo najít staré</td>
+    <td><strong>Cards → Schůzky</strong> (vlevo v panelu)</td>
+    <td>Klikni na "Schůzky" → "+" vpravo nahoře → vyplň název (např. "Konzultace s ekonomem 2026-07-10"), datum, co bylo rozhodnuto, co kdo udělá</td>
   </tr>
   <tr>
-    <td>2</td>
-    <td><strong>Najít staré schůzky</strong></td>
-    <td>Cards → pohled "Záznamy ze schůzek"</td>
-    <td>V Cards klikni vlevo nahoře na "Záznamy ze schůzek" — uvidíš všechny otevřené záznamy. Hledej fulltextem Ctrl+K.</td>
+    <td><strong>2. ÚKOL</strong><br/>Přidat nebo najít úkol pro tým</td>
+    <td><strong>Tracker</strong> (levý panel → Zakázky, projekty a úkoly → Tracker)</td>
+    <td>Klikni "+" → vyplň název, přiřaď vlastníka, nastav deadline</td>
   </tr>
   <tr>
-    <td>3</td>
-    <td><strong>Přidat nového klienta / firmu</strong></td>
-    <td>Cards → +</td>
-    <td>Typ: <strong>Firma</strong> → název, IČO, web, segment, vlastník</td>
+    <td><strong>3. KLIENT nebo ZAKÁZKA</strong><br/>Přidat nového klienta nebo zakázku, nebo najít existující</td>
+    <td><strong>Cards → "+"</strong> nebo pohled <strong>"Aktivní zakázky"</strong></td>
+    <td>Klikni "+" → vyber typ (Firma = klient, Zakazka = aktivní práce pro klienta) → vyplň</td>
   </tr>
   <tr>
-    <td>4</td>
-    <td><strong>Vytvořit nabídku</strong></td>
-    <td>Cards → +</td>
-    <td>Typ: <strong>Nabídka</strong> → stav: draft → po dokončení: ke schvaleni → po odsouhlasení: odeslano</td>
-  </tr>
-  <tr>
-    <td>5</td>
-    <td><strong>Co čeká na moje schválení</strong></td>
-    <td>Cards → pohled "Ke schválení"</td>
-    <td>Pohled vlevo v Cards — ukazuje nabídky ve stavu "ke schvaleni"</td>
-  </tr>
-  <tr>
-    <td>6</td>
-    <td><strong>Přidat úkol pro tým</strong></td>
-    <td>Tracker → +</td>
-    <td>Vyber šablonu → přiřaď vlastníka + deadline → branch: TSK-123-popis, PR: [TSK-123] Co jsem změnil</td>
-  </tr>
-  <tr>
-    <td>7</td>
-    <td><strong>Incident / problém u klienta</strong></td>
-    <td>Cards → +</td>
-    <td>Typ: <strong>Incident</strong> → stav: triage → dopad: klient → vlastník = řešitel → upozornění vedení do 2h</td>
-  </tr>
-  <tr>
-    <td>8</td>
-    <td><strong>Napsat firemní pravidlo nebo proces</strong></td>
-    <td>Levý panel → teamspace → New Document</td>
-    <td>Základ systemu pro procesy a pravidla; Dokumenty a znalostní báze pro know-how a rozhodnutí</td>
-  </tr>
-  <tr>
-    <td>9</td>
-    <td><strong>Přehled zakázek</strong></td>
-    <td>Cards → pohled "Aktivní"</td>
-    <td>Vidíš vše co právě běží. Filtruj typ "Zakazka" nebo konkrétní atributy.</td>
-  </tr>
-  <tr>
-    <td>10</td>
-    <td><strong>Faktura po splatnosti</strong></td>
-    <td>Cards → pohled "Po splatnosti"</td>
-    <td>Zavolej klientovi, aktualizuj stav faktury. Pohled "Nezaplacené" ukáže vše co ještě neplatil.</td>
+    <td><strong>4. DOKUMENT / PRAVIDLO</strong><br/>Napsat nebo najít firemní pravidlo, proces, know-how</td>
+    <td><strong>Levý panel → Základ systemu</strong> (nebo jiný teamspace)</td>
+    <td>Klikni na teamspace → "New Document" → napiš název a obsah</td>
   </tr>
 </table>
 
-<h2>Jak Huly funguje — 3 věty</h2>
+<h2>Kde jsou schůzky?</h2>
 
-<p><strong>Cards</strong> jsou firemní objekty: klienti, zakázky, nabídky, schůzky, incidenty. Každý objekt má typ (Firma/Nabídka/Zápis ze schůzky/…) a atributy (datum, stav, vlastník, …). <strong>Tracker</strong> jsou každodenní interní úkoly (jako GitHub Issues). <strong>Teamspaces</strong> v levém panelu jsou sekce pro dokumenty, procesy a know-how — nejsou to složky pro karty.</p>
+<p>V levém panelu Cards vidíš sekci <strong>"Schůzky"</strong> — to je místo kde jsou všechny záznamy ze schůzek. Stačí tam kliknout a vidíš je. "+" přidá novou.</p>
 
-<h2>Proč nevidím "SCH ekonom"?</h2>
+<p>Pro přehled přes celý systém: pohled <strong>"Záznamy ze schůzek"</strong> (vlevo v Cards nad sekcemi).</p>
 
-<p>Prostor "SCH ekonom" byl testovací prostor — byl archivován při čištění workspace. Schůzky s ekonomem (nebo jakékoliv jiné) patří do <strong>Cards → Zapis ze schuzky</strong>. Viz DEMO záznamy (prefix "DEMO - Schůzka:") jako příklad jak to vypadá.</p>
+<h2>Co ostatní věci v Cards?</h2>
+
+<p>Zbytek — nabídky, faktury, projekty, incidenty — je v sekci <strong>Default</strong> (v Cards vlevo). Pohled <strong>"Ke schválení"</strong> ukazuje co čeká na tvé rozhodnutí. <strong>"V riziku"</strong> ukazuje zakázky s problémem.</p>
 `
 
 const GUIDE_CONTENT = `
