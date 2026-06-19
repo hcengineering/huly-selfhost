@@ -73,5 +73,8 @@ Vždy nejdřív DRY-RUN, ověř cíle, pak `--apply`. Před většími zásahy s
   Nedotaženo (vyžaduje admin UI session, ne API): `Bez vlastníka` (pole `vlastnik`/`PM`/
   `schvalovatel` jsou freeform text, ne enum — "je prázdné" potřebuje jiný typ filtru než
   ValueFilter) a `Moje` (vyžaduje dynamický `$me` filtr vázaný na přihlášeného uživatele).
-  `Obnovy do 60 dní` u `Zakazka` přeskočeno — pole `datum obnovy` ze schématu v aktuálním
-  modelu nebylo nalezeno, ověřit přímo v `Settings → TYPES → Zakazka`.
+  `Obnovy do 60 dní` u `Zakazka` přeskočeno — datový nález: pole `datum obnovy` existuje,
+  ale je v modelu typované jako **text** (`core:class:TypeString`), ne jako datum
+  (`core:class:TypeDate`). Date-range filtr ("příštích 60 dní") nelze spustit ani ručně
+  v UI, dokud se pole v `Settings → TYPES → Zakazka` nepřetypuje na Date. To je úprava
+  datového modelu, ne věc, kterou vyřeší tento nástroj.
