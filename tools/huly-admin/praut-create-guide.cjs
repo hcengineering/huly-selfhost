@@ -21,6 +21,7 @@ const { createClient, getAccountClient } = require('@hcengineering/server-client
 
 const APPLY = process.argv.includes('--apply')
 
+const HOME_TITLE = '🏠 PRAUT — Co dnes dělám'
 const CHEAT_TITLE = 'PRAUT Huly — 4 věci které potřebuješ znát'
 const GUIDE_TITLE = 'Jak pracovat v Huly — průvodce pro tým PRAUT'
 
@@ -32,6 +33,105 @@ function env (file) {
   }
   return out
 }
+
+const HOME_CONTENT = `
+<h1>🏠 PRAUT — Co dnes dělám</h1>
+
+<p>Otevři tohle každé ráno. Zabere 5 minut. Pak víš vše co potřebuješ.</p>
+
+<hr/>
+
+<h2>⏰ KAŽDÉ RÁNO (5 minut)</h2>
+
+<table>
+  <tr>
+    <th>Co zkontrolovat</th>
+    <th>Kde to najít v Huly</th>
+    <th>Co hledat</th>
+  </tr>
+  <tr>
+    <td>⭐ <strong>Čeká na mě schválení?</strong></td>
+    <td>Cards → pohled <strong>"⭐ Ke schválení"</strong></td>
+    <td>Nabídky čekající na tvůj podpis/souhlas</td>
+  </tr>
+  <tr>
+    <td>🔴 <strong>Hoří něco?</strong></td>
+    <td>Cards → pohled <strong>"🔴 V riziku"</strong></td>
+    <td>Zakázky s problémem — zavolej PM ihned</td>
+  </tr>
+  <tr>
+    <td>💰 <strong>Dlužíme nebo nám dlužíte?</strong></td>
+    <td>Cards → pohled <strong>"💰 Po splatnosti"</strong></td>
+    <td>Faktury po termínu — zavolej klientovi dnes</td>
+  </tr>
+</table>
+
+<p>Pokud všechny tři pohledy jsou prázdné → skvělý den, jdi na kafe ☕</p>
+
+<hr/>
+
+<h2>📅 SCHŮZKY</h2>
+
+<table>
+  <tr>
+    <th>Chci…</th>
+    <th>Jak</th>
+  </tr>
+  <tr>
+    <td>Zapsat novou schůzku</td>
+    <td>Cards → levý panel → <strong>Schůzky</strong> → klikni <strong>"+"</strong> vpravo nahoře</td>
+  </tr>
+  <tr>
+    <td>Najít starší schůzky</td>
+    <td>Cards → pohled <strong>"📅 Záznamy ze schůzek"</strong></td>
+  </tr>
+  <tr>
+    <td>Vzorový záznam</td>
+    <td>Cards → Schůzky → karta "DEMO - Schůzka: Konzultace s ekonomem"</td>
+  </tr>
+</table>
+
+<hr/>
+
+<h2>🆕 NOVÁ PRÁCE</h2>
+
+<table>
+  <tr>
+    <th>Vytvářím…</th>
+    <th>Kde</th>
+  </tr>
+  <tr>
+    <td>Nového klienta (firmu)</td>
+    <td>Cards → <strong>"+"</strong> → vyber <strong>Firma</strong></td>
+  </tr>
+  <tr>
+    <td>Novou nabídku</td>
+    <td>Cards → <strong>"+"</strong> → vyber <strong>Nabidka</strong></td>
+  </tr>
+  <tr>
+    <td>Novou zakázku</td>
+    <td>Cards → <strong>"+"</strong> → vyber <strong>Zakazka</strong></td>
+  </tr>
+  <tr>
+    <td>Úkol pro tým</td>
+    <td>Tracker (levý panel → Zakázky, projekty a úkoly → Tracker) → <strong>"+"</strong></td>
+  </tr>
+  <tr>
+    <td>Zápis ze schůzky</td>
+    <td>Cards → Schůzky → <strong>"+"</strong></td>
+  </tr>
+</table>
+
+<hr/>
+
+<h2>📚 Pokud nevíš jak na to</h2>
+
+<ul>
+  <li><strong>Rychlý přehled (4 věci):</strong> dokument <em>"PRAUT Huly — 4 věci které potřebuješ znát"</em> (tady v Základ systemu)</li>
+  <li><strong>Detailní průvodce:</strong> dokument <em>"Jak pracovat v Huly — průvodce pro tým PRAUT"</em> (tady v Základ systemu)</li>
+  <li><strong>Vzorové karty:</strong> Cards → pohledy → vše s prefixem "DEMO -"</li>
+</ul>
+`
 
 const CHEAT_CONTENT = `
 <h1>PRAUT Huly — 4 věci které potřebuješ znát</h1>
@@ -249,6 +349,7 @@ async function main () {
   console.log(`Teamspace: "${zakladSpace.name}" (${zakladSpace._id})`)
   console.log(`Mode: ${APPLY ? 'APPLY' : 'DRY-RUN'}\n`)
 
+  await createOrReplaceDoc(client, zakladSpace._id, zakladSpace.name, HOME_TITLE, HOME_CONTENT, APPLY)
   await createOrReplaceDoc(client, zakladSpace._id, zakladSpace.name, CHEAT_TITLE, CHEAT_CONTENT, APPLY)
   await createOrReplaceDoc(client, zakladSpace._id, zakladSpace.name, GUIDE_TITLE, GUIDE_CONTENT, APPLY)
 

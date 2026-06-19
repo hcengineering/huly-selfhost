@@ -37,17 +37,17 @@ const MARK = 'praut-ops' // značka spravovaných pohledů (v poli 'tags' dat)
 // Záměrně MINIMÁLNÍ — 5 pohledů pro každodenní potřeby PRAUT
 const SPEC = {
   'Zapis ze schuzky': [
-    { name: 'Záznamy ze schůzek', attr: 'stav', mode: 'Nin', values: ['uzavreno'] }
+    { name: '📅 Záznamy ze schůzek', attr: 'stav', mode: 'Nin', values: ['uzavreno'] }
   ],
   Nabidka: [
-    { name: 'Ke schválení', attr: 'stav', mode: 'In', values: ['interni kontrola', 'ke schvaleni'] }
+    { name: '⭐ Ke schválení', attr: 'stav', mode: 'In', values: ['interni kontrola', 'ke schvaleni'] }
   ],
   Zakazka: [
-    { name: 'Aktivní zakázky', attr: 'stav', mode: 'Nin', values: ['dokonceno', 'archiv'] },
-    { name: 'V riziku', attr: 'health', mode: 'In', values: ['cerveny', 'v riziku'] }
+    { name: '📦 Aktivní zakázky', attr: 'stav', mode: 'Nin', values: ['dokonceno', 'archiv'] },
+    { name: '🔴 V riziku', attr: 'health', mode: 'In', values: ['cerveny', 'v riziku'] }
   ],
   Faktura: [
-    { name: 'Po splatnosti', attr: 'stav', mode: 'In', values: ['po splatnosti'] }
+    { name: '💰 Po splatnosti', attr: 'stav', mode: 'In', values: ['po splatnosti'] }
   ]
 }
 
