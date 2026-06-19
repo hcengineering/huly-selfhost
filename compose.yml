@@ -231,6 +231,10 @@ services:
       - DESKTOP_UPDATES_CHANNEL=${DESKTOP_CHANNEL}
       - DISABLED_FEATURES=auto-translate,mailboxes
       - DISABLE_SIGNUP=${DISABLE_SIGNUP:-}
+      # GitHub integration (front builds OAuth + App install URLs client-side)
+      - GITHUB_URL=http${SECURE:+s}://${HOST_ADDRESS}/_github
+      - GITHUB_APP=${GITHUB_APP_SLUG:-}
+      - GITHUB_CLIENTID=${GITHUB_CLIENTID:-}
     restart: unless-stopped
     networks:
       - huly_net
