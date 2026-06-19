@@ -25,6 +25,28 @@ jen ručním klikáním v UI. Tyto skripty to dělají programově a opakovateln
 | `praut-spaces-list.cjs` | READ-ONLY výpis všech prostorů (název, třída, archived, _id). |
 | `praut-archive-junk.cjs` | Archivuje/odarchivuje testovací junk prostory (cílí přesně podle _id). `--apply` provede, `--unarchive` vrátí. |
 | `praut-tune.cjs` | Drobné úpravy obsahu (např. přejmenování prázdného `Untitled` dokumentu). `--apply` provede. |
+| `praut-build-views.cjs` | Vytvoří sadu uložených pohledů (`FilteredView`) na klíčových card typech. Idempotentní (nejdřív smaže své dříve vytvořené pohledy přes tag `praut-ops`), self-check spustí ekvivalentní dotaz a vypíše počet karet před vytvořením. Vyžaduje `/tmp/typemap.json` vygenerovaný `praut-typemap.cjs` (není v repu, je to jen runtime cache). |
+
+## Důležitý detail formátu filtru
+
+`FilteredView.filters[].value` pro `FilterValueIn`/`FilterValueNin` **musí** být vnořené
+pole `[[hodnota, [hodnota]]]`, ne plochý seznam `[hodnota]` — Huly klient interně dělá
+`filter.value.map(p => p[1]).flat()` (viz `plugins/view-resources/src/filter.ts`,
+funkce `valueInResult`/`valueNinResult`). Plochý formát vytvoří pohled, který v UI
+nic nefiltruje (filtr se "ztratí").
+
+## Spouštění mimo prohlížeč (Node)
+
+Huly klient očekává browser globály. Skripty řeší shimem:
+```js
+globalThis.window = globalThis
+globalThis.addEventListener = () => {}
+// localStorage MUSÍ být typeof 'undefined' (ne shim objekt!), jinak klient
+// spustí IndexedDB model-cache, která v Node neexistuje:
+Object.defineProperty(globalThis, 'localStorage', { value: undefined, configurable: true })
+```
+A `createClient(endpoint, token, [])` — třetí parametr (prázdný model) vynutí
+in-memory model store místo IndexedDB persistence.
 
 ## Použití
 
