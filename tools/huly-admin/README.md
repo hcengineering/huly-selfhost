@@ -65,3 +65,13 @@ Vždy nejdřív DRY-RUN, ověř cíle, pak `--apply`. Před většími zásahy s
 - 2026-06-18: archivováno 8 testovacích prostorů (Card: Pizda, poi, PULS, SCH ekonom,
   Zaznamnik.pro; Tracker: Zaznamnik.pro, ProjZaznamnik, puls). Reverzibilní.
 - 2026-06-18: přejmenován prázdný dokument `Untitled` → `Poznámky (k doplnění)`.
+- 2026-06-19: vytvořeno 13 uložených pohledů na 9 klíčových typech (Nabidka, Zakazka,
+  Faktura, Lead/Poptavka, Obchodni prilezitost, Projekt, Zakaznicky pozadavek, Incident,
+  Riziko) — `Aktivní`/`Otevřené` (stav není uzavřeno) a `V riziku`/`Po splatnosti`/
+  `Ke schválení` tam, kde to dává smysl. Sdíleno všem 4 členům workspace. Self-check
+  proti reálným datům proveden u každého před vytvořením.
+  Nedotaženo (vyžaduje admin UI session, ne API): `Bez vlastníka` (pole `vlastnik`/`PM`/
+  `schvalovatel` jsou freeform text, ne enum — "je prázdné" potřebuje jiný typ filtru než
+  ValueFilter) a `Moje` (vyžaduje dynamický `$me` filtr vázaný na přihlášeného uživatele).
+  `Obnovy do 60 dní` u `Zakazka` přeskočeno — pole `datum obnovy` ze schématu v aktuálním
+  modelu nebylo nalezeno, ověřit přímo v `Settings → TYPES → Zakazka`.
