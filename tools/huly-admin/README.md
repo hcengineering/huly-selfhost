@@ -22,10 +22,13 @@ jen ručním klikáním v UI. Tyto skripty to dělají programově a opakovateln
 
 | Skript | Co dělá |
 |---|---|
+| `praut-typemap.cjs` | **Spusť jako první.** Generuje `/tmp/typemap.json` — runtime cache metadat všech 22 card typů (atributy, enum hodnoty, viewlety). Spusť znovu po každé změně datového modelu. |
 | `praut-spaces-list.cjs` | READ-ONLY výpis všech prostorů (název, třída, archived, _id). |
 | `praut-archive-junk.cjs` | Archivuje/odarchivuje testovací junk prostory (cílí přesně podle _id). `--apply` provede, `--unarchive` vrátí. |
-| `praut-tune.cjs` | Drobné úpravy obsahu (např. přejmenování prázdného `Untitled` dokumentu). `--apply` provede. |
-| `praut-build-views.cjs` | Vytvoří sadu uložených pohledů (`FilteredView`) na klíčových card typech. Idempotentní (nejdřív smaže své dříve vytvořené pohledy přes tag `praut-ops`), self-check spustí ekvivalentní dotaz a vypíše počet karet před vytvořením. Vyžaduje `/tmp/typemap.json` vygenerovaný `praut-typemap.cjs` (není v repu, je to jen runtime cache). |
+| `praut-tune.cjs` | Drobné úpravy obsahu (např. přejmenování prázdného dokumentu). `--apply` provede. |
+| `praut-build-views.cjs` | Vytvoří 13 uložených pohledů (`FilteredView`) na klíčových card typech. Idempotentní (nejdřív smaže své dříve vytvořené pohledy přes tag `praut-ops`). Vyžaduje `/tmp/typemap.json` z `praut-typemap.cjs`. |
+| `praut-create-demo.cjs` | Vytvoří/obnoví 7 DEMO karet (Firma→Lead→Příležitost→Nabídka→Zakázka→Faktura+Projekt). Ukazuje ukázkový obchodní workflow s vyplněnými poli a vazbami. `--apply` vytvoří, `--delete` smaže. |
+| `praut-create-guide.cjs` | Vytvoří/obnoví orientační dokument "Jak začít v Huly" v teamspacu Základ systemu. `--apply` vytvoří. |
 
 ## Důležitý detail formátu filtru
 
@@ -48,13 +51,25 @@ Object.defineProperty(globalThis, 'localStorage', { value: undefined, configurab
 A `createClient(endpoint, token, [])` — třetí parametr (prázdný model) vynutí
 in-memory model store místo IndexedDB persistence.
 
+## Manuální návody (UI-only kroky)
+
+| Dokument | Co pokrývá |
+|---|---|
+| `TRACKER_SETUP_MANUAL.md` | Nastavení stavů (Backlog/Review/Blocked/…) a šablon v Tracker projektu TSK |
+| `AUTOMATION_SETUP_MANUAL.md` | 7 alert-only automatizačních pravidel (nastavení v Huly Automation UI) |
+
 ## Použití
 
 ```bash
 cd HulyPrautplatform/dev/import-tool
-cp <repo>/tools/huly-admin/praut-archive-junk.cjs .
-node praut-archive-junk.cjs            # DRY-RUN, nic nemění
-node praut-archive-junk.cjs --apply    # provede
+# 1. Typemapa (nutná pro build-views a create-demo)
+cp <repo>/tools/huly-admin/praut-typemap.cjs .
+node praut-typemap.cjs
+
+# 2. Jakýkoliv jiný skript
+cp <repo>/tools/huly-admin/praut-build-views.cjs .
+node praut-build-views.cjs             # DRY-RUN, nic nemění
+node praut-build-views.cjs --apply     # provede
 ```
 
 Vždy nejdřív DRY-RUN, ověř cíle, pak `--apply`. Před většími zásahy spusť zálohu
@@ -67,14 +82,19 @@ Vždy nejdřív DRY-RUN, ověř cíle, pak `--apply`. Před většími zásahy s
 - 2026-06-18: přejmenován prázdný dokument `Untitled` → `Poznámky (k doplnění)`.
 - 2026-06-19: vytvořeno 13 uložených pohledů na 9 klíčových typech (Nabidka, Zakazka,
   Faktura, Lead/Poptavka, Obchodni prilezitost, Projekt, Zakaznicky pozadavek, Incident,
-  Riziko) — `Aktivní`/`Otevřené` (stav není uzavřeno) a `V riziku`/`Po splatnosti`/
-  `Ke schválení` tam, kde to dává smysl. Sdíleno všem 4 členům workspace. Self-check
-  proti reálným datům proveden u každého před vytvořením.
-  Nedotaženo (vyžaduje admin UI session, ne API): `Bez vlastníka` (pole `vlastnik`/`PM`/
-  `schvalovatel` jsou freeform text, ne enum — "je prázdné" potřebuje jiný typ filtru než
-  ValueFilter) a `Moje` (vyžaduje dynamický `$me` filtr vázaný na přihlášeného uživatele).
-  `Obnovy do 60 dní` u `Zakazka` přeskočeno — datový nález: pole `datum obnovy` existuje,
-  ale je v modelu typované jako **text** (`core:class:TypeString`), ne jako datum
-  (`core:class:TypeDate`). Date-range filtr ("příštích 60 dní") nelze spustit ani ručně
-  v UI, dokud se pole v `Settings → TYPES → Zakazka` nepřetypuje na Date. To je úprava
-  datového modelu, ne věc, kterou vyřeší tento nástroj.
+  Riziko). Sdíleno všem 4 členům workspace.
+- 2026-06-19: vytvořeno 7 DEMO karet (Firma→Lead→Příležitost→Nabídka→Zakázka→Faktura+Projekt)
+  ukazující ukázkový obchodní workflow s vyplněnými poli a vazbami.
+- 2026-06-19: vytvořen orientační dokument "Jak začít v Huly" v teamspacu Základ systemu.
+
+### Nedotaženo (vyžaduje UI nebo změnu datového modelu)
+
+- **`Bez vlastníka`**: pole `vlastnik`/`PM`/`schvalovatel` jsou `TypeString` (freeform text),
+  ne enum — "je prázdné" nelze detekovat ValueFilterem. Řešení: změnit pole na `RefTo:Member`
+  v `Settings → TYPES → <typ>`.
+- **`Moje`**: vyžaduje dynamický `$me` filtr vázaný na přihlášeného uživatele — v Huly API
+  jde nastavit jen na konkrétní UUID, ne per-session dynamicky.
+- **`Obnovy do 60 dní`**: pole `datum obnovy` na Zakazka je `TypeString`, ne `TypeDate`.
+  Date-range filtr nelze spustit, dokud se pole nepřetypuje v `Settings → TYPES → Zakazka`.
+- **Automatizace** (7 pravidel): viz `AUTOMATION_SETUP_MANUAL.md` — nastavení přes Huly UI.
+- **Tracker stavy/šablony**: viz `TRACKER_SETUP_MANUAL.md` — nastavení přes Huly UI.
