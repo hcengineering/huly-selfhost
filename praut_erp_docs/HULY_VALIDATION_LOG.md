@@ -839,3 +839,36 @@ Next:
 - Complete Cards saved views and required-field validation in Huly UI.
 - Inspect `Untitled` without deletion.
 - Run owner-ready control scenarios on `DEMO -` records.
+
+## 2026-06-18 17:30 CEST - Verified live audit (SSH + DB unblocked)
+
+Actor:
+- Claude Opus 4.8 (1M context).
+
+Purpose:
+- Resolve the 2026-06-16 access blocker and verify the live state previous sessions could not confirm.
+
+Steps:
+- Working SSH to VPS established (`/Users/stepan/praut/.ssh/vps_codex_key`).
+- Read-only queries against `huly_v7-cockroach-1` (DB `defaultdb`).
+- `docker compose ps`, running-service env checks.
+- Fresh backup + restore smoke executed.
+
+Result:
+- PASS (data + infrastructure layer).
+
+Evidence:
+- Praut workspace (`4533ec0f-…`): 8 teamspaces, 81 documents, 22 card types, 30 cards.
+- `DISABLE_SIGNUP=true` on running `account` service.
+- `kvs` bound to `127.0.0.1:8094`.
+- Daily backup cron 02:30 present; restore smoke PASS on `scheduled/20260618-172259`.
+- `https://huly.praut.cz` HTTP 200.
+- Full detail in `HULY_LIVE_AUDIT_2026-06-18.md`.
+
+Issues:
+- `Untitled` document confirmed present (1×) — still needs rename/archive in UI.
+- Cards saved views, required-field enforcement, Tracker setup, automation rules remain UI-only tasks.
+
+Next:
+- Owner/admin UI session for the remaining 6 items (see live audit doc).
+- Onboarding of real team members once the people list is provided.
