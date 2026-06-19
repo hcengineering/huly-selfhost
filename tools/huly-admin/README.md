@@ -51,13 +51,25 @@ Object.defineProperty(globalThis, 'localStorage', { value: undefined, configurab
 A `createClient(endpoint, token, [])` — třetí parametr (prázdný model) vynutí
 in-memory model store místo IndexedDB persistence.
 
+## Manuální návody (UI-only kroky)
+
+| Dokument | Co pokrývá |
+|---|---|
+| `TRACKER_SETUP_MANUAL.md` | Nastavení stavů (Backlog/Review/Blocked/…) a šablon v Tracker projektu TSK |
+| `AUTOMATION_SETUP_MANUAL.md` | 7 alert-only automatizačních pravidel (nastavení v Huly Automation UI) |
+
 ## Použití
 
 ```bash
 cd HulyPrautplatform/dev/import-tool
-cp <repo>/tools/huly-admin/praut-archive-junk.cjs .
-node praut-archive-junk.cjs            # DRY-RUN, nic nemění
-node praut-archive-junk.cjs --apply    # provede
+# 1. Typemapa (nutná pro build-views a create-demo)
+cp <repo>/tools/huly-admin/praut-typemap.cjs .
+node praut-typemap.cjs
+
+# 2. Jakýkoliv jiný skript
+cp <repo>/tools/huly-admin/praut-build-views.cjs .
+node praut-build-views.cjs             # DRY-RUN, nic nemění
+node praut-build-views.cjs --apply     # provede
 ```
 
 Vždy nejdřív DRY-RUN, ověř cíle, pak `--apply`. Před většími zásahy spusť zálohu
