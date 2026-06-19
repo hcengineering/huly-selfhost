@@ -65,6 +65,9 @@ const SPEC = {
   ],
   Riziko: [
     { name: 'Otevřená', attr: 'stav', mode: 'Nin', values: ['uzavreno'] }
+  ],
+  'Zapis ze schuzky': [
+    { name: 'Záznamy ze schůzek', attr: 'stav', mode: 'Nin', values: ['uzavreno'] }
   ]
 }
 

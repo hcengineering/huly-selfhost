@@ -1,5 +1,7 @@
-// Vytvoří orientační dokument "Jak začít v Huly" v teamspacu "Základ systému".
-// Idempotentní: pokud dokument se stejným názvem existuje, smaže ho a vytvoří znovu.
+// Vytvoří/obnoví dva dokumenty v teamspacu "Základ systému":
+//   1. "Cheat Sheet — Kde co v Huly" (krátká tabulka pro každodenní použití)
+//   2. "Jak pracovat v Huly — průvodce pro tým PRAUT" (detailní průvodce)
+// Idempotentní: smaže existující dokumenty se stejným názvem, pak vytvoří nové.
 //   node praut-create-guide.cjs           DRY-RUN
 //   node praut-create-guide.cjs --apply   vytvoří/obnoví
 globalThis.window = globalThis
@@ -18,7 +20,9 @@ const serverClientPlugin = require('@hcengineering/server-client').default
 const { createClient, getAccountClient } = require('@hcengineering/server-client')
 
 const APPLY = process.argv.includes('--apply')
-const GUIDE_TITLE = 'Jak začít v Huly — průvodce pro tým PRAUT'
+
+const CHEAT_TITLE = 'Cheat Sheet — Kde co v Huly'
+const GUIDE_TITLE = 'Jak pracovat v Huly — průvodce pro tým PRAUT'
 
 function env (file) {
   const out = {}
@@ -29,104 +33,235 @@ function env (file) {
   return out
 }
 
-// Obsah průvodce ve formátu, který Huly přijímá jako markup
-const GUIDE_CONTENT = `
-<h1>Jak začít v Huly — průvodce pro tým PRAUT</h1>
+const CHEAT_CONTENT = `
+<h1>Cheat Sheet — Kde co v Huly</h1>
 
-<p>Huly je náš interní operační systém. Tento dokument ti ukáže, kde co najdeš a jak v tom pracovat.</p>
-
-<h2>1. Kde co v Huly je</h2>
-
-<p>Huly má 8 oblastí (teamspaces) v levém panelu:</p>
-
-<ul>
-  <li><strong>Základ systému</strong> — pravidla, procesy, tento průvodce</li>
-  <li><strong>Obchod a CRM</strong> — leady, příležitosti, nabídky</li>
-  <li><strong>Zakázky, projekty a úkoly</strong> — zakázky, projekty, Tracker (denní úkoly)</li>
-  <li><strong>Dokumenty a znalostní báze</strong> — návody, know-how, rozhodnutí</li>
-  <li><strong>Komunikace a spolupráce</strong> — záznamy ze schůzek, předání</li>
-  <li><strong>Marketing a zákaznická péče</strong> — kampaně, zákaznické požadavky, incidenty</li>
-  <li><strong>Automatizace, AI a integrace</strong> — naše AI nástroje a integrace</li>
-  <li><strong>Řízení firmy a reporting</strong> — KPI, rizika, change requesty</li>
-</ul>
-
-<h2>2. Cards — strukturovaná evidence</h2>
-
-<p>Cards jsou firemní objekty: Zakázka, Faktura, Lead, Projekt, Incident, Riziko atd. Najdeš je v horní navigaci (ikona karty).</p>
-
-<p><strong>Ukázkový workflow (DEMO karty):</strong></p>
-<ol>
-  <li>Přijde poptávka → vytvoříš <strong>Lead/Poptávka</strong></li>
-  <li>Lead se kvalifikuje → vytvoříš <strong>Obchodní příležitost</strong></li>
-  <li>Píšeme nabídku → vytvoříš <strong>Nabídka</strong> (stav: ke schválení)</li>
-  <li>Klient kývne → vytvoříš <strong>Zakázka</strong> (stav: aktivní)</li>
-  <li>Fakturujeme → vytvoříš <strong>Faktura</strong> (stav: vystavena)</li>
-  <li>Realizujeme → vytvoříš <strong>Projekt</strong> (fáze: aktivní realizace)</li>
-</ol>
-
-<p>Podívej se na DEMO karty (prefix "DEMO -") v Cards → ukazují, jak má vypadat každý krok s vyplněnými poli.</p>
-
-<h2>3. Pohledy — filtrovat co je důležité teď</h2>
-
-<p>V Cards (ikona karty) máš uložené pohledy vlevo nahoře:</p>
-
-<ul>
-  <li><strong>Aktivní</strong> — vše co právě běží (nekončí)</li>
-  <li><strong>Ke schválení</strong> — nabídky čekající na tvé rozhodnutí</li>
-  <li><strong>V riziku</strong> — zakázky s červeným/rizikovým health</li>
-  <li><strong>Po splatnosti</strong> — faktury po splatnosti</li>
-  <li><strong>Nezaplacené</strong> — faktury, za které jsme ještě nedostali peníze</li>
-  <li><strong>Otevřené</strong> — požadavky/incidenty/rizika bez uzavření</li>
-</ul>
-
-<p><strong>Denní rituál (každé ráno, 5 minut):</strong></p>
-<ol>
-  <li>Ke schválení → zkontroluj, co čeká na tebe</li>
-  <li>V riziku → co potřebuje pozornost</li>
-  <li>Po splatnosti → zavolej/napiš klientovi</li>
-</ol>
-
-<h2>4. Tracker — denní úkoly a projekty</h2>
-
-<p>Tracker je náš GitHub-Issues ekvivalent pro interní úkoly. Najdeš ho v levém panelu → Zakázky, projekty a úkoly → Tracker.</p>
-
-<p><strong>Pravidlo pro úkoly:</strong></p>
-<ul>
-  <li>Každý úkol má vlastníka a deadline (nebo jasný důvod proč ne)</li>
-  <li>Branch name: <code>TSK-123-kratky-popis</code></li>
-  <li>PR title: <code>[TSK-123] Co jsem změnil</code></li>
-  <li>Do Huly issue dej link na PR ručně (dokud nemáme GitHub integraci)</li>
-</ul>
-
-<h2>5. Co kam NE</h2>
+<p>Rychlý přehled pro každodenní použití. Aktualizováno červen 2026.</p>
 
 <table>
-  <tr><th>Typ info</th><th>Správné místo</th><th>NE sem</th></tr>
-  <tr><td>Klient, zakázka, rozhodnutí o ceně</td><td>Card</td><td>Chat</td></tr>
-  <tr><td>Průvodce, pravidlo, proces</td><td>Dokument</td><td>Card</td></tr>
-  <tr><td>Rychlá koordinace, dotaz</td><td>Chat</td><td>Card/Dokument</td></tr>
-  <tr><td>Incident, SLA porušení</td><td>Card → Incident</td><td>Email/Slack only</td></tr>
-  <tr><td>AI výstup bez kontroly</td><td>Nikam!</td><td>—</td></tr>
+  <tr><th>#</th><th>Chci…</th><th>Kam jít</th><th>Přesný postup</th></tr>
+  <tr>
+    <td>1</td>
+    <td><strong>Zapsat schůzku</strong></td>
+    <td>Cards → +</td>
+    <td>Typ: <strong>Zapis ze schuzky</strong> → vyplň název, datum, klient, rozhodnutí, akční kroky → nastav citlivost (interni/citlive)</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td><strong>Najít staré schůzky</strong></td>
+    <td>Cards → pohled "Záznamy ze schůzek"</td>
+    <td>V Cards klikni vlevo nahoře na "Záznamy ze schůzek" — uvidíš všechny otevřené záznamy. Hledej fulltextem Ctrl+K.</td>
+  </tr>
+  <tr>
+    <td>3</td>
+    <td><strong>Přidat nového klienta / firmu</strong></td>
+    <td>Cards → +</td>
+    <td>Typ: <strong>Firma</strong> → název, IČO, web, segment, vlastník</td>
+  </tr>
+  <tr>
+    <td>4</td>
+    <td><strong>Vytvořit nabídku</strong></td>
+    <td>Cards → +</td>
+    <td>Typ: <strong>Nabídka</strong> → stav: draft → po dokončení: ke schvaleni → po odsouhlasení: odeslano</td>
+  </tr>
+  <tr>
+    <td>5</td>
+    <td><strong>Co čeká na moje schválení</strong></td>
+    <td>Cards → pohled "Ke schválení"</td>
+    <td>Pohled vlevo v Cards — ukazuje nabídky ve stavu "ke schvaleni"</td>
+  </tr>
+  <tr>
+    <td>6</td>
+    <td><strong>Přidat úkol pro tým</strong></td>
+    <td>Tracker → +</td>
+    <td>Vyber šablonu → přiřaď vlastníka + deadline → branch: TSK-123-popis, PR: [TSK-123] Co jsem změnil</td>
+  </tr>
+  <tr>
+    <td>7</td>
+    <td><strong>Incident / problém u klienta</strong></td>
+    <td>Cards → +</td>
+    <td>Typ: <strong>Incident</strong> → stav: triage → dopad: klient → vlastník = řešitel → upozornění vedení do 2h</td>
+  </tr>
+  <tr>
+    <td>8</td>
+    <td><strong>Napsat firemní pravidlo nebo proces</strong></td>
+    <td>Levý panel → teamspace → New Document</td>
+    <td>Základ systemu pro procesy a pravidla; Dokumenty a znalostní báze pro know-how a rozhodnutí</td>
+  </tr>
+  <tr>
+    <td>9</td>
+    <td><strong>Přehled zakázek</strong></td>
+    <td>Cards → pohled "Aktivní"</td>
+    <td>Vidíš vše co právě běží. Filtruj typ "Zakazka" nebo konkrétní atributy.</td>
+  </tr>
+  <tr>
+    <td>10</td>
+    <td><strong>Faktura po splatnosti</strong></td>
+    <td>Cards → pohled "Po splatnosti"</td>
+    <td>Zavolej klientovi, aktualizuj stav faktury. Pohled "Nezaplacené" ukáže vše co ještě neplatil.</td>
+  </tr>
 </table>
 
-<h2>6. Admin a bezpečnost</h2>
+<h2>Jak Huly funguje — 3 věty</h2>
+
+<p><strong>Cards</strong> jsou firemní objekty: klienti, zakázky, nabídky, schůzky, incidenty. Každý objekt má typ (Firma/Nabídka/Zápis ze schůzky/…) a atributy (datum, stav, vlastník, …). <strong>Tracker</strong> jsou každodenní interní úkoly (jako GitHub Issues). <strong>Teamspaces</strong> v levém panelu jsou sekce pro dokumenty, procesy a know-how — nejsou to složky pro karty.</p>
+
+<h2>Proč nevidím "SCH ekonom"?</h2>
+
+<p>Prostor "SCH ekonom" byl testovací prostor — byl archivován při čištění workspace. Schůzky s ekonomem (nebo jakékoliv jiné) patří do <strong>Cards → Zapis ze schuzky</strong>. Viz DEMO záznamy (prefix "DEMO - Schůzka:") jako příklad jak to vypadá.</p>
+`
+
+const GUIDE_CONTENT = `
+<h1>Jak pracovat v Huly — průvodce pro tým PRAUT</h1>
+
+<p>Huly je náš interní operační systém. Vše důležité — zákazníci, zakázky, schůzky, úkoly, dokumenty — je tady, ne v emailu nebo chatu. Tento průvodce ti ukáže jak v tom pracovat.</p>
+
+<p><strong>Rychlý přehled je v dokumentu "Cheat Sheet — Kde co v Huly" (tady v Základ systemu).</strong></p>
+
+<h2>1. Jak zapsat schůzku</h2>
+
+<p>Schůzky jsou <strong>Cards → Zapis ze schuzky</strong>. Postup krok za krokem:</p>
+
+<ol>
+  <li>Klikni na ikonu karet (Cards) v horní navigaci</li>
+  <li>Klikni na <strong>"+"</strong> (nová karta) vpravo nahoře</li>
+  <li>Vyber typ: <strong>Zapis ze schuzky</strong> (seznam typů je abecedně, dole)</li>
+  <li>Do názvu napiš: "Schůzka: [kdo/co] (datum)" — např. "Schůzka: Konzultace s ekonomem (2026-07-10)"</li>
+  <li>Vyplň atributy:
+    <ul>
+      <li><strong>datum</strong> — datum schůzky (formát YYYY-MM-DD)</li>
+      <li><strong>projekt/klient</strong> — s kým nebo o čem (např. "AI spol. s r.o." nebo "Interní")</li>
+      <li><strong>rozhodnutí</strong> — co bylo rozhodnuto (konkrétně, ne "probrali jsme")</li>
+      <li><strong>akční položky</strong> — kdo co udělá do kdy (číslovaný seznam)</li>
+    </ul>
+  </li>
+  <li>Nastav <strong>citlivost</strong>: verejne / interni / citlive</li>
+  <li>Nastav <strong>stav</strong>: draft → ke kontrole → potvrzeno / akcni kroky otevrene → uzavreno</li>
+</ol>
+
+<p>Hotové záznamy najdeš: Cards → pohled <strong>"Záznamy ze schůzek"</strong> vlevo nahoře.</p>
+
+<p>Podívej se na DEMO záznamy (prefix "DEMO - Schůzka:") jako vzorový příklad se všemi vyplněnými poli.</p>
+
+<h2>2. Denní rituál (5 minut každé ráno)</h2>
+
+<ol>
+  <li><strong>Cards → "Ke schválení"</strong> — co čeká na tvé rozhodnutí (nabídky)</li>
+  <li><strong>Cards → "V riziku"</strong> — zakázky s problémem (cerveny/v riziku health)</li>
+  <li><strong>Cards → "Po splatnosti"</strong> — faktury po splatnosti (zavolej klientovi)</li>
+  <li><strong>Tracker → přiřazeno mně</strong> — moje úkoly na dnešek</li>
+</ol>
+
+<h2>3. Obchodní workflow (kde co vzniká)</h2>
+
+<p>Celý obchodní cyklus v PRAUT vypadá takto:</p>
+
+<ol>
+  <li>Přijde poptávka → vytvoříš <strong>Lead/Poptávka</strong> (Cards → +)</li>
+  <li>Lead se kvalifikuje → vytvoříš <strong>Obchodní příležitost</strong></li>
+  <li>Píšeme nabídku → vytvoříš <strong>Nabídka</strong> (stav: draft → ke schválení)</li>
+  <li>Štěpán schválí → stav nabídky: ke schvaleni → odeslano</li>
+  <li>Klient kývne → vytvoříš <strong>Zakázka</strong> (stav: aktivni, propoj s nabídkou)</li>
+  <li>Fakturujeme → vytvoříš <strong>Faktura</strong> (stav: vystavena, propoj se zakázkou)</li>
+  <li>Realizujeme → vytvoříš <strong>Projekt</strong> (propoj se zakázkou)</li>
+  <li>Každá důležitá schůzka → <strong>Zapis ze schuzky</strong> (propoj s klientem v poli projekt/klient)</li>
+</ol>
+
+<p>Viz DEMO karty (prefix "DEMO -") — ukazují jak vypadá každý krok se skutečnými daty.</p>
+
+<h2>4. Uložené pohledy v Cards</h2>
+
+<p>Vlevo nahoře v Cards najdeš uložené pohledy — jsou to předdefinované filtry pro nejčastější situace:</p>
 
 <ul>
-  <li>Public signup je vypnutý — nové lidi přidává admin přes invite link</li>
-  <li>Zálohy běží každý den 02:30 — zálohu spustíš ručně přes SSH příkaz</li>
-  <li>Před větší změnou v nastavení → vždy nejdřív záloha</li>
-  <li>Admin: stepan@praut.cz (svanda@praut.cz)</li>
+  <li><strong>Aktivní</strong> — vše co právě běží (nabídky, zakázky, projekty, leady)</li>
+  <li><strong>Ke schválení</strong> — nabídky čekající na schválení (stav: ke schvaleni)</li>
+  <li><strong>V riziku</strong> — zakázky s červeným nebo rizikovým health</li>
+  <li><strong>Nezaplacené</strong> — faktury, za které jsme nedostali peníze</li>
+  <li><strong>Po splatnosti</strong> — faktury po termínu splatnosti</li>
+  <li><strong>Záznamy ze schůzek</strong> — všechny záznamy ze schůzek (ne uzavřené)</li>
+  <li><strong>Otevřené</strong> — incidenty, zákaznické požadavky, rizika bez uzavření</li>
 </ul>
 
-<h2>7. Kde hledat pomoc</h2>
+<h2>5. Tracker — pro vývojářský tým</h2>
+
+<p>Tracker je pro interní denní úkoly — jako GitHub Issues. Najdeš ho vlevo v panelu → Zakázky, projekty a úkoly → Tracker.</p>
 
 <ul>
-  <li>Tento dokument (Základ systému → Jak začít v Huly)</li>
-  <li>Složka Základ systému — tam jsou všechny provozní procesy</li>
-  <li>PRAUT_OWNER_ADMIN_KURZ.md — strukturovaný kurz pro admina</li>
-  <li>GitHub repo PrautAutomation/huly-selfhost — technická dokumentace</li>
+  <li>Každý issue má <strong>vlastníka</strong> (kdo dělá) a <strong>deadline</strong> (nebo jasný důvod proč ne)</li>
+  <li>Branch name: <code>TSK-123-kratky-popis</code></li>
+  <li>PR title: <code>[TSK-123] Co jsem změnil</code></li>
+  <li>Po mergi: aktualizuj stav issue v Trackeru</li>
+</ul>
+
+<h2>6. Co patří kam</h2>
+
+<table>
+  <tr><th>Info</th><th>Správné místo</th><th>NE sem</th></tr>
+  <tr><td>Schůzka s klientem / interní</td><td>Cards → Zapis ze schuzky</td><td>Chat, email</td></tr>
+  <tr><td>Klient, zakázka, nabídka</td><td>Cards (příslušný typ)</td><td>Chat, dokument</td></tr>
+  <tr><td>Firemní pravidlo, proces</td><td>Základ systemu → New Document</td><td>Card, chat</td></tr>
+  <tr><td>Know-how, rozhodnutí, návod</td><td>Dokumenty a znalostní báze</td><td>Card</td></tr>
+  <tr><td>Rychlá koordinace, dotaz</td><td>Chat</td><td>Card, Tracker</td></tr>
+  <tr><td>Incident, SLA</td><td>Cards → Incident</td><td>Email, chat only</td></tr>
+  <tr><td>Denní vývojářský úkol</td><td>Tracker</td><td>Chat</td></tr>
+  <tr><td>AI výstup bez lidské kontroly</td><td>Nikam!</td><td>—</td></tr>
+</table>
+
+<h2>7. Teamspaces — co v nich najdeš</h2>
+
+<p>Teamspaces jsou sekce v levém panelu pro dokumenty. Každý teamspace má jiné zaměření:</p>
+
+<ul>
+  <li><strong>Základ systemu</strong> — tento průvodce, Cheat Sheet, firemní procesy</li>
+  <li><strong>Obchod a CRM</strong> — email šablony, návody pro obchodní tým</li>
+  <li><strong>Zakázky, projekty a úkoly</strong> — metodiky projektového řízení, šablony</li>
+  <li><strong>Dokumenty a znalostní báze</strong> — know-how, technické rozhodnutí (ADR), návody</li>
+  <li><strong>Komunikace a spoluprace</strong> — delší protokoly ze schůzek (karty Zapis ze schuzky jsou v Cards)</li>
+  <li><strong>Marketing a zákaznická péče</strong> — marketingové materiály, SLA pravidla</li>
+  <li><strong>Automatizace, AI a integrace</strong> — popis AI nástrojů, integrace</li>
+  <li><strong>Řízení firmy a reporting</strong> — KPI definice, reportingové šablony</li>
+</ul>
+
+<h2>8. Bezpečnost a přístupy</h2>
+
+<ul>
+  <li>Public signup je <strong>vypnutý</strong> — nové lidi přidává admin přes invite (Settings → HR)</li>
+  <li>Zálohy běží každý den 02:30</li>
+  <li>Admin: stepan@praut.cz (svanda@praut.cz)</li>
+  <li>GitHub repo: PrautAutomation/huly-selfhost — technická dokumentace a skripty</li>
 </ul>
 `
+
+async function createOrReplaceDoc (client, spaceId, spaceName, title, content, apply) {
+  const existing = await client.findAll('document:class:Document', { space: spaceId })
+  const found = existing.find(d => d.title === title)
+  if (found) {
+    if (apply) {
+      await client.removeDoc(found._class, found.space, found._id)
+      console.log(`  Smazán existující: "${title}"`)
+    } else {
+      console.log(`  DRY-RUN: "${title}" by byl přepsán`)
+      return null
+    }
+  }
+  if (!apply) {
+    console.log(`  DRY-RUN: "${title}" by byl vytvořen v "${spaceName}"`)
+    return null
+  }
+  const docId = await client.createDoc('document:class:Document', spaceId, {
+    title,
+    content,
+    category: null,
+    attachments: 0,
+    comments: 0,
+    labels: [],
+    members: [],
+    relations: []
+  })
+  console.log(`  Vytvořen: "${title}" (${docId})`)
+  return docId
+}
 
 async function main () {
   const s = env('/Users/stepan/praut/huly-poc-secrets.env')
@@ -139,64 +274,27 @@ async function main () {
   const connection = await createClient(selected.endpoint, selected.token, [])
   const client = new TxOperations(connection, socialId)
 
-  // Najdi teamspace "Základ systému"
   const spaces = await client.findAll('document:class:Teamspace', {})
-  console.log(`Nalezeno ${spaces.length} document teamspaces:`)
-  for (const sp of spaces) console.log(`  ${sp._id} — "${sp.name}"`)
-
-  const zakladSpace = spaces.find(sp => sp.name && (
-    sp.name.includes('Základ') ||
-    sp.name.toLowerCase().includes('zaklad') ||
-    sp.name.includes('System') ||
-    sp.name.includes('system')
-  ))
+  const zakladSpace = spaces.find(sp => sp.name && (sp.name.includes('Základ') || sp.name.toLowerCase().includes('zaklad')))
 
   if (!zakladSpace) {
-    console.log('\n⚠️  Teamspace "Základ systému" nenalezen. Dostupné spaces:')
+    console.log('CHYBA: teamspace "Základ systému" nenalezen')
     for (const sp of spaces) console.log(`  "${sp.name}"`)
-    console.log('Zkus spustit s přesným názvem nebo si zkontroluj Huly UI.')
     await connection.close()
     process.exit(1)
   }
 
-  console.log(`\nCílový teamspace: "${zakladSpace.name}" (${zakladSpace._id})`)
+  console.log(`Teamspace: "${zakladSpace.name}" (${zakladSpace._id})`)
+  console.log(`Mode: ${APPLY ? 'APPLY' : 'DRY-RUN'}\n`)
 
-  // Zkontroluj existující průvodce
-  const existing = await client.findAll('document:class:Document', { space: zakladSpace._id })
-  const existingGuide = existing.find(d => d.title === GUIDE_TITLE)
-
-  if (existingGuide) {
-    if (APPLY) {
-      await client.removeDoc(existingGuide._class, existingGuide.space, existingGuide._id)
-      console.log(`Smazán existující průvodce (${existingGuide._id})`)
-    } else {
-      console.log(`DRY-RUN: průvodce "${GUIDE_TITLE}" by byl přepsán`)
-    }
-  }
+  await createOrReplaceDoc(client, zakladSpace._id, zakladSpace.name, CHEAT_TITLE, CHEAT_CONTENT, APPLY)
+  await createOrReplaceDoc(client, zakladSpace._id, zakladSpace.name, GUIDE_TITLE, GUIDE_CONTENT, APPLY)
 
   if (!APPLY) {
-    console.log(`\nDRY-RUN — průvodce nebyl vytvořen. Spusť s --apply.`)
-    console.log(`Byl by vytvořen: "${GUIDE_TITLE}" v teamspacu "${zakladSpace.name}"`)
-    await connection.close()
-    process.exit(0)
+    console.log('\nDRY-RUN — nic nebylo vytvořeno. Spusť s --apply.')
+  } else {
+    console.log('\nHotovo. Najdeš dokumenty v Huly → levý panel → Základ systému.')
   }
-
-  // Vytvoř průvodce
-  const docId = await client.createDoc('document:class:Document', zakladSpace._id, {
-    title: GUIDE_TITLE,
-    content: GUIDE_CONTENT,
-    category: null,
-    attachments: 0,
-    comments: 0,
-    labels: [],
-    members: [],
-    relations: []
-  })
-
-  console.log(`\n✅ Průvodce vytvořen: "${GUIDE_TITLE}"`)
-  console.log(`   ID: ${docId}`)
-  console.log(`   Space: ${zakladSpace._id} (${zakladSpace.name})`)
-  console.log(`\nNajdeš ho v Huly → levý panel → ${zakladSpace.name}`)
 
   await connection.close()
   process.exit(0)

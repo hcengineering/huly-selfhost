@@ -28,7 +28,8 @@ jen ručním klikáním v UI. Tyto skripty to dělají programově a opakovateln
 | `praut-tune.cjs` | Drobné úpravy obsahu (např. přejmenování prázdného dokumentu). `--apply` provede. |
 | `praut-build-views.cjs` | Vytvoří 13 uložených pohledů (`FilteredView`) na klíčových card typech. Idempotentní (nejdřív smaže své dříve vytvořené pohledy přes tag `praut-ops`). Vyžaduje `/tmp/typemap.json` z `praut-typemap.cjs`. |
 | `praut-create-demo.cjs` | Vytvoří/obnoví 7 DEMO karet (Firma→Lead→Příležitost→Nabídka→Zakázka→Faktura+Projekt). Ukazuje ukázkový obchodní workflow s vyplněnými poli a vazbami. `--apply` vytvoří, `--delete` smaže. |
-| `praut-create-guide.cjs` | Vytvoří/obnoví orientační dokument "Jak začít v Huly" v teamspacu Základ systemu. `--apply` vytvoří. |
+| `praut-create-guide.cjs` | Vytvoří/obnoví dva dokumenty v Základ systemu: "Cheat Sheet — Kde co v Huly" (přehledová tabulka) + "Jak pracovat v Huly" (detailní průvodce s krok-za-krokem pro schůzky, obchodní workflow). `--apply` vytvoří. |
+| `praut-create-teamspace-docs.cjs` | Vytvoří dokument "Co sem patří — přehled" v každém ze 7 teamspaces (kromě Základ systemu). `--apply` vytvoří. |
 
 ## Důležitý detail formátu filtru
 
@@ -86,6 +87,10 @@ Vždy nejdřív DRY-RUN, ověř cíle, pak `--apply`. Před většími zásahy s
 - 2026-06-19: vytvořeno 7 DEMO karet (Firma→Lead→Příležitost→Nabídka→Zakázka→Faktura+Projekt)
   ukazující ukázkový obchodní workflow s vyplněnými poli a vazbami.
 - 2026-06-19: vytvořen orientační dokument "Jak začít v Huly" v teamspacu Základ systemu.
+- 2026-06-19: přidán pohled "Záznamy ze schůzek" (FilteredView pro Zapis ze schuzky — stav ≠ uzavreno).
+- 2026-06-19: přidány 3 DEMO záznamy ze schůzek (kick-off, konzultace s ekonomem, interní operativa).
+- 2026-06-19: přepsán průvodce na Cheat Sheet + detailní průvodce s krok-za-krokem pro schůzky.
+- 2026-06-19: vytvořen dokument "Co sem patří — přehled" v 7 teamspaces.
 
 ### Nedotaženo (vyžaduje UI nebo změnu datového modelu)
 
