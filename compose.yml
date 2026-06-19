@@ -277,7 +277,30 @@ services:
     restart: unless-stopped
     networks:
       - huly_net
-      
+
+  # GitHub integration service. Requires a registered GitHub App — see the
+  # "GitHub Service" section in README.md. The GITHUB_* values are filled in
+  # huly_v7.conf (NOT committed — keep the private key out of git).
+  github:
+    image: ${HULY_IMAGE_REGISTRY:-hardcoreeng}/github:${HULY_VERSION}
+    environment:
+      - PORT=3500
+      - STORAGE_CONFIG=minio|minio?accessKey=minioadmin&secretKey=minioadmin
+      - SERVER_SECRET=${SECRET}
+      - ACCOUNTS_URL=http://account:3000
+      - STATS_URL=http://stats:4900
+      - APP_ID=${GITHUB_APPID:-}
+      - CLIENT_ID=${GITHUB_CLIENTID:-}
+      - CLIENT_SECRET=${GITHUB_CLIENT_SECRET:-}
+      - PRIVATE_KEY=${GITHUB_PRIVATE_KEY:-}
+      - COLLABORATOR_URL=ws${SECURE:+s}://${HOST_ADDRESS}/_collaborator
+      - WEBHOOK_SECRET=${GITHUB_WEBHOOK_SECRET:-}
+      - FRONT_URL=http${SECURE:+s}://${HOST_ADDRESS}
+      - BOT_NAME=${GITHUB_APP_SLUG:-}[bot]
+    restart: unless-stopped
+    networks:
+      - huly_net
+
 volumes:
   # These named volumes are used when custom volume paths are not specified
   # If VOLUME_*_PATH variables are set, these volumes will be ignored
