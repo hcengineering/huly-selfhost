@@ -35,101 +35,177 @@ function env (file) {
 }
 
 const HOME_CONTENT = `
-<h1>🏠 PRAUT — Co dnes dělám</h1>
+<h1>🏠 PRAUT — Jak se v Huly vyznat</h1>
 
-<p>Otevři tohle každé ráno. Zabere 5 minut. Pak víš vše co potřebuješ.</p>
+<p><strong>Toto je tvůj průvodce. Když nevíš kam jít — začni tady.</strong></p>
 
 <hr/>
 
-<h2>⏰ KAŽDÉ RÁNO (5 minut)</h2>
+<h2>🗺️ MAPA HULY — kde co najdeš</h2>
+
+<p>Huly má 4 hlavní sekce. Přepínáš je ikonami <strong>v levém sloupci úplně nahoře</strong>:</p>
 
 <table>
   <tr>
-    <th>Co zkontrolovat</th>
-    <th>Kde to najít v Huly</th>
-    <th>Co hledat</th>
+    <th>Ikona (vlevo nahoře)</th>
+    <th>Sekce</th>
+    <th>Co tam najdeš</th>
+    <th>Pro koho</th>
   </tr>
   <tr>
-    <td>⭐ <strong>Čeká na mě schválení?</strong></td>
-    <td>Cards → pohled <strong>"⭐ Ke schválení"</strong></td>
-    <td>Nabídky čekající na tvůj podpis/souhlas</td>
+    <td>🗃️ <strong>mřížka / karet</strong></td>
+    <td><strong>Cards</strong></td>
+    <td>Schůzky, zakázky, klienti, nabídky, faktury</td>
+    <td>Všichni</td>
   </tr>
   <tr>
-    <td>🔴 <strong>Hoří něco?</strong></td>
-    <td>Cards → pohled <strong>"🔴 V riziku"</strong></td>
-    <td>Zakázky s problémem — zavolej PM ihned</td>
+    <td>💬 <strong>bublina</strong></td>
+    <td><strong>Chat (Chunter)</strong></td>
+    <td>Zprávy, kanál #praut-denni-prehled</td>
+    <td>Všichni</td>
   </tr>
   <tr>
-    <td>💰 <strong>Dlužíme nebo nám dlužíte?</strong></td>
-    <td>Cards → pohled <strong>"💰 Po splatnosti"</strong></td>
-    <td>Faktury po termínu — zavolej klientovi dnes</td>
+    <td>📄 <strong>stránka s textem</strong></td>
+    <td><strong>Documents</strong></td>
+    <td>Tato stránka + firemní dokumenty</td>
+    <td>Všichni</td>
+  </tr>
+  <tr>
+    <td>◻️ <strong>malé čtverce</strong></td>
+    <td><strong>Tracker</strong></td>
+    <td>Vývojářské úkoly (GitHub Issues ekvivalent)</td>
+    <td><strong>Jen vývojáři</strong></td>
   </tr>
 </table>
 
-<p>Pokud všechny tři pohledy jsou prázdné → skvělý den, jdi na kafe ☕</p>
+<p>⚠️ <strong>Pokud jsi omylem v Trackeru</strong> (vidíš "New Funnel", "Backlog", "SCH-AD-1") → klikni na ikonu 📄 Documents vlevo nahoře a vrať se sem.</p>
 
 <hr/>
 
-<h2>📅 SCHŮZKY</h2>
+<h2>📅 SCHŮZKA — přesně 4 kliky</h2>
+
+<ol>
+  <li>Klikni na ikonu <strong>🗃️ Cards</strong> — je vlevo nahoře, vypadá jako mřížka karet</li>
+  <li>V levém panelu (seznam sekcí) klikni na <strong>Schůzky</strong> — je pod nadpisem SPACES</li>
+  <li>Klikni na <strong>+</strong> — je vpravo nahoře, vedle nápisu "Schůzky"</li>
+  <li>Vyplň: <strong>Název</strong> (např. "Schůzka s ekonomem 2026-06-20"), <strong>datum</strong>, <strong>rozhodnutí</strong>, <strong>akční položky</strong></li>
+</ol>
+
+<p>Hotovo. Schůzka je uložená. Najdeš ji pak v Cards → Schůzky nebo v pohledu "📅 Záznamy ze schůzek".</p>
+
+<p><em>Vzor jak má zápis ze schůzky vypadat: Cards → Schůzky → karta "DEMO - Schůzka: Konzultace s ekonomem"</em></p>
+
+<hr/>
+
+<h2>⏰ ŘEDITEL — ranní kontrola (5 minut)</h2>
+
+<p>Otevři Cards (ikona 🗃️ vlevo nahoře) a projdi tyto 3 pohledy v levém panelu:</p>
 
 <table>
   <tr>
-    <th>Chci…</th>
-    <th>Jak</th>
+    <th>Pohled v Cards</th>
+    <th>Co hledáš</th>
+    <th>Co dělat</th>
   </tr>
   <tr>
-    <td>Zapsat novou schůzku</td>
-    <td>Cards → levý panel → <strong>Schůzky</strong> → klikni <strong>"+"</strong> vpravo nahoře</td>
+    <td><strong>⭐ Ke schválení</strong></td>
+    <td>Nabídky čekající na tvůj podpis</td>
+    <td>Schválit nebo odmítnout — do 48 h</td>
   </tr>
   <tr>
-    <td>Najít starší schůzky</td>
-    <td>Cards → pohled <strong>"📅 Záznamy ze schůzek"</strong></td>
+    <td><strong>🔴 V riziku</strong></td>
+    <td>Zakázky s problémem (červený/v riziku)</td>
+    <td>Zavolej PM ihned</td>
   </tr>
   <tr>
-    <td>Vzorový záznam</td>
-    <td>Cards → Schůzky → karta "DEMO - Schůzka: Konzultace s ekonomem"</td>
+    <td><strong>💰 Po splatnosti</strong></td>
+    <td>Faktury po termínu splatnosti</td>
+    <td>Zavolej klientovi dnes</td>
   </tr>
 </table>
 
+<p>Všechny tři prázdné → skvělý den, jdi na kafe ☕</p>
+
 <hr/>
 
-<h2>🆕 NOVÁ PRÁCE</h2>
+<h2>🆕 NOVÁ PRÁCE — co kam jde</h2>
 
 <table>
   <tr>
-    <th>Vytvářím…</th>
-    <th>Kde</th>
-  </tr>
-  <tr>
-    <td>Nového klienta (firmu)</td>
-    <td>Cards → <strong>"+"</strong> → vyber <strong>Firma</strong></td>
-  </tr>
-  <tr>
-    <td>Novou nabídku</td>
-    <td>Cards → <strong>"+"</strong> → vyber <strong>Nabidka</strong></td>
-  </tr>
-  <tr>
-    <td>Novou zakázku</td>
-    <td>Cards → <strong>"+"</strong> → vyber <strong>Zakazka</strong></td>
-  </tr>
-  <tr>
-    <td>Úkol pro tým</td>
-    <td>Tracker (levý panel → Zakázky, projekty a úkoly → Tracker) → <strong>"+"</strong></td>
+    <th>Chci vytvořit…</th>
+    <th>Kde v Huly</th>
   </tr>
   <tr>
     <td>Zápis ze schůzky</td>
-    <td>Cards → Schůzky → <strong>"+"</strong></td>
+    <td>Cards (🗃️) → Schůzky (v levém panelu) → <strong>+</strong></td>
+  </tr>
+  <tr>
+    <td>Nového klienta (firmu)</td>
+    <td>Cards (🗃️) → <strong>+</strong> tlačítko nahoře → vyber typ <strong>Firma</strong></td>
+  </tr>
+  <tr>
+    <td>Novou nabídku</td>
+    <td>Cards (🗃️) → <strong>+</strong> → vyber typ <strong>Nabidka</strong></td>
+  </tr>
+  <tr>
+    <td>Novou zakázku</td>
+    <td>Cards (🗃️) → <strong>+</strong> → vyber typ <strong>Zakazka</strong></td>
+  </tr>
+  <tr>
+    <td>Fakturu</td>
+    <td>Cards (🗃️) → <strong>+</strong> → vyber typ <strong>Faktura</strong></td>
+  </tr>
+  <tr>
+    <td>Vývojářský úkol</td>
+    <td>Tracker (◻️) → <strong>+</strong> — ale to dělají vývojáři, ne Štěpán</td>
+  </tr>
+  <tr>
+    <td>Firemní dokument/pravidlo</td>
+    <td>Documents (📄) → Základ systemu → <strong>New Document</strong></td>
   </tr>
 </table>
 
 <hr/>
 
-<h2>📚 Pokud nevíš jak na to</h2>
+<h2>🆘 ZACHRAŇOVACÍ KROKY — když si nevíš rady</h2>
+
+<table>
+  <tr>
+    <th>Problém</th>
+    <th>Řešení</th>
+  </tr>
+  <tr>
+    <td>Nevím kde jsem</td>
+    <td>Klikni na ikonu 📄 Documents vlevo nahoře → Základ systemu → otevři tento dokument</td>
+  </tr>
+  <tr>
+    <td>Vidím "New Funnel" nebo "Backlog"</td>
+    <td>Jsi v Trackeru (pro vývojáře). Klikni 📄 Documents vlevo nahoře.</td>
+  </tr>
+  <tr>
+    <td>Nevidím sekci "Schůzky"</td>
+    <td>Klikni 🗃️ Cards → scroll dolů v levém panelu → sekce SPACES → Schůzky</td>
+  </tr>
+  <tr>
+    <td>Potřebuji rychlý přehled</td>
+    <td>Dokument "PRAUT Huly — 4 věci které potřebuješ znát" (tady v Základ systemu)</td>
+  </tr>
+  <tr>
+    <td>Huly nefunguje / nejde otevřít</td>
+    <td>Kontaktuj EmperorKunDis (GitHub) nebo tech tým — viz docs/RUNBOOK-SERVER-DOWN.md v repozitáři</td>
+  </tr>
+</table>
+
+<hr/>
+
+<h2>📚 Další dokumenty v Základ systemu</h2>
 
 <ul>
-  <li><strong>Rychlý přehled (4 věci):</strong> dokument <em>"PRAUT Huly — 4 věci které potřebuješ znát"</em> (tady v Základ systemu)</li>
-  <li><strong>Detailní průvodce:</strong> dokument <em>"Jak pracovat v Huly — průvodce pro tým PRAUT"</em> (tady v Základ systemu)</li>
-  <li><strong>Vzorové karty:</strong> Cards → pohledy → vše s prefixem "DEMO -"</li>
+  <li><strong>Rychlý start — co dělat v první den</strong> — pro nové členy týmu</li>
+  <li><strong>Jak zapsat schůzku — krok za krokem</strong> — detailní postup pro schůzky</li>
+  <li><strong>Role v PRAUT — kdo za co odpovídá</strong> — vlastník, schvalovatel, řešitel</li>
+  <li><strong>PRAUT Huly — 4 věci které potřebuješ znát</strong> — ultra-krátký cheat sheet</li>
+  <li><strong>Jak pracovat v Huly — průvodce pro tým PRAUT</strong> — kompletní průvodce</li>
 </ul>
 `
 
