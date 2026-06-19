@@ -22,10 +22,13 @@ jen ručním klikáním v UI. Tyto skripty to dělají programově a opakovateln
 
 | Skript | Co dělá |
 |---|---|
+| `praut-typemap.cjs` | **Spusť jako první.** Generuje `/tmp/typemap.json` — runtime cache metadat všech 22 card typů (atributy, enum hodnoty, viewlety). Spusť znovu po každé změně datového modelu. |
 | `praut-spaces-list.cjs` | READ-ONLY výpis všech prostorů (název, třída, archived, _id). |
 | `praut-archive-junk.cjs` | Archivuje/odarchivuje testovací junk prostory (cílí přesně podle _id). `--apply` provede, `--unarchive` vrátí. |
-| `praut-tune.cjs` | Drobné úpravy obsahu (např. přejmenování prázdného `Untitled` dokumentu). `--apply` provede. |
-| `praut-build-views.cjs` | Vytvoří sadu uložených pohledů (`FilteredView`) na klíčových card typech. Idempotentní (nejdřív smaže své dříve vytvořené pohledy přes tag `praut-ops`), self-check spustí ekvivalentní dotaz a vypíše počet karet před vytvořením. Vyžaduje `/tmp/typemap.json` vygenerovaný `praut-typemap.cjs` (není v repu, je to jen runtime cache). |
+| `praut-tune.cjs` | Drobné úpravy obsahu (např. přejmenování prázdného dokumentu). `--apply` provede. |
+| `praut-build-views.cjs` | Vytvoří 13 uložených pohledů (`FilteredView`) na klíčových card typech. Idempotentní (nejdřív smaže své dříve vytvořené pohledy přes tag `praut-ops`). Vyžaduje `/tmp/typemap.json` z `praut-typemap.cjs`. |
+| `praut-create-demo.cjs` | Vytvoří/obnoví 7 DEMO karet (Firma→Lead→Příležitost→Nabídka→Zakázka→Faktura+Projekt). Ukazuje ukázkový obchodní workflow s vyplněnými poli a vazbami. `--apply` vytvoří, `--delete` smaže. |
+| `praut-create-guide.cjs` | Vytvoří/obnoví orientační dokument "Jak začít v Huly" v teamspacu Základ systemu. `--apply` vytvoří. |
 
 ## Důležitý detail formátu filtru
 
