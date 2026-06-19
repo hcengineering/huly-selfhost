@@ -22,7 +22,9 @@ const { createClient, getAccountClient } = require('@hcengineering/server-client
 
 const APPLY = process.argv.includes('--apply')
 const DELETE = process.argv.includes('--delete')
-const TYPEMAP = JSON.parse(fs.readFileSync('/tmp/typemap.json', 'utf8'))
+const _rawmap = JSON.parse(fs.readFileSync('/tmp/typemap.json', 'utf8'))
+// Podpora nového formátu { typemap: {...} } i starého přímého { Nabidka: {...} }
+const TYPEMAP = _rawmap.typemap || _rawmap
 const MEMBERS = [
   '365e6db8-3544-44f3-b22a-bafe51bff369',
   '3ded1307-141c-4eec-95f8-4cfb017de72e',
