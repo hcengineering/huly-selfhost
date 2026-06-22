@@ -80,6 +80,7 @@ ověřena jen shoda struktury s funkčním pilotem (dumpem).
 | `praut-create-chunter.cjs` | Vytvoří Chunter kanál #praut-denni-prehled jako navigační hub. `--apply` vytvoří. |
 | `praut-clean-tracker.cjs` | Smaže testovací junk issues z Trackeru (cílí podle názvu). `--apply` smaže. |
 | `praut-tracker-templates.cjs` | Vytvoří/obnoví 6 šablon issues (Feature, Bug, Client request, Sales follow-up, Review/QA, Ops/Admin) v projektu Default. Idempotentní. `--apply` provede. |
+| `praut-build-processes.cjs` | Vytvoří/obnoví 3 automatizační procesy (Lead 7 dní, SLA 1 den, Zakázka v riziku) dle vzoru ručního pilotu. Idempotentní, pilot nedotčen. `--apply` provede. |
 
 ## Důležitý detail formátu filtru
 
