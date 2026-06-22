@@ -34,37 +34,20 @@ const MEMBERS = [
 const MARK = 'praut-ops' // značka spravovaných pohledů (v poli 'tags' dat)
 
 // SPEC: type label -> [{ name, attr (label), mode, values }]
+// Záměrně MINIMÁLNÍ — 5 pohledů pro každodenní potřeby PRAUT
 const SPEC = {
+  'Zapis ze schuzky': [
+    { name: '📅 Záznamy ze schůzek', attr: 'stav', mode: 'Nin', values: ['uzavreno'] }
+  ],
   Nabidka: [
-    { name: 'Aktivní', attr: 'stav', mode: 'Nin', values: ['vyhrano', 'prohrano'] },
-    { name: 'Ke schválení', attr: 'stav', mode: 'In', values: ['interni kontrola', 'ke schvaleni'] }
+    { name: '⭐ Ke schválení', attr: 'stav', mode: 'In', values: ['interni kontrola', 'ke schvaleni'] }
   ],
   Zakazka: [
-    { name: 'Aktivní', attr: 'stav', mode: 'Nin', values: ['dokonceno', 'archiv'] },
-    { name: 'V riziku', attr: 'health', mode: 'In', values: ['cerveny', 'v riziku'] }
+    { name: '📦 Aktivní zakázky', attr: 'stav', mode: 'Nin', values: ['dokonceno', 'archiv'] },
+    { name: '🔴 V riziku', attr: 'health', mode: 'In', values: ['cerveny', 'v riziku'] }
   ],
   Faktura: [
-    { name: 'Nezaplacené', attr: 'stav', mode: 'Nin', values: ['zaplaceno', 'storno'] },
-    { name: 'Po splatnosti', attr: 'stav', mode: 'In', values: ['po splatnosti'] }
-  ],
-  'Lead/Poptavka': [
-    { name: 'Aktivní', attr: 'stav', mode: 'Nin', values: ['prevedeno', 'odmitnuto', 'archiv'] }
-  ],
-  'Obchodni prilezitost': [
-    { name: 'Aktivní', attr: 'faze', mode: 'Nin', values: ['vyhrano', 'prohrano'] },
-    { name: 'V riziku', attr: 'riziko', mode: 'In', values: ['vysoke'] }
-  ],
-  Projekt: [
-    { name: 'Aktivní', attr: 'faze', mode: 'Nin', values: ['dokonceno'] }
-  ],
-  'Zakaznicky pozadavek': [
-    { name: 'Otevřené', attr: 'stav', mode: 'Nin', values: ['vyreseno', 'uzavreno'] }
-  ],
-  Incident: [
-    { name: 'Otevřené', attr: 'stav', mode: 'Nin', values: ['uzavreno'] }
-  ],
-  Riziko: [
-    { name: 'Otevřená', attr: 'stav', mode: 'Nin', values: ['uzavreno'] }
+    { name: '💰 Po splatnosti', attr: 'stav', mode: 'In', values: ['po splatnosti'] }
   ]
 }
 

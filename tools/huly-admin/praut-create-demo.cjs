@@ -1,4 +1,4 @@
-// Vytvoří ukázkový obchodní řetězec DEMO karet: Firma → Lead → Příležitost → Nabídka → Zakázka → Faktura + Projekt.
+// Vytvoří ukázkový obchodní řetězec DEMO karet: Firma → Lead → Příležitost → Nabídka → Zakázka → Faktura + Projekt + 3× Zápis ze schůzky.
 // Idempotentní: nejdřív odstraní existující DEMO karty (dle prefixu "DEMO - "), pak vytvoří nové.
 //   node praut-create-demo.cjs           DRY-RUN (pouze vypíše co by vytvořil)
 //   node praut-create-demo.cjs --apply   vytvoří/obnoví
@@ -21,6 +21,8 @@ const { createClient, getAccountClient } = require('@hcengineering/server-client
 const APPLY = process.argv.includes('--apply')
 const DELETE = process.argv.includes('--delete')
 const SPACE = 'card:space:Default'
+// Schůzky CardSpace — vytvořen skriptem praut-create-spaces.cjs
+const SCHUZKY_SPACE = '6a35824737b43c4db539494a'
 const DEMO_PREFIX = 'DEMO - '
 
 // ─── Konstanty z typemapy ────────────────────────────────────────────────────
@@ -33,6 +35,7 @@ const T = {
   Zakazka:        '6a2bb7f8295c2f467fa1d4bf',
   Faktura:        '6a2bb7f8295c2f467fa1d4bd',
   Projekt:        '6a2bb7f8295c2f467fa1d50f',
+  ZapisSch:       '6a2bb7f8295c2f467fa1d565',
 }
 
 // Attr klíče — UUID property names na kartách
@@ -88,6 +91,13 @@ const ATTR = {
   proj_PM:                 '6a2bb7f8295c2f467fa1d53c',
   proj_deadline:           '6a2bb7f8295c2f467fa1d53f',
   proj_zakazka:            '6a2bb7f8295c2f467fa1d53b',
+  // Zápis ze schůzky
+  sch_citlivost:           '6a2bb7f8295c2f467fa1d56b',
+  sch_stav:                '6a2bb7f8295c2f467fa1d56d',
+  sch_datum:               '6a2bb7f8295c2f467fa1d566',
+  sch_klient:              '6a2bb7f8295c2f467fa1d568',
+  sch_rozhodnuti:          '6a2bb7f8295c2f467fa1d569',
+  sch_akcni:               '6a2bb7f8295c2f467fa1d56a',
 }
 
 function env (file) {
@@ -99,10 +109,10 @@ function env (file) {
   return out
 }
 
-async function createCard (client, typeId, title, attrs, dryRun) {
+async function createCard (client, typeId, title, attrs, dryRun, space) {
   const data = { title, ...attrs }
   if (!dryRun) {
-    const id = await client.createDoc(typeId, SPACE, data)
+    const id = await client.createDoc(typeId, space || SPACE, data)
     return id
   }
   return 'dry-run-id'
@@ -229,24 +239,60 @@ async function main () {
   }, dryRun)
   console.log(`✅ Projekt: "DEMO - Projekt: Implementace AI agenta" (${projId})`)
 
+  // 8-10. Záznamy ze schůzek → jdou do CardSpace "Schůzky" (ne Default)
+  const schSpace = dryRun ? SCHUZKY_SPACE : SCHUZKY_SPACE
+
+  await createCard(client, T.ZapisSch, 'DEMO - Schůzka: Kick-off AI Customer Service Agent (2026-07-01)', {
+    [ATTR.sch_citlivost]: 'interni',
+    [ATTR.sch_stav]: 'akcni kroky otevrene',
+    [ATTR.sch_datum]: '2026-07-01',
+    [ATTR.sch_klient]: 'AI spol. s r.o. — Zakázka Z-2026-01',
+    [ATTR.sch_rozhodnuti]: 'Projekt spouštíme 2026-07-01, PM je Štěpán, deliverable do 2026-10-31.',
+    [ATTR.sch_akcni]: '1. Štěpán: nastavit GitHub repo do 2026-07-03 | 2. AI spol.: dodat přístup do CRM do 2026-07-05',
+  }, dryRun, schSpace)
+  console.log('✅ Zápis ze schůzky: "DEMO - Schůzka: Kick-off..." → space: Schůzky')
+
+  await createCard(client, T.ZapisSch, 'DEMO - Schůzka: Konzultace s ekonomem (2026-07-10)', {
+    [ATTR.sch_citlivost]: 'citlive',
+    [ATTR.sch_stav]: 'ke kontrole',
+    [ATTR.sch_datum]: '2026-07-10',
+    [ATTR.sch_klient]: 'Interní — ekonomický poradce',
+    [ATTR.sch_rozhodnuti]: 'Mzdové náklady zmrazeny do konce Q3. Nákupy nad 50 tis. Kč schvaluje Štěpán.',
+    [ATTR.sch_akcni]: '1. Štěpán: zaslat ekonomovi Q2 výkazy do 2026-07-15 | 2. Ekonom: připravit Q3 plán do 2026-07-30',
+  }, dryRun, schSpace)
+  console.log('✅ Zápis ze schůzky: "DEMO - Schůzka: Konzultace s ekonomem..." → space: Schůzky')
+
+  await createCard(client, T.ZapisSch, 'DEMO - Schůzka: Interní operativní schůzka (2026-07-08)', {
+    [ATTR.sch_citlivost]: 'interni',
+    [ATTR.sch_stav]: 'potvrzeno',
+    [ATTR.sch_datum]: '2026-07-08',
+    [ATTR.sch_klient]: 'Interní — týmová operativa',
+    [ATTR.sch_rozhodnuti]: 'Týdenní operativní meeting každé úterý 10:00. Záznamy jdou jako Zapis ze schuzky v Huly.',
+    [ATTR.sch_akcni]: '1. Všichni: doplnit stavy zakázek do Huly do pátku | 2. Štěpán: sdílet odkaz na Huly všem',
+  }, dryRun, schSpace)
+  console.log('✅ Zápis ze schůzky: "DEMO - Schůzka: Interní operativní schůzka..." → space: Schůzky')
+
   // ── Shrnutí ──────────────────────────────────────────────────────────────────
   console.log('\n=== SHRNUTÍ ===')
   if (dryRun) {
     console.log('DRY-RUN — žádné karty nebyly vytvořeny. Spusť s --apply pro vytvoření.')
     console.log('\nByly by vytvořeny:')
   } else {
-    console.log('✅ Vytvořeno 7 DEMO karet v card:space:Default')
+    console.log('✅ Vytvořeno 10 DEMO karet v card:space:Default')
     console.log('\nVytvořeny:')
   }
   console.log('  1. DEMO - Klient AI spol. s r.o.               (Firma)')
   console.log('  2. DEMO - Poptávka na AI agenta...             (Lead/Poptávka)')
   console.log('  3. DEMO - AI Customer Service Agent — AI spol. (Obchodní příležitost)')
   console.log('  4. DEMO - Nabídka #N-2026-01...                (Nabídka)')
-  console.log('  5. DEMO - Zakázka Z-2026-01...                 (Zakázka) ← obsahuje datum obnovy')
+  console.log('  5. DEMO - Zakázka Z-2026-01...                 (Zakázka)')
   console.log('  6. DEMO - Faktura F-2026-001...                (Faktura)')
   console.log('  7. DEMO - Projekt: Implementace AI agenta      (Projekt)')
-  console.log('\nKarty jsou vzájemně propojeny: Lead → Příležitost → Nabídka → Zakázka → Faktura + Projekt')
-  console.log('V Huly je najdeš v Cards → filtr podle typu nebo pohledu "Aktivní"')
+  console.log('  8. DEMO - Schůzka: Kick-off AI CSA...          (Zapis ze schuzky — akcni kroky)')
+  console.log('  9. DEMO - Schůzka: Konzultace s ekonomem...    (Zapis ze schuzky — ke kontrole)')
+  console.log(' 10. DEMO - Schůzka: Interní operativní...       (Zapis ze schuzky — potvrzeno)')
+  console.log('\nSchůzky najdeš: Cards → pohled "Záznamy ze schůzek" (nebo filtr typ Zapis ze schuzky)')
+  console.log('Obchodní řetězec: Lead → Příležitost → Nabídka → Zakázka → Faktura + Projekt')
 
   await connection.close()
   process.exit(0)

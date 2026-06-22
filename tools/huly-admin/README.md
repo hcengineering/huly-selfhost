@@ -18,6 +18,27 @@ jen ručním klikáním v UI. Tyto skripty to dělají programově a opakovateln
 - Admin přihlášení čtou z `/Users/stepan/praut/huly-poc-secrets.env`
   (`ADMIN_EMAIL`, `ADMIN_PASSWORD`) — soubor je mimo git.
 
+## Aktuální stav workspace (2026-06-19)
+
+### Živé v huly.praut.cz
+
+| Co | Stav |
+|---|---|
+| CardSpace "Schůzky" | ✅ aktivní (ID: `6a35824737b43c4db539494a`) |
+| 5 FilteredViews s emoji | ✅ aktivní (📅 Záznamy, ⭐ Ke schválení, 📦 Aktivní, 🔴 V riziku, 💰 Po splatnosti) |
+| 10 DEMO karet | ✅ aktivní (3 schůzky, 7 obchodní workflow) |
+| Chunter #praut-denni-prehled | ✅ vytvořen |
+| HOME + Cheat Sheet + Průvodce | ✅ v Základ systemu |
+| 3 zaměstnanecké návody | ✅ v Základ systemu |
+| "Co sem patří" v 7 teamspaces | ✅ aktivní |
+
+### Pending — vyžaduje manuální nastavení v Huly UI
+
+| Co | Dokument |
+|---|---|
+| 7 automatizačních pravidel | `AUTOMATION_SETUP_MANUAL.md` |
+| Tracker stavy a šablony | `TRACKER_SETUP_MANUAL.md` |
+
 ## Skripty
 
 | Skript | Co dělá |
@@ -26,9 +47,13 @@ jen ručním klikáním v UI. Tyto skripty to dělají programově a opakovateln
 | `praut-spaces-list.cjs` | READ-ONLY výpis všech prostorů (název, třída, archived, _id). |
 | `praut-archive-junk.cjs` | Archivuje/odarchivuje testovací junk prostory (cílí přesně podle _id). `--apply` provede, `--unarchive` vrátí. |
 | `praut-tune.cjs` | Drobné úpravy obsahu (např. přejmenování prázdného dokumentu). `--apply` provede. |
-| `praut-build-views.cjs` | Vytvoří 13 uložených pohledů (`FilteredView`) na klíčových card typech. Idempotentní (nejdřív smaže své dříve vytvořené pohledy přes tag `praut-ops`). Vyžaduje `/tmp/typemap.json` z `praut-typemap.cjs`. |
-| `praut-create-demo.cjs` | Vytvoří/obnoví 7 DEMO karet (Firma→Lead→Příležitost→Nabídka→Zakázka→Faktura+Projekt). Ukazuje ukázkový obchodní workflow s vyplněnými poli a vazbami. `--apply` vytvoří, `--delete` smaže. |
-| `praut-create-guide.cjs` | Vytvoří/obnoví orientační dokument "Jak začít v Huly" v teamspacu Základ systemu. `--apply` vytvoří. |
+| `praut-build-views.cjs` | Vytvoří 5 uložených pohledů (`FilteredView`) s emoji. Idempotentní (tag `praut-ops`). Vyžaduje `/tmp/typemap.json`. |
+| `praut-create-demo.cjs` | Vytvoří/obnoví 10 DEMO karet (Firma→Lead→Příležitost→Nabídka→Zakázka→Faktura+Projekt+3× schůzka). `--apply` vytvoří, `--delete` smaže. |
+| `praut-create-guide.cjs` | Vytvoří/obnoví 3 dokumenty v Základ systemu: 🏠 HOME (navigační mapa UI), Cheat Sheet, Průvodce. `--apply` vytvoří. |
+| `praut-import-guides.cjs` | Importuje 3 zaměstnanecké návody do Základ systemu (Rychlý start, Schůzky krok za krokem, Role a odpovědnosti). `--apply` vytvoří. |
+| `praut-create-teamspace-docs.cjs` | Vytvoří dokument "Co sem patří — přehled" v každém ze 7 teamspaces. `--apply` vytvoří. |
+| `praut-create-spaces.cjs` | Vytvoří CardSpace "Schůzky" (viditelná v levém panelu Cards). `--apply` vytvoří. |
+| `praut-create-chunter.cjs` | Vytvoří Chunter kanál #praut-denni-prehled jako navigační hub. `--apply` vytvoří. |
 
 ## Důležitý detail formátu filtru
 
@@ -86,6 +111,13 @@ Vždy nejdřív DRY-RUN, ověř cíle, pak `--apply`. Před většími zásahy s
 - 2026-06-19: vytvořeno 7 DEMO karet (Firma→Lead→Příležitost→Nabídka→Zakázka→Faktura+Projekt)
   ukazující ukázkový obchodní workflow s vyplněnými poli a vazbami.
 - 2026-06-19: vytvořen orientační dokument "Jak začít v Huly" v teamspacu Základ systemu.
+- 2026-06-19: přidán pohled "Záznamy ze schůzek" (FilteredView pro Zapis ze schuzky — stav ≠ uzavreno).
+- 2026-06-19: přidány 3 DEMO záznamy ze schůzek (kick-off, konzultace s ekonomem, interní operativa).
+- 2026-06-19: přepsán průvodce na Cheat Sheet + detailní průvodce s krok-za-krokem pro schůzky.
+- 2026-06-19: vytvořen dokument "Co sem patří — přehled" v 7 teamspaces.
+- 2026-06-19: dashboard — přejmenováno 5 pohledů s emoji, HOME dokument, Chunter kanál.
+- 2026-06-19: kompletní UX přestavba — nový HOME s navigační mapou UI, 3 zaměstnanecké
+  návody importovány do Základ systemu, docs/RUNBOOK-SERVER-DOWN.md, docs/DEV-ONBOARDING.md.
 
 ### Nedotaženo (vyžaduje UI nebo změnu datového modelu)
 
