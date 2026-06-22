@@ -18,7 +18,7 @@ jen ručním klikáním v UI. Tyto skripty to dělají programově a opakovateln
 - Admin přihlášení čtou z `/Users/stepan/praut/huly-poc-secrets.env`
   (`ADMIN_EMAIL`, `ADMIN_PASSWORD`) — soubor je mimo git.
 
-## Aktuální stav workspace (2026-06-19)
+## Aktuální stav workspace (2026-06-22)
 
 ### Živé v huly.praut.cz
 
@@ -26,10 +26,9 @@ jen ručním klikáním v UI. Tyto skripty to dělají programově a opakovateln
 |---|---|
 | CardSpace "Schůzky" | ✅ aktivní (ID: `6a35824737b43c4db539494a`) |
 | 5 FilteredViews s emoji | ✅ aktivní (📅 Záznamy, ⭐ Ke schválení, 📦 Aktivní, 🔴 V riziku, 💰 Po splatnosti) |
-| 10 DEMO karet | ✅ aktivní (3 schůzky, 7 obchodní workflow) |
+| DEMO karty | ❌ smazány (workspace ukazuje jen reálná data) |
 | Chunter #praut-denni-prehled | ✅ vytvořen |
-| HOME + Cheat Sheet + Průvodce | ✅ v Základ systemu |
-| 3 zaměstnanecké návody | ✅ v Základ systemu |
+| Návody sloučeny 6 → 2 | ✅ jen 🏠 HOME (rozcestník) + 📖 Příručka PRAUT Huly v Základ systemu |
 | "Co sem patří" v 7 teamspaces | ✅ aktivní |
 
 ### Pending — vyžaduje manuální nastavení v Huly UI
