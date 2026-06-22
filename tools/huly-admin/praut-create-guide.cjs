@@ -1,9 +1,10 @@
-// Vytvoří/obnoví dva dokumenty v teamspacu "Základ systému":
-//   1. "Cheat Sheet — Kde co v Huly" (krátká tabulka pro každodenní použití)
-//   2. "Jak pracovat v Huly — průvodce pro tým PRAUT" (detailní průvodce)
-// Idempotentní: smaže existující dokumenty se stejným názvem, pak vytvoří nové.
+// Vytvoří/obnoví DVA dokumenty v teamspacu "Základ systemu":
+//   1. "🏠 PRAUT — Co dnes dělám" (HOME / rozcestník — mapa Huly + denní rutina)
+//   2. "📖 Příručka PRAUT Huly" (jediný detailní dokument — schůzky, role, workflow, Tracker)
+// Navíc smaže zastaralé návodové dokumenty (STALE_TITLES) — po sloučení 6 → 2.
+// Idempotentní: dokument se stejným názvem smaže a vytvoří znovu.
 //   node praut-create-guide.cjs           DRY-RUN
-//   node praut-create-guide.cjs --apply   vytvoří/obnoví
+//   node praut-create-guide.cjs --apply   vytvoří/obnoví + smaže zastaralé
 globalThis.window = globalThis
 globalThis.addEventListener = () => {}
 globalThis.removeEventListener = () => {}
@@ -22,8 +23,16 @@ const { createClient, getAccountClient } = require('@hcengineering/server-client
 const APPLY = process.argv.includes('--apply')
 
 const HOME_TITLE = '🏠 PRAUT — Co dnes dělám'
-const CHEAT_TITLE = 'PRAUT Huly — 4 věci které potřebuješ znát'
-const GUIDE_TITLE = 'Jak pracovat v Huly — průvodce pro tým PRAUT'
+const PRIRUCKA_TITLE = '📖 Příručka PRAUT Huly'
+
+// Zastaralé dokumenty z doby 6 návodů — po sloučení je mažeme.
+const STALE_TITLES = [
+  'PRAUT Huly — 4 věci které potřebuješ znát',
+  'Jak pracovat v Huly — průvodce pro tým PRAUT',
+  'Rychlý start — co dělat v první den',
+  'Jak zapsat schůzku — krok za krokem',
+  'Role v PRAUT — kdo za co odpovídá'
+]
 
 function env (file) {
   const out = {}
@@ -37,7 +46,7 @@ function env (file) {
 const HOME_CONTENT = `
 <h1>🏠 PRAUT — Jak se v Huly vyznat</h1>
 
-<p><strong>Toto je tvůj průvodce. Když nevíš kam jít — začni tady.</strong></p>
+<p><strong>Toto je rozcestník. Když nevíš kam jít — začni tady.</strong> Potřebuješ detailní návod? Otevři dokument <strong>📖 Příručka PRAUT Huly</strong> (je tady v Základ systemu).</p>
 
 <hr/>
 
@@ -82,22 +91,7 @@ const HOME_CONTENT = `
 
 <hr/>
 
-<h2>📅 SCHŮZKA — přesně 4 kliky</h2>
-
-<ol>
-  <li>Klikni na ikonu <strong>🗃️ Cards</strong> — je vlevo nahoře, vypadá jako mřížka karet</li>
-  <li>V levém panelu (seznam sekcí) klikni na <strong>Schůzky</strong> — je pod nadpisem SPACES</li>
-  <li>Klikni na <strong>+</strong> — je vpravo nahoře, vedle nápisu "Schůzky"</li>
-  <li>Vyplň: <strong>Název</strong> (např. "Schůzka s ekonomem 2026-06-20"), <strong>datum</strong>, <strong>rozhodnutí</strong>, <strong>akční položky</strong></li>
-</ol>
-
-<p>Hotovo. Schůzka je uložená. Najdeš ji pak v Cards → Schůzky nebo v pohledu "📅 Záznamy ze schůzek".</p>
-
-<p><em>Vzor jak má zápis ze schůzky vypadat: Cards → Schůzky → karta "DEMO - Schůzka: Konzultace s ekonomem"</em></p>
-
-<hr/>
-
-<h2>⏰ ŘEDITEL — ranní kontrola (5 minut)</h2>
+<h2>⏰ DENNÍ RUTINA — ranní kontrola (5 minut)</h2>
 
 <p>Otevři Cards (ikona 🗃️ vlevo nahoře) a projdi tyto 3 pohledy v levém panelu:</p>
 
@@ -109,7 +103,7 @@ const HOME_CONTENT = `
   </tr>
   <tr>
     <td><strong>⭐ Ke schválení</strong></td>
-    <td>Nabídky čekající na tvůj podpis</td>
+    <td>Nabídky čekající na podpis</td>
     <td>Schválit nebo odmítnout — do 48 h</td>
   </tr>
   <tr>
@@ -128,55 +122,13 @@ const HOME_CONTENT = `
 
 <hr/>
 
-<h2>🆕 NOVÁ PRÁCE — co kam jde</h2>
+<h2>🆘 KDYŽ SI NEVÍŠ RADY</h2>
 
 <table>
+  <tr><th>Problém</th><th>Řešení</th></tr>
   <tr>
-    <th>Chci vytvořit…</th>
-    <th>Kde v Huly</th>
-  </tr>
-  <tr>
-    <td>Zápis ze schůzky</td>
-    <td>Cards (🗃️) → Schůzky (v levém panelu) → <strong>+</strong></td>
-  </tr>
-  <tr>
-    <td>Nového klienta (firmu)</td>
-    <td>Cards (🗃️) → <strong>+</strong> tlačítko nahoře → vyber typ <strong>Firma</strong></td>
-  </tr>
-  <tr>
-    <td>Novou nabídku</td>
-    <td>Cards (🗃️) → <strong>+</strong> → vyber typ <strong>Nabidka</strong></td>
-  </tr>
-  <tr>
-    <td>Novou zakázku</td>
-    <td>Cards (🗃️) → <strong>+</strong> → vyber typ <strong>Zakazka</strong></td>
-  </tr>
-  <tr>
-    <td>Fakturu</td>
-    <td>Cards (🗃️) → <strong>+</strong> → vyber typ <strong>Faktura</strong></td>
-  </tr>
-  <tr>
-    <td>Vývojářský úkol</td>
-    <td>Tracker (◻️) → <strong>+</strong> — ale to dělají vývojáři, ne Štěpán</td>
-  </tr>
-  <tr>
-    <td>Firemní dokument/pravidlo</td>
-    <td>Documents (📄) → Základ systemu → <strong>New Document</strong></td>
-  </tr>
-</table>
-
-<hr/>
-
-<h2>🆘 ZACHRAŇOVACÍ KROKY — když si nevíš rady</h2>
-
-<table>
-  <tr>
-    <th>Problém</th>
-    <th>Řešení</th>
-  </tr>
-  <tr>
-    <td>Nevím kde jsem</td>
-    <td>Klikni na ikonu 📄 Documents vlevo nahoře → Základ systemu → otevři tento dokument</td>
+    <td>Nevím kde jsem / nevím jak na to</td>
+    <td>Otevři 📄 Documents → Základ systemu → <strong>📖 Příručka PRAUT Huly</strong></td>
   </tr>
   <tr>
     <td>Vidím "New Funnel" nebo "Backlog"</td>
@@ -187,150 +139,107 @@ const HOME_CONTENT = `
     <td>Klikni 🗃️ Cards → scroll dolů v levém panelu → sekce SPACES → Schůzky</td>
   </tr>
   <tr>
-    <td>Potřebuji rychlý přehled</td>
-    <td>Dokument "PRAUT Huly — 4 věci které potřebuješ znát" (tady v Základ systemu)</td>
-  </tr>
-  <tr>
     <td>Huly nefunguje / nejde otevřít</td>
-    <td>Kontaktuj EmperorKunDis (GitHub) nebo tech tým — viz docs/RUNBOOK-SERVER-DOWN.md v repozitáři</td>
+    <td>Kontaktuj tech tým — viz docs/RUNBOOK-SERVER-DOWN.md v repozitáři</td>
   </tr>
 </table>
 
 <hr/>
 
-<h2>📚 Další dokumenty v Základ systemu</h2>
-
-<ul>
-  <li><strong>Rychlý start — co dělat v první den</strong> — pro nové členy týmu</li>
-  <li><strong>Jak zapsat schůzku — krok za krokem</strong> — detailní postup pro schůzky</li>
-  <li><strong>Role v PRAUT — kdo za co odpovídá</strong> — vlastník, schvalovatel, řešitel</li>
-  <li><strong>PRAUT Huly — 4 věci které potřebuješ znát</strong> — ultra-krátký cheat sheet</li>
-  <li><strong>Jak pracovat v Huly — průvodce pro tým PRAUT</strong> — kompletní průvodce</li>
-</ul>
+<p><strong>👉 Vše ostatní — jak zapsat schůzku, role v týmu, obchodní workflow, Tracker — najdeš v dokumentu 📖 Příručka PRAUT Huly.</strong></p>
 `
 
-const CHEAT_CONTENT = `
-<h1>PRAUT Huly — 4 věci které potřebuješ znát</h1>
+const PRIRUCKA_CONTENT = `
+<h1>📖 Příručka PRAUT Huly</h1>
 
-<p>Tohle je vše co potřebuješ. Nic víc.</p>
+<p>Huly je náš interní operační systém. Vše důležité — zákazníci, zakázky, schůzky, úkoly, dokumenty — je tady, ne v emailu nebo chatu. Tato příručka je <strong>jediný detailní návod</strong>; rychlý rozcestník je dokument 🏠 PRAUT — Co dnes dělám.</p>
 
-<table>
-  <tr><th>Chci…</th><th>Kam jít</th><th>Jak</th></tr>
-  <tr>
-    <td><strong>1. SCHŮZKA</strong><br/>Zapsat novou schůzku nebo najít staré</td>
-    <td><strong>Cards → Schůzky</strong> (vlevo v panelu)</td>
-    <td>Klikni na "Schůzky" → "+" vpravo nahoře → vyplň název (např. "Konzultace s ekonomem 2026-07-10"), datum, co bylo rozhodnuto, co kdo udělá</td>
-  </tr>
-  <tr>
-    <td><strong>2. ÚKOL</strong><br/>Přidat nebo najít úkol pro tým</td>
-    <td><strong>Tracker</strong> (levý panel → Zakázky, projekty a úkoly → Tracker)</td>
-    <td>Klikni "+" → vyplň název, přiřaď vlastníka, nastav deadline</td>
-  </tr>
-  <tr>
-    <td><strong>3. KLIENT nebo ZAKÁZKA</strong><br/>Přidat nového klienta nebo zakázku, nebo najít existující</td>
-    <td><strong>Cards → "+"</strong> nebo pohled <strong>"Aktivní zakázky"</strong></td>
-    <td>Klikni "+" → vyber typ (Firma = klient, Zakazka = aktivní práce pro klienta) → vyplň</td>
-  </tr>
-  <tr>
-    <td><strong>4. DOKUMENT / PRAVIDLO</strong><br/>Napsat nebo najít firemní pravidlo, proces, know-how</td>
-    <td><strong>Levý panel → Základ systemu</strong> (nebo jiný teamspace)</td>
-    <td>Klikni na teamspace → "New Document" → napiš název a obsah</td>
-  </tr>
-</table>
-
-<h2>Kde jsou schůzky?</h2>
-
-<p>V levém panelu Cards vidíš sekci <strong>"Schůzky"</strong> — to je místo kde jsou všechny záznamy ze schůzek. Stačí tam kliknout a vidíš je. "+" přidá novou.</p>
-
-<p>Pro přehled přes celý systém: pohled <strong>"Záznamy ze schůzek"</strong> (vlevo v Cards nad sekcemi).</p>
-
-<h2>Co ostatní věci v Cards?</h2>
-
-<p>Zbytek — nabídky, faktury, projekty, incidenty — je v sekci <strong>Default</strong> (v Cards vlevo). Pohled <strong>"Ke schválení"</strong> ukazuje co čeká na tvé rozhodnutí. <strong>"V riziku"</strong> ukazuje zakázky s problémem.</p>
-`
-
-const GUIDE_CONTENT = `
-<h1>Jak pracovat v Huly — průvodce pro tým PRAUT</h1>
-
-<p>Huly je náš interní operační systém. Vše důležité — zákazníci, zakázky, schůzky, úkoly, dokumenty — je tady, ne v emailu nebo chatu. Tento průvodce ti ukáže jak v tom pracovat.</p>
-
-<p><strong>Rychlý přehled je v dokumentu "Cheat Sheet — Kde co v Huly" (tady v Základ systemu).</strong></p>
+<hr/>
 
 <h2>1. Jak zapsat schůzku</h2>
 
-<p>Schůzky jsou <strong>Cards → Zapis ze schuzky</strong>. Postup krok za krokem:</p>
+<p>Schůzky jsou karty typu <strong>Zapis ze schuzky</strong> v prostoru <strong>Cards → Schůzky</strong>. Postup:</p>
 
 <ol>
-  <li>Klikni na ikonu karet (Cards) v horní navigaci</li>
-  <li>Klikni na <strong>"+"</strong> (nová karta) vpravo nahoře</li>
-  <li>Vyber typ: <strong>Zapis ze schuzky</strong> (seznam typů je abecedně, dole)</li>
-  <li>Do názvu napiš: "Schůzka: [kdo/co] (datum)" — např. "Schůzka: Konzultace s ekonomem (2026-07-10)"</li>
-  <li>Vyplň atributy:
-    <ul>
-      <li><strong>datum</strong> — datum schůzky (formát YYYY-MM-DD)</li>
-      <li><strong>projekt/klient</strong> — s kým nebo o čem (např. "AI spol. s r.o." nebo "Interní")</li>
-      <li><strong>rozhodnutí</strong> — co bylo rozhodnuto (konkrétně, ne "probrali jsme")</li>
-      <li><strong>akční položky</strong> — kdo co udělá do kdy (číslovaný seznam)</li>
-    </ul>
-  </li>
-  <li>Nastav <strong>citlivost</strong>: verejne / interni / citlive</li>
-  <li>Nastav <strong>stav</strong>: draft → ke kontrole → potvrzeno / akcni kroky otevrene → uzavreno</li>
+  <li>Klikni na ikonu <strong>🗃️ Cards</strong> (vlevo nahoře, mřížka karet)</li>
+  <li>V levém panelu klikni na sekci <strong>Schůzky</strong> (pod nadpisem SPACES)</li>
+  <li>Klikni na <strong>+</strong> vpravo nahoře</li>
+  <li>Do názvu napiš: <em>"Schůzka: [kdo/co] (datum)"</em> — např. "Schůzka: Konzultace s ekonomem (2026-07-10)"</li>
+  <li>Vyplň pole (viz tabulka níže)</li>
 </ol>
 
-<p>Hotové záznamy najdeš: Cards → pohled <strong>"Záznamy ze schůzek"</strong> vlevo nahoře.</p>
+<table>
+  <tr><th>Pole</th><th>Co vyplnit</th></tr>
+  <tr><td><strong>datum</strong></td><td>Datum schůzky (YYYY-MM-DD)</td></tr>
+  <tr><td><strong>projekt/klient</strong></td><td>S kým nebo o čem (např. "AI spol. s r.o." nebo "Interní")</td></tr>
+  <tr><td><strong>rozhodnutí</strong></td><td>Co bylo rozhodnuto — konkrétně, ne "probrali jsme"</td></tr>
+  <tr><td><strong>akční položky</strong></td><td>Kdo co udělá do kdy (číslovaný seznam)</td></tr>
+  <tr><td><strong>citlivost</strong></td><td>verejne / interni / citlive</td></tr>
+  <tr><td><strong>stav</strong></td><td>draft → ke kontrole → potvrzeno / akcni kroky otevrene → uzavreno</td></tr>
+</table>
 
-<p>Podívej se na DEMO záznamy (prefix "DEMO - Schůzka:") jako vzorový příklad se všemi vyplněnými poli.</p>
+<p>Hotové záznamy: Cards → pohled <strong>📅 Záznamy ze schůzek</strong>.</p>
 
-<h2>2. Denní rituál (5 minut každé ráno)</h2>
+<hr/>
 
-<ol>
-  <li><strong>Cards → "Ke schválení"</strong> — co čeká na tvé rozhodnutí (nabídky)</li>
-  <li><strong>Cards → "V riziku"</strong> — zakázky s problémem (cerveny/v riziku health)</li>
-  <li><strong>Cards → "Po splatnosti"</strong> — faktury po splatnosti (zavolej klientovi)</li>
-  <li><strong>Tracker → přiřazeno mně</strong> — moje úkoly na dnešek</li>
-</ol>
+<h2>2. Role — kdo za co odpovídá</h2>
+
+<p>U každé práce (karta, úkol, zakázka) rozlišujeme tři role:</p>
+
+<table>
+  <tr><th>Role</th><th>Co dělá</th></tr>
+  <tr><td><strong>Vlastník</strong></td><td>Odpovídá za výsledek. Hlídá, aby se práce dotáhla. Nemusí ji dělat sám.</td></tr>
+  <tr><td><strong>Řešitel</strong></td><td>Dělá samotnou práci. Reportuje vlastníkovi.</td></tr>
+  <tr><td><strong>Schvalovatel</strong></td><td>Potvrzuje a schvaluje (typicky Štěpán u nabídek, cen a zakázek). Bez jeho OK se neodesílá ven.</td></tr>
+</table>
+
+<p><strong>Pravidlo:</strong> každá karta má vlastníka. Když vlastník chybí, práce zapadne — proto pohled „bez vlastníka" hlídá automatika.</p>
+
+<hr/>
 
 <h2>3. Obchodní workflow (kde co vzniká)</h2>
 
-<p>Celý obchodní cyklus v PRAUT vypadá takto:</p>
+<p>Celý obchodní cyklus v PRAUT:</p>
 
 <ol>
-  <li>Přijde poptávka → vytvoříš <strong>Lead/Poptávka</strong> (Cards → +)</li>
-  <li>Lead se kvalifikuje → vytvoříš <strong>Obchodní příležitost</strong></li>
-  <li>Píšeme nabídku → vytvoříš <strong>Nabídka</strong> (stav: draft → ke schválení)</li>
-  <li>Štěpán schválí → stav nabídky: ke schvaleni → odeslano</li>
-  <li>Klient kývne → vytvoříš <strong>Zakázka</strong> (stav: aktivni, propoj s nabídkou)</li>
-  <li>Fakturujeme → vytvoříš <strong>Faktura</strong> (stav: vystavena, propoj se zakázkou)</li>
-  <li>Realizujeme → vytvoříš <strong>Projekt</strong> (propoj se zakázkou)</li>
-  <li>Každá důležitá schůzka → <strong>Zapis ze schuzky</strong> (propoj s klientem v poli projekt/klient)</li>
+  <li>Přijde poptávka → <strong>Lead/Poptávka</strong> (Cards → +)</li>
+  <li>Lead se kvalifikuje → <strong>Obchodní příležitost</strong></li>
+  <li>Píšeme nabídku → <strong>Nabídka</strong> (stav: draft → ke schválení)</li>
+  <li>Schvalovatel schválí → stav nabídky: ke schvaleni → odeslano</li>
+  <li>Klient kývne → <strong>Zakázka</strong> (stav: aktivni, propoj s nabídkou)</li>
+  <li>Fakturujeme → <strong>Faktura</strong> (propoj se zakázkou)</li>
+  <li>Realizujeme → <strong>Projekt</strong> (propoj se zakázkou)</li>
+  <li>Každá důležitá schůzka → <strong>Zapis ze schuzky</strong> (propoj v poli projekt/klient)</li>
 </ol>
 
-<p>Viz DEMO karty (prefix "DEMO -") — ukazují jak vypadá každý krok se skutečnými daty.</p>
+<hr/>
 
 <h2>4. Uložené pohledy v Cards</h2>
 
-<p>Vlevo nahoře v Cards najdeš uložené pohledy — jsou to předdefinované filtry pro nejčastější situace:</p>
+<p>Vlevo v Cards jsou předdefinované filtry pro nejčastější situace:</p>
 
 <ul>
-  <li><strong>Aktivní</strong> — vše co právě běží (nabídky, zakázky, projekty, leady)</li>
-  <li><strong>Ke schválení</strong> — nabídky čekající na schválení (stav: ke schvaleni)</li>
-  <li><strong>V riziku</strong> — zakázky s červeným nebo rizikovým health</li>
-  <li><strong>Nezaplacené</strong> — faktury, za které jsme nedostali peníze</li>
-  <li><strong>Po splatnosti</strong> — faktury po termínu splatnosti</li>
-  <li><strong>Záznamy ze schůzek</strong> — všechny záznamy ze schůzek (ne uzavřené)</li>
-  <li><strong>Otevřené</strong> — incidenty, zákaznické požadavky, rizika bez uzavření</li>
+  <li><strong>📅 Záznamy ze schůzek</strong> — otevřené záznamy ze schůzek</li>
+  <li><strong>⭐ Ke schválení</strong> — nabídky čekající na schválení</li>
+  <li><strong>📦 Aktivní zakázky</strong> — zakázky, které právě běží</li>
+  <li><strong>🔴 V riziku</strong> — zakázky s červeným/rizikovým health</li>
+  <li><strong>💰 Po splatnosti</strong> — faktury po termínu splatnosti</li>
 </ul>
+
+<hr/>
 
 <h2>5. Tracker — pro vývojářský tým</h2>
 
-<p>Tracker je pro interní denní úkoly — jako GitHub Issues. Najdeš ho vlevo v panelu → Zakázky, projekty a úkoly → Tracker.</p>
+<p>Tracker je pro interní denní úkoly — jako GitHub Issues. Vlevo v panelu → Zakázky, projekty a úkoly → Tracker.</p>
 
 <ul>
-  <li>Každý issue má <strong>vlastníka</strong> (kdo dělá) a <strong>deadline</strong> (nebo jasný důvod proč ne)</li>
+  <li>Každý issue má <strong>vlastníka</strong> a <strong>deadline</strong> (nebo jasný důvod proč ne)</li>
   <li>Branch name: <code>TSK-123-kratky-popis</code></li>
   <li>PR title: <code>[TSK-123] Co jsem změnil</code></li>
   <li>Po mergi: aktualizuj stav issue v Trackeru</li>
 </ul>
+
+<hr/>
 
 <h2>6. Co patří kam</h2>
 
@@ -346,27 +255,29 @@ const GUIDE_CONTENT = `
   <tr><td>AI výstup bez lidské kontroly</td><td>Nikam!</td><td>—</td></tr>
 </table>
 
+<hr/>
+
 <h2>7. Teamspaces — co v nich najdeš</h2>
 
-<p>Teamspaces jsou sekce v levém panelu pro dokumenty. Každý teamspace má jiné zaměření:</p>
-
 <ul>
-  <li><strong>Základ systemu</strong> — tento průvodce, Cheat Sheet, firemní procesy</li>
+  <li><strong>Základ systemu</strong> — tato příručka, HOME rozcestník, firemní procesy</li>
   <li><strong>Obchod a CRM</strong> — email šablony, návody pro obchodní tým</li>
   <li><strong>Zakázky, projekty a úkoly</strong> — metodiky projektového řízení, šablony</li>
-  <li><strong>Dokumenty a znalostní báze</strong> — know-how, technické rozhodnutí (ADR), návody</li>
-  <li><strong>Komunikace a spoluprace</strong> — delší protokoly ze schůzek (karty Zapis ze schuzky jsou v Cards)</li>
+  <li><strong>Dokumenty a znalostní báze</strong> — know-how, technická rozhodnutí (ADR), návody</li>
+  <li><strong>Komunikace a spoluprace</strong> — delší protokoly ze schůzek</li>
   <li><strong>Marketing a zákaznická péče</strong> — marketingové materiály, SLA pravidla</li>
   <li><strong>Automatizace, AI a integrace</strong> — popis AI nástrojů, integrace</li>
   <li><strong>Řízení firmy a reporting</strong> — KPI definice, reportingové šablony</li>
 </ul>
+
+<hr/>
 
 <h2>8. Bezpečnost a přístupy</h2>
 
 <ul>
   <li>Public signup je <strong>vypnutý</strong> — nové lidi přidává admin přes invite (Settings → HR)</li>
   <li>Zálohy běží každý den 02:30</li>
-  <li>Admin: stepan@praut.cz (svanda@praut.cz)</li>
+  <li>Admin: stepan@praut.cz</li>
   <li>GitHub repo: PrautAutomation/huly-selfhost — technická dokumentace a skripty</li>
 </ul>
 `
@@ -401,6 +312,20 @@ async function createOrReplaceDoc (client, spaceId, spaceName, title, content, a
   return docId
 }
 
+async function deleteStaleDocs (client, spaceId, apply) {
+  const existing = await client.findAll('document:class:Document', { space: spaceId })
+  for (const title of STALE_TITLES) {
+    const found = existing.find(d => d.title === title)
+    if (!found) continue
+    if (apply) {
+      await client.removeDoc(found._class, found.space, found._id)
+      console.log(`  Smazán zastaralý: "${title}"`)
+    } else {
+      console.log(`  DRY-RUN: zastaralý "${title}" by byl smazán`)
+    }
+  }
+}
+
 async function main () {
   const s = env('/Users/stepan/praut/huly-poc-secrets.env')
   const config = await (await fetch('https://huly.praut.cz/config.json')).json()
@@ -416,7 +341,7 @@ async function main () {
   const zakladSpace = spaces.find(sp => sp.name && (sp.name.includes('Základ') || sp.name.toLowerCase().includes('zaklad')))
 
   if (!zakladSpace) {
-    console.log('CHYBA: teamspace "Základ systému" nenalezen')
+    console.log('CHYBA: teamspace "Základ systemu" nenalezen')
     for (const sp of spaces) console.log(`  "${sp.name}"`)
     await connection.close()
     process.exit(1)
@@ -425,14 +350,17 @@ async function main () {
   console.log(`Teamspace: "${zakladSpace.name}" (${zakladSpace._id})`)
   console.log(`Mode: ${APPLY ? 'APPLY' : 'DRY-RUN'}\n`)
 
+  console.log('Sloučené dokumenty:')
   await createOrReplaceDoc(client, zakladSpace._id, zakladSpace.name, HOME_TITLE, HOME_CONTENT, APPLY)
-  await createOrReplaceDoc(client, zakladSpace._id, zakladSpace.name, CHEAT_TITLE, CHEAT_CONTENT, APPLY)
-  await createOrReplaceDoc(client, zakladSpace._id, zakladSpace.name, GUIDE_TITLE, GUIDE_CONTENT, APPLY)
+  await createOrReplaceDoc(client, zakladSpace._id, zakladSpace.name, PRIRUCKA_TITLE, PRIRUCKA_CONTENT, APPLY)
+
+  console.log('\nZastaralé dokumenty (mažeme po sloučení 6 → 2):')
+  await deleteStaleDocs(client, zakladSpace._id, APPLY)
 
   if (!APPLY) {
-    console.log('\nDRY-RUN — nic nebylo vytvořeno. Spusť s --apply.')
+    console.log('\nDRY-RUN — nic nebylo změněno. Spusť s --apply.')
   } else {
-    console.log('\nHotovo. Najdeš dokumenty v Huly → levý panel → Základ systému.')
+    console.log('\nHotovo. V Základ systemu zůstaly jen 2 návodové dokumenty: HOME + Příručka.')
   }
 
   await connection.close()
