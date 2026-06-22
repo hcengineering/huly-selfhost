@@ -31,12 +31,19 @@ jen ručním klikáním v UI. Tyto skripty to dělají programově a opakovateln
 | Návody sloučeny 6 → 2 | ✅ jen 🏠 HOME (rozcestník) + 📖 Příručka PRAUT Huly v Základ systemu |
 | "Co sem patří" v 7 teamspaces | ✅ aktivní |
 
-### Pending — vyžaduje manuální nastavení v Huly UI
+### Tracker (2026-06-22)
 
-| Co | Dokument |
+| Co | Stav |
 |---|---|
-| 7 automatizačních pravidel | `AUTOMATION_SETUP_MANUAL.md` |
-| Tracker stavy a šablony | `TRACKER_SETUP_MANUAL.md` |
+| Junk issues (TSK-1/2/3) | ❌ smazány (`praut-clean-tracker.cjs`) |
+| 6 šablon issues | ✅ vytvořeny přes API (`praut-tracker-templates.cjs`) |
+| Stavy projektu | ✅ ponecháno 5 defaultních (Backlog/Todo/In Progress/Done/Cancelled) — extra stavy = riziko na sdíleném ProjectType |
+
+### Pending — odloženo
+
+| Co | Pozn. |
+|---|---|
+| 7 automatizačních pravidel | Plugin „Process" + chybí SMTP + zatím bez dat → nastavit až bude reálný provoz (`AUTOMATION_SETUP_MANUAL.md`) |
 
 ## Skripty
 
