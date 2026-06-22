@@ -93,13 +93,18 @@ const HOME_CONTENT = `
 
 <h2>⏰ DENNÍ RUTINA — ranní kontrola (5 minut)</h2>
 
-<p>Otevři Cards (ikona 🗃️ vlevo nahoře) a projdi tyto 3 pohledy v levém panelu:</p>
+<p>Otevři Cards (ikona 🗃️ vlevo nahoře) a projdi tyto pohledy v levém panelu:</p>
 
 <table>
   <tr>
     <th>Pohled v Cards</th>
     <th>Co hledáš</th>
     <th>Co dělat</th>
+  </tr>
+  <tr>
+    <td><strong>🤝 Aktivní příležitosti</strong></td>
+    <td>Rozjednané obchody — kde to vázne?</td>
+    <td>Posuň další krok, naplánuj schůzku</td>
   </tr>
   <tr>
     <td><strong>⭐ Ke schválení</strong></td>
@@ -118,7 +123,9 @@ const HOME_CONTENT = `
   </tr>
 </table>
 
-<p>Všechny tři prázdné → skvělý den, jdi na kafe ☕</p>
+<p>Chceš přehled klienta? Pohled <strong>🏢 Klienti</strong> → klikni na firmu → vidíš u ní navázané příležitosti, nabídky i zakázky pohromadě.</p>
+
+<p>Vše prázdné → skvělý den, jdi na kafe ☕</p>
 
 <hr/>
 
