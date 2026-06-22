@@ -31,7 +31,9 @@ const JUNK = new Set([
   '6a33c7d13944be5b4ac94e44', // CardSpace  SCH ekonom (4 karty)
   '6a2c0afb814f52d3c14f4b63', // Project    Zaznamnik.pro
   '6a2f06d90719a7e7ae7ff8d9', // Project    ProjZaznamnik
-  '6a31ff580552fecae4679775' //  Project    puls
+  '6a31ff580552fecae4679775', // Project    puls
+  '6a358a03c5bdc5ea6a29e366', // Project    PULS (nový zbytek, 2026-06-22)
+  '6a357aac9393ec233f387f4b' //  Product    zaznamnik.pro (nový zbytek, 2026-06-22)
 ])
 
 function env (file) {
