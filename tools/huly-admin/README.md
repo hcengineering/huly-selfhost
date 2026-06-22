@@ -47,9 +47,8 @@ jen ručním klikáním v UI. Tyto skripty to dělají programově a opakovateln
 | `praut-archive-junk.cjs` | Archivuje/odarchivuje testovací junk prostory (cílí přesně podle _id). `--apply` provede, `--unarchive` vrátí. |
 | `praut-tune.cjs` | Drobné úpravy obsahu (např. přejmenování prázdného dokumentu). `--apply` provede. |
 | `praut-build-views.cjs` | Vytvoří 5 uložených pohledů (`FilteredView`) s emoji. Idempotentní (tag `praut-ops`). Vyžaduje `/tmp/typemap.json`. |
-| `praut-create-demo.cjs` | Vytvoří/obnoví 10 DEMO karet (Firma→Lead→Příležitost→Nabídka→Zakázka→Faktura+Projekt+3× schůzka). `--apply` vytvoří, `--delete` smaže. |
-| `praut-create-guide.cjs` | Vytvoří/obnoví 3 dokumenty v Základ systemu: 🏠 HOME (navigační mapa UI), Cheat Sheet, Průvodce. `--apply` vytvoří. |
-| `praut-import-guides.cjs` | Importuje 3 zaměstnanecké návody do Základ systemu (Rychlý start, Schůzky krok za krokem, Role a odpovědnosti). `--apply` vytvoří. |
+| `praut-create-demo.cjs` | Vytvoří/obnoví 10 DEMO karet (Firma→Lead→Příležitost→Nabídka→Zakázka→Faktura+Projekt+3× schůzka). `--apply` vytvoří, `--delete` smaže. *(Karty jsou aktuálně smazané.)* |
+| `praut-create-guide.cjs` | Vytvoří/obnoví **2** dokumenty v Základ systemu: 🏠 HOME (rozcestník) + 📖 Příručka PRAUT Huly (jediný detailní návod). Navíc smaže 5 zastaralých návodů (`STALE_TITLES`). `--apply` provede. |
 | `praut-create-teamspace-docs.cjs` | Vytvoří dokument "Co sem patří — přehled" v každém ze 7 teamspaces. `--apply` vytvoří. |
 | `praut-create-spaces.cjs` | Vytvoří CardSpace "Schůzky" (viditelná v levém panelu Cards). `--apply` vytvoří. |
 | `praut-create-chunter.cjs` | Vytvoří Chunter kanál #praut-denni-prehled jako navigační hub. `--apply` vytvoří. |
