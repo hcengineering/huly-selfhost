@@ -153,7 +153,7 @@ const HOME_CONTENT = `
 
 <hr/>
 
-<p><strong>👉 Vše ostatní — jak zapsat schůzku, role v týmu, obchodní workflow, Tracker — najdeš v dokumentu 📖 Příručka PRAUT Huly.</strong></p>
+<p><strong>👉 Celý postup od zájemce k zakázce (4 kroky), schůzky, podklady, role i Tracker — najdeš v dokumentu 📖 Příručka PRAUT Huly. Je tam i příklad krok za krokem.</strong></p>
 `
 
 const PRIRUCKA_CONTENT = `
