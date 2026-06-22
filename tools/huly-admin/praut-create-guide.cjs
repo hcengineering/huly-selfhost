@@ -93,13 +93,18 @@ const HOME_CONTENT = `
 
 <h2>⏰ DENNÍ RUTINA — ranní kontrola (5 minut)</h2>
 
-<p>Otevři Cards (ikona 🗃️ vlevo nahoře) a projdi tyto 3 pohledy v levém panelu:</p>
+<p>Otevři Cards (ikona 🗃️ vlevo nahoře) a projdi tyto pohledy v levém panelu:</p>
 
 <table>
   <tr>
     <th>Pohled v Cards</th>
     <th>Co hledáš</th>
     <th>Co dělat</th>
+  </tr>
+  <tr>
+    <td><strong>🤝 Aktivní příležitosti</strong></td>
+    <td>Rozjednané obchody — kde to vázne?</td>
+    <td>Posuň další krok, naplánuj schůzku</td>
   </tr>
   <tr>
     <td><strong>⭐ Ke schválení</strong></td>
@@ -118,7 +123,9 @@ const HOME_CONTENT = `
   </tr>
 </table>
 
-<p>Všechny tři prázdné → skvělý den, jdi na kafe ☕</p>
+<p>Chceš přehled klienta? Pohled <strong>🏢 Klienti</strong> → klikni na firmu → vidíš u ní navázané příležitosti, nabídky i zakázky pohromadě.</p>
+
+<p>Vše prázdné → skvělý den, jdi na kafe ☕</p>
 
 <hr/>
 
@@ -146,139 +153,104 @@ const HOME_CONTENT = `
 
 <hr/>
 
-<p><strong>👉 Vše ostatní — jak zapsat schůzku, role v týmu, obchodní workflow, Tracker — najdeš v dokumentu 📖 Příručka PRAUT Huly.</strong></p>
+<p><strong>👉 Celý postup od zájemce k zakázce (4 kroky), schůzky, podklady, role i Tracker — najdeš v dokumentu 📖 Příručka PRAUT Huly. Je tam i příklad krok za krokem.</strong></p>
 `
 
 const PRIRUCKA_CONTENT = `
 <h1>📖 Příručka PRAUT Huly</h1>
 
-<p>Huly je náš interní operační systém. Vše důležité — zákazníci, zakázky, schůzky, úkoly, dokumenty — je tady, ne v emailu nebo chatu. Tato příručka je <strong>jediný detailní návod</strong>; rychlý rozcestník je dokument 🏠 PRAUT — Co dnes dělám.</p>
+<p>Huly je náš interní operační systém pro firmu na <strong>software na míru</strong>. Vše o klientech, obchodu a zakázkách je tady, ne v emailu. Tato příručka je <strong>jediný detailní návod</strong>; rychlý rozcestník je dokument 🏠 PRAUT — Co dnes dělám.</p>
 
 <hr/>
 
-<h2>1. Jak zapsat schůzku</h2>
+<h2>🎯 OBCHODNÍ WORKFLOW — 4 kroky od zájemce k hotové zakázce</h2>
 
-<p>Schůzky jsou karty typu <strong>Zapis ze schuzky</strong> v prostoru <strong>Cards → Schůzky</strong>. Postup:</p>
-
-<ol>
-  <li>Klikni na ikonu <strong>🗃️ Cards</strong> (vlevo nahoře, mřížka karet)</li>
-  <li>V levém panelu klikni na sekci <strong>Schůzky</strong> (pod nadpisem SPACES)</li>
-  <li>Klikni na <strong>+</strong> vpravo nahoře</li>
-  <li>Do názvu napiš: <em>"Schůzka: [kdo/co] (datum)"</em> — např. "Schůzka: Konzultace s ekonomem (2026-07-10)"</li>
-  <li>Vyplň pole (viz tabulka níže)</li>
-</ol>
+<p>Když přijde nový zájemce, vždy jdeš těmito 4 kroky. Každý krok = jedna karta v Cards (ikona 🗃️ vlevo nahoře, tlačítko <strong>+</strong> a vyber typ):</p>
 
 <table>
-  <tr><th>Pole</th><th>Co vyplnit</th></tr>
-  <tr><td><strong>datum</strong></td><td>Datum schůzky (YYYY-MM-DD)</td></tr>
-  <tr><td><strong>projekt/klient</strong></td><td>S kým nebo o čem (např. "AI spol. s r.o." nebo "Interní")</td></tr>
-  <tr><td><strong>rozhodnutí</strong></td><td>Co bylo rozhodnuto — konkrétně, ne "probrali jsme"</td></tr>
-  <tr><td><strong>akční položky</strong></td><td>Kdo co udělá do kdy (číslovaný seznam)</td></tr>
-  <tr><td><strong>citlivost</strong></td><td>verejne / interni / citlive</td></tr>
-  <tr><td><strong>stav</strong></td><td>draft → ke kontrole → potvrzeno / akcni kroky otevrene → uzavreno</td></tr>
+  <tr><th>Krok</th><th>Typ karty</th><th>Co sem patří</th></tr>
+  <tr><td><strong>1. KLIENT</strong></td><td>Firma (+ Kontakt)</td><td>Kdo to je: název, IČO, web. Osoba = Kontakt (jméno, email, telefon).</td></tr>
+  <tr><td><strong>2. PŘÍLEŽITOST</strong></td><td>Obchodní příležitost</td><td>Co chce, fáze vyjednávání, <strong>podklady (přílohy)</strong>, schůzky.</td></tr>
+  <tr><td><strong>3. NABÍDKA</strong></td><td>Nabídka</td><td>„Kolik to bude stát" — rozsah, cena, verze. Štěpán schvaluje.</td></tr>
+  <tr><td><strong>4. ZAKÁZKA + PROJEKT</strong></td><td>Zakázka, Projekt</td><td>Realizace softwaru. Projekt = práce týmu (vývoj, design).</td></tr>
 </table>
 
-<p>Hotové záznamy: Cards → pohled <strong>📅 Záznamy ze schůzek</strong>.</p>
+<p>✨ <strong>Karty jsou propojené.</strong> U klienta (Firma) automaticky vidíš všechny jeho příležitosti, nabídky i zakázky pohromadě. Pohled <strong>🏢 Klienti</strong> → klikni na firmu → záložky s navázanými kartami.</p>
 
 <hr/>
 
-<h2>2. Role — kdo za co odpovídá</h2>
+<h2>📖 PŘÍKLAD KROK ZA KROKEM (reálný případ)</h2>
 
-<p>U každé práce (karta, úkol, zakázka) rozlišujeme tři role:</p>
+<p><em>„V úterý přišel zaměstnanec jedné firmy, chce software na míru. Zítra máme schůzku o ceně a rozsahu."</em> Takhle to zapíšeš:</p>
+
+<ol>
+  <li><strong>Založ klienta:</strong> Cards → + → <strong>Firma</strong> → název firmy, IČO, web. Pak + → <strong>Kontakt</strong> → ten zaměstnanec (jméno, email, telefon), navázaný na firmu.</li>
+  <li><strong>Založ příležitost:</strong> Cards → + → <strong>Obchodní příležitost</strong> → název (např. „Web na míru — Novák s.r.o."), fáze = <em>kvalifikace</em>, navaž na firmu. Sem nahraješ <strong>podklady jako přílohy</strong> (zadání, poznámky) — tlačítko přílohy na kartě.</li>
+  <li><strong>Naplánuj zítřejší schůzku:</strong> v <strong>Kalendáři</strong> (ikona kalendáře vlevo) → nová událost → datum zítra, název „Schůzka Novák — cena a rozsah", pozvi účastníky. <em>Tady vidíš KDY schůzka je.</em></li>
+  <li><strong>Po schůzce zapiš výsledek:</strong> Cards → + → <strong>Zápis ze schůzky</strong> → datum, rozhodnutí (co jste dohodli), akční položky (kdo co udělá), navaž na příležitost. <em>Tady je CO se domluvilo a podklady.</em></li>
+  <li><strong>Pošli nabídku:</strong> Cards → + → <strong>Nabídka</strong> → rozsah, cena, navázaná na příležitost. Štěpán schválí (stav → ke schválení → odesláno).</li>
+  <li><strong>Klient kývne → zakázka:</strong> Cards → + → <strong>Zakázka</strong> + <strong>Projekt</strong> → realizace, tým dostane úkoly v Trackeru.</li>
+</ol>
+
+<p>👉 Kdykoli pak otevřeš klienta nebo příležitost, máš <strong>totální přehled</strong>: kdy byla/bude schůzka, o čem byla, jaké jsou podklady, v jaké fázi obchod je.</p>
+
+<hr/>
+
+<h2>📅 SCHŮZKA: kalendář vs. zápis</h2>
+
+<table>
+  <tr><th></th><th>Kdy použít</th><th>Co obsahuje</th></tr>
+  <tr><td><strong>Kalendář (událost)</strong></td><td>PŘED schůzkou — naplánovat</td><td>Kdy, kde, kdo přijde</td></tr>
+  <tr><td><strong>Zápis ze schůzky (karta)</strong></td><td>PO schůzce — zaznamenat</td><td>Rozhodnutí, akční kroky, podklady</td></tr>
+</table>
+
+<p>Hotové zápisy: Cards → pohled <strong>📅 Záznamy ze schůzek</strong>.</p>
+
+<hr/>
+
+<h2>👥 ROLE — kdo za co odpovídá</h2>
 
 <table>
   <tr><th>Role</th><th>Co dělá</th></tr>
   <tr><td><strong>Vlastník</strong></td><td>Odpovídá za výsledek. Hlídá, aby se práce dotáhla. Nemusí ji dělat sám.</td></tr>
-  <tr><td><strong>Řešitel</strong></td><td>Dělá samotnou práci. Reportuje vlastníkovi.</td></tr>
-  <tr><td><strong>Schvalovatel</strong></td><td>Potvrzuje a schvaluje (typicky Štěpán u nabídek, cen a zakázek). Bez jeho OK se neodesílá ven.</td></tr>
+  <tr><td><strong>Řešitel</strong></td><td>Dělá samotnou práci (vývojář, designer). Reportuje vlastníkovi.</td></tr>
+  <tr><td><strong>Schvalovatel</strong></td><td>Potvrzuje (typicky Štěpán u nabídek, cen a zakázek). Bez jeho OK se neodesílá ven.</td></tr>
 </table>
 
-<p><strong>Pravidlo:</strong> každá karta má vlastníka. Když vlastník chybí, práce zapadne — proto pohled „bez vlastníka" hlídá automatika.</p>
-
 <hr/>
 
-<h2>3. Obchodní workflow (kde co vzniká)</h2>
+<h2>💻 TÝM A VÝVOJ — Tracker (+ GitHub)</h2>
 
-<p>Celý obchodní cyklus v PRAUT:</p>
-
-<ol>
-  <li>Přijde poptávka → <strong>Lead/Poptávka</strong> (Cards → +)</li>
-  <li>Lead se kvalifikuje → <strong>Obchodní příležitost</strong></li>
-  <li>Píšeme nabídku → <strong>Nabídka</strong> (stav: draft → ke schválení)</li>
-  <li>Schvalovatel schválí → stav nabídky: ke schvaleni → odeslano</li>
-  <li>Klient kývne → <strong>Zakázka</strong> (stav: aktivni, propoj s nabídkou)</li>
-  <li>Fakturujeme → <strong>Faktura</strong> (propoj se zakázkou)</li>
-  <li>Realizujeme → <strong>Projekt</strong> (propoj se zakázkou)</li>
-  <li>Každá důležitá schůzka → <strong>Zapis ze schuzky</strong> (propoj v poli projekt/klient)</li>
-</ol>
-
-<hr/>
-
-<h2>4. Uložené pohledy v Cards</h2>
-
-<p>Vlevo v Cards jsou předdefinované filtry pro nejčastější situace:</p>
-
+<p>Práci vývojářů a designérů řídí <strong>Tracker</strong> (vlevo → Zakázky, projekty a úkoly → Tracker) — jako GitHub Issues:</p>
 <ul>
-  <li><strong>📅 Záznamy ze schůzek</strong> — otevřené záznamy ze schůzek</li>
-  <li><strong>⭐ Ke schválení</strong> — nabídky čekající na schválení</li>
-  <li><strong>📦 Aktivní zakázky</strong> — zakázky, které právě běží</li>
-  <li><strong>🔴 V riziku</strong> — zakázky s červeným/rizikovým health</li>
-  <li><strong>💰 Po splatnosti</strong> — faktury po termínu splatnosti</li>
+  <li>Každý úkol má <strong>vlastníka</strong> a <strong>deadline</strong>. Šablony: Feature, Bug, Client request, Sales follow-up, Review/QA, Ops/Admin.</li>
+  <li>Branch: <code>TSK-123-kratky-popis</code> · PR: <code>[TSK-123] Co jsem změnil</code></li>
+  <li><strong>GitHub propojení</strong> (až bude zapnuté): úkol v Trackeru ↔ issue/PR na GitHubu — designer i vývojář vidí, co kdo dělá, bez přepínání nástrojů.</li>
 </ul>
 
 <hr/>
 
-<h2>5. Tracker — pro vývojářský tým</h2>
-
-<p>Tracker je pro interní denní úkoly — jako GitHub Issues. Vlevo v panelu → Zakázky, projekty a úkoly → Tracker.</p>
-
-<ul>
-  <li>Každý issue má <strong>vlastníka</strong> a <strong>deadline</strong> (nebo jasný důvod proč ne)</li>
-  <li>Branch name: <code>TSK-123-kratky-popis</code></li>
-  <li>PR title: <code>[TSK-123] Co jsem změnil</code></li>
-  <li>Po mergi: aktualizuj stav issue v Trackeru</li>
-</ul>
-
-<hr/>
-
-<h2>6. Co patří kam</h2>
+<h2>🗂️ CO PATŘÍ KAM</h2>
 
 <table>
-  <tr><th>Info</th><th>Správné místo</th><th>NE sem</th></tr>
-  <tr><td>Schůzka s klientem / interní</td><td>Cards → Zapis ze schuzky</td><td>Chat, email</td></tr>
-  <tr><td>Klient, zakázka, nabídka</td><td>Cards (příslušný typ)</td><td>Chat, dokument</td></tr>
-  <tr><td>Firemní pravidlo, proces</td><td>Základ systemu → New Document</td><td>Card, chat</td></tr>
-  <tr><td>Know-how, rozhodnutí, návod</td><td>Dokumenty a znalostní báze</td><td>Card</td></tr>
-  <tr><td>Rychlá koordinace, dotaz</td><td>Chat</td><td>Card, Tracker</td></tr>
-  <tr><td>Incident, SLA</td><td>Cards → Incident</td><td>Email, chat only</td></tr>
-  <tr><td>Denní vývojářský úkol</td><td>Tracker</td><td>Chat</td></tr>
-  <tr><td>AI výstup bez lidské kontroly</td><td>Nikam!</td><td>—</td></tr>
+  <tr><th>Info</th><th>Správné místo</th></tr>
+  <tr><td>Klient, příležitost, nabídka, zakázka</td><td>Cards (příslušný typ)</td></tr>
+  <tr><td>Naplánovaná schůzka (kdy)</td><td>Kalendář</td></tr>
+  <tr><td>Výsledek schůzky (co se dohodlo)</td><td>Cards → Zápis ze schůzky</td></tr>
+  <tr><td>Podklady k obchodu</td><td>Přílohy na kartě Příležitost</td></tr>
+  <tr><td>Vývojářský / designérský úkol</td><td>Tracker</td></tr>
+  <tr><td>Firemní pravidlo, know-how</td><td>Documents → teamspace</td></tr>
+  <tr><td>Rychlá koordinace</td><td>Chat</td></tr>
 </table>
 
 <hr/>
 
-<h2>7. Teamspaces — co v nich najdeš</h2>
-
-<ul>
-  <li><strong>Základ systemu</strong> — tato příručka, HOME rozcestník, firemní procesy</li>
-  <li><strong>Obchod a CRM</strong> — email šablony, návody pro obchodní tým</li>
-  <li><strong>Zakázky, projekty a úkoly</strong> — metodiky projektového řízení, šablony</li>
-  <li><strong>Dokumenty a znalostní báze</strong> — know-how, technická rozhodnutí (ADR), návody</li>
-  <li><strong>Komunikace a spoluprace</strong> — delší protokoly ze schůzek</li>
-  <li><strong>Marketing a zákaznická péče</strong> — marketingové materiály, SLA pravidla</li>
-  <li><strong>Automatizace, AI a integrace</strong> — popis AI nástrojů, integrace</li>
-  <li><strong>Řízení firmy a reporting</strong> — KPI definice, reportingové šablony</li>
-</ul>
-
-<hr/>
-
-<h2>8. Bezpečnost a přístupy</h2>
+<h2>🔒 BEZPEČNOST</h2>
 
 <ul>
   <li>Public signup je <strong>vypnutý</strong> — nové lidi přidává admin přes invite (Settings → HR)</li>
   <li>Zálohy běží každý den 02:30</li>
-  <li>Admin: stepan@praut.cz</li>
-  <li>GitHub repo: PrautAutomation/huly-selfhost — technická dokumentace a skripty</li>
+  <li>Admin: stepan@praut.cz · GitHub repo: PrautAutomation/huly-selfhost</li>
 </ul>
 `
 

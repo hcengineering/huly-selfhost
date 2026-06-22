@@ -34,8 +34,14 @@ const MEMBERS = [
 const MARK = 'praut-ops' // značka spravovaných pohledů (v poli 'tags' dat)
 
 // SPEC: type label -> [{ name, attr (label), mode, values }]
-// Záměrně MINIMÁLNÍ — 5 pohledů pro každodenní potřeby PRAUT
+// 7 pohledů: 2 vstupní (klienti, příležitosti) + 5 provozních pro každodenní potřeby
 const SPEC = {
+  Firma: [
+    { name: '🏢 Klienti', attr: 'stav vztahu', mode: 'Nin', values: ['archiv'] }
+  ],
+  'Obchodni prilezitost': [
+    { name: '🤝 Aktivní příležitosti', attr: 'faze', mode: 'Nin', values: ['vyhrano', 'prohrano'] }
+  ],
   'Zapis ze schuzky': [
     { name: '📅 Záznamy ze schůzek', attr: 'stav', mode: 'Nin', values: ['uzavreno'] }
   ],

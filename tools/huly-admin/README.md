@@ -24,11 +24,12 @@ jen ručním klikáním v UI. Tyto skripty to dělají programově a opakovateln
 
 | Co | Stav |
 |---|---|
+| Typy karet | ✅ zjednodušeno 22 → **8** (Firma, Kontakt, Příležitost, Nabídka, Zakázka, Projekt, Schůzka, Faktura); 14 skryto přes `removed` (vratné) |
 | CardSpace "Schůzky" | ✅ aktivní (ID: `6a35824737b43c4db539494a`) |
-| 5 FilteredViews s emoji | ✅ aktivní (📅 Záznamy, ⭐ Ke schválení, 📦 Aktivní, 🔴 V riziku, 💰 Po splatnosti) |
+| 7 FilteredViews s emoji | ✅ 🏢 Klienti, 🤝 Aktivní příležitosti, 📅 Záznamy, ⭐ Ke schválení, 📦 Aktivní, 🔴 V riziku, 💰 Po splatnosti |
 | DEMO karty | ❌ smazány (workspace ukazuje jen reálná data) |
 | Chunter #praut-denni-prehled | ✅ vytvořen |
-| Návody sloučeny 6 → 2 | ✅ jen 🏠 HOME (rozcestník) + 📖 Příručka PRAUT Huly v Základ systemu |
+| Návody | ✅ 🏠 HOME (rozcestník) + 📖 Příručka — **4-krokový workflow** (Klient→Příležitost→Nabídka→Zakázka) + příklad krok za krokem |
 | "Co sem patří" v 7 teamspaces | ✅ aktivní |
 
 ### Tracker (2026-06-22)
@@ -81,6 +82,7 @@ ověřena jen shoda struktury s funkčním pilotem (dumpem).
 | `praut-clean-tracker.cjs` | Smaže testovací junk issues z Trackeru (cílí podle názvu). `--apply` smaže. |
 | `praut-tracker-templates.cjs` | Vytvoří/obnoví 6 šablon issues (Feature, Bug, Client request, Sales follow-up, Review/QA, Ops/Admin) v projektu Default. Idempotentní. `--apply` provede. |
 | `praut-build-processes.cjs` | Vytvoří/obnoví 3 automatizační procesy (Lead 7 dní, SLA 1 den, Zakázka v riziku) dle vzoru ručního pilotu. Idempotentní, pilot nedotčen. `--apply` provede. |
+| `praut-hide-types.cjs` | Skryje 14 nadbytečných typů karet (`removed=true`) — zůstane 8 workflow typů. Vratné `--restore`. Nemaže karty. `--apply` provede. |
 
 ## Důležitý detail formátu filtru
 
