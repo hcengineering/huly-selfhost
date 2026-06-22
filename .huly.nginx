@@ -157,7 +157,7 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
 
         rewrite ^/_github(/.*)$ $1 break;
-        proxy_pass http://github:3500/;
+        proxy_pass http://github:3500;
     }
 
     # location /_export {
