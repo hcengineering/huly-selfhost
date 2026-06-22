@@ -66,18 +66,18 @@ async function main () {
   console.log(`Mode: ${APPLY ? (RESTORE ? 'APPLY RESTORE (removed=false)' : 'APPLY HIDE (removed=true)') : 'DRY-RUN'}\n`)
   const tags = await client.findAll('card:class:MasterTag', {})
   let hit = 0
-  for (const label of HIDE_LABELS) {
-    const tag = tags.find(t => t.label === label)
-    if (!tag) { console.log(`  ⚠️  NENALEZEN: "${label}"`); continue }
+  for (const [id, name] of HIDE) {
+    const tag = tags.find(t => t._id === id)
+    if (!tag) { console.log(`  ⚠️  NENALEZEN: "${name}" (${id})`); continue }
     hit++
     if (APPLY) {
       await client.update(tag, { removed: TARGET })
-      console.log(`  ${TARGET ? '🙈 skryt' : '👁️  vrácen'}: "${label}"`)
+      console.log(`  ${TARGET ? '🙈 skryt' : '👁️  vrácen'}: "${name}"`)
     } else {
-      console.log(`  DRY-RUN: "${label}" → removed=${TARGET}`)
+      console.log(`  DRY-RUN: "${name}" → removed=${TARGET}  (nyní removed=${tag.removed})`)
     }
   }
-  console.log(`\n${APPLY ? 'Hotovo' : 'DRY-RUN hotov'} — ${hit}/${HIDE_LABELS.length} typů. Ponecháno 8 workflow typů. Žádná karta nesmazána.`)
+  console.log(`\n${APPLY ? 'Hotovo' : 'DRY-RUN hotov'} — ${hit}/${HIDE.length} typů. Ponecháno 8 workflow typů. Žádná karta nesmazána.`)
   await connection.close()
   process.exit(0)
 }
