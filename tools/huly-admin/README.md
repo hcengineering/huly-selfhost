@@ -39,11 +39,30 @@ jen ručním klikáním v UI. Tyto skripty to dělají programově a opakovateln
 | 6 šablon issues | ✅ vytvořeny přes API (`praut-tracker-templates.cjs`) |
 | Stavy projektu | ✅ ponecháno 5 defaultních (Backlog/Todo/In Progress/Done/Cancelled) — extra stavy = riziko na sdíleném ProjectType |
 
-### Pending — odloženo
+### Automatizace / Procesy (2026-06-22)
 
-| Co | Pozn. |
-|---|---|
-| 7 automatizačních pravidel | Plugin „Process" + chybí SMTP + zatím bez dat → nastavit až bude reálný provoz (`AUTOMATION_SETUP_MANUAL.md`) |
+Realizováno přes plugin „Process" (workflow engine). Akce = in-app upozornění (ToDo)
+adminovi — in-app funguje hned, e-mail až po SMTP. Pilot postaven ručně v UI
+(kvůli ověření offset formátu), zbytek replikován přes API (`praut-build-processes.cjs`).
+
+| Proces | Typ karty | Spouštěč | Stav |
+|---|---|---|---|
+| Nabídka uvízla ve schvalování | Nabidka | stav=ke schvaleni → +2 dny | ✅ pilot (UI) |
+| Lead bez aktivity 7 dní | Lead/Poptávka | +7 dní od startu | ✅ API |
+| SLA požadavku do 24 h | Zákaznický požadavek | +1 den od startu | ✅ API |
+| Zakázka v riziku | Zakazka | health=v riziku → ihned | ✅ API |
+
+**Nerealizováno (záměrně):**
+- *Incident v triage 2 h* — Huly neumí hodinové offsety (jen dny/týdny/měsíce).
+- *Zakázka obnova 30 dní* — pole „datum obnovy" je text, ne Date → offset nelze.
+- *Projekt v riziku* — typ Projekt nemá rizikové pole (přemapováno na Zakázka health).
+- *Karta bez vlastníka* — detekce prázdného pole netriviální.
+
+Příjemce všech upozornění je zatím Praut Admin (pole „schvalovatel" je text, ne odkaz
+na uživatele → nelze adresovat dynamicky).
+
+**⚠️ Neověřeno runtime:** že časovač reálně spustí akci po N dnech nelze bez čekání ověřit;
+ověřena jen shoda struktury s funkčním pilotem (dumpem).
 
 ## Skripty
 
