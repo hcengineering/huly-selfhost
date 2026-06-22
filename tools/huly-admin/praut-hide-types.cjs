@@ -23,13 +23,24 @@ const APPLY = process.argv.includes('--apply')
 const RESTORE = process.argv.includes('--restore')
 const TARGET = RESTORE ? false : true // removed = true/false
 
-// Typy ke skrytí (14) — nadbytečné pro firmu na software na míru.
+// Typy ke skrytí (14) — cílíme podle přesného _id (label má prefix embedded:embedded:).
 // Ponechané (NEskrývat): Firma, Kontakt, Obchodni prilezitost, Nabidka,
 //                        Zakazka, Projekt, Zapis ze schuzky, Faktura.
-const HIDE_LABELS = [
-  'Lead/Poptavka', 'Zakaznicky pozadavek', 'AI funkce', 'Automatizace',
-  'Change request', 'Incident', 'Integrace', 'KPI', 'Kampan', 'Milnik',
-  'Obsahova polozka', 'Predani', 'Riziko', 'Znalostni clanek'
+const HIDE = [
+  ['6a2bb7f8295c2f467fa1d502', 'Lead/Poptavka'],
+  ['6a2bb7f8295c2f467fa1d559', 'Zakaznicky pozadavek'],
+  ['6a2bb7f8295c2f467fa1d49c', 'AI funkce'],
+  ['6a2bb7f8295c2f467fa1d4a7', 'Automatizace'],
+  ['6a2bb7f8295c2f467fa1d4b3', 'Change request'],
+  ['6a2bb7f8295c2f467fa1d4d2', 'Incident'],
+  ['6a2bb7f8295c2f467fa1d4d5', 'Integrace'],
+  ['6a2bb7f8295c2f467fa1d4e6', 'KPI'],
+  ['6a2bb7f8295c2f467fa1d4f0', 'Kampan'],
+  ['6a2bb7f8295c2f467fa1d50e', 'Milnik'],
+  ['6a2bb7f8295c2f467fa1d529', 'Obsahova polozka'],
+  ['6a2bb7f8295c2f467fa1d532', 'Predani'],
+  ['6a2bb7f8295c2f467fa1d543', 'Riziko'],
+  ['6a2bb7f8295c2f467fa1d56e', 'Znalostni clanek']
 ]
 
 function env (file) {
