@@ -152,10 +152,11 @@ async function main () {
   console.log('  URL           :', FRONT_URL)
   console.log('Doporuč mu po přihlášení změnit heslo: Settings → Change password.')
   if (locked) {
-    console.log('\n⚠️  ÚČET JE ZAMČENÝ — než se Martin přihlásí, ODEMKNI ho na serveru tímto příkazem:')
-    console.log('  docker compose exec cockroach ./cockroach sql --certs-dir=certs --host=127.0.0.1:26257 \\')
-    console.log("    --database=defaultdb -e \"UPDATE global_account.account SET failed_login_attempts = 0 WHERE uuid = '" + accountUuid + "';\"")
-    console.log('  (resetuje počítadlo neúspěšných pokusů; jiný způsob odemčení bez SMTP/OTP není)')
+    console.log('\n⚠️  ÚČET JE ZAMČENÝ — než se Martin přihlásí, ODEMKNI ho na serveru (v /root/huly-selfhost):')
+    console.log('  docker compose exec -T cockroach ./cockroach sql \\')
+    console.log('    --url "$(grep \'^CR_DB_URL=\' .env | cut -d= -f2- | sed \'s#@cockroach:#@127.0.0.1:#\')?sslmode=disable" \\')
+    console.log("    -e \"UPDATE global_account.account SET failed_login_attempts = 0 WHERE uuid = '" + accountUuid + "';\"")
+    console.log('  (CockroachDB běží s --accept-sql-without-tls; resetuje počítadlo. Bez SMTP/OTP jiné odemčení není.)')
   }
   console.log('========================================')
   process.exit(0)
