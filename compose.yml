@@ -240,6 +240,8 @@ services:
       - GMAIL_URL=${GMAIL_URL:-}
       - TELEGRAM_URL=${TELEGRAM_URL:-}
       - STATS_URL=http${SECURE:+s}://${HOST_ADDRESS}/_stats
+      - PULSE_URL=http${SECURE:+s}://${HOST_ADDRESS}/_pulse
+      - PUSH_PUBLIC_KEY=${PUSH_PUBLIC_KEY}
       - UPLOAD_URL=/files
       - ELASTIC_URL=http://elastic:9200
       - COLLABORATOR_URL=ws${SECURE:+s}://${HOST_ADDRESS}/_collaborator
