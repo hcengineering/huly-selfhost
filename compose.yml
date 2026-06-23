@@ -105,27 +105,42 @@ services:
   #     - huly_net
   #   # Required by HulyPulse (push notifications / real-time updates)
 
-  # hulypulse:
-  #   image: ${HULY_IMAGE_REGISTRY:-hardcoreeng}/service_hulypulse:${HULY_PULSE_VERSION:-0.1.29}
-  #   ports:
-  #     - 8099:8099
-  #   environment:
-  #     - HULY_BIND_PORT=8099
-  #     - HULY_LOG=info
-  #     - HULY_TOKEN_SECRET=${SECRET}
-  #     - HULY_HEARTBEAT_TIMEOUT=60
-  #     - HULY_BACKEND=memory
-  #     # For Redis backend instead of in-memory (optional, e.g. multi-node setups):
-  #     # - HULY_BACKEND=redis
-  #     # - HULY_REDIS_MODE=direct
-  #     # - HULY_REDIS_URLS=redis://redis:6379
-  #   deploy:
-  #     resources:
-  #       limits:
-  #         memory: 512M
-  #   restart: unless-stopped
-  #   networks:
-  #     - huly_net
+  # HulyPulse — real-time presence/typing + call knock/invite. In-memory backend
+  # (no Redis needed for a single node). Internal only: reached as hulypulse:8099
+  # on huly_net (transactor) and via nginx /_pulse — no host port published.
+  hulypulse:
+    image: ${HULY_IMAGE_REGISTRY:-hardcoreeng}/service_hulypulse:${HULY_PULSE_VERSION:-0.1.29}
+    environment:
+      - HULY_BIND_PORT=8099
+      - HULY_LOG=info
+      - HULY_TOKEN_SECRET=${SECRET}
+      - HULY_HEARTBEAT_TIMEOUT=60
+      - HULY_BACKEND=memory
+      # For Redis backend instead of in-memory (optional, e.g. multi-node setups):
+      # - HULY_BACKEND=redis
+      # - HULY_REDIS_MODE=direct
+      # - HULY_REDIS_URLS=redis://redis:6379
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    restart: unless-stopped
+    networks:
+      - huly_net
+
+  # Web push notifications (browser/mobile). Needs VAPID keys in huly_v7.conf;
+  # transactor points to it via WEB_PUSH_URL. Internal only (no host port).
+  notification:
+    image: ${HULY_IMAGE_REGISTRY:-hardcoreeng}/notification:${HULY_VERSION}
+    environment:
+      - PORT=8091
+      - SOURCE=${EMAIL_FROM}
+      - STATS_URL=http://stats:4900
+      - PUSH_PUBLIC_KEY=${PUSH_PUBLIC_KEY}
+      - PUSH_PRIVATE_KEY=${PUSH_PRIVATE_KEY}
+    restart: unless-stopped
+    networks:
+      - huly_net
 
   rekoni:
     image: ${HULY_IMAGE_REGISTRY:-hardcoreeng}/rekoni-service:${HULY_VERSION}
@@ -154,6 +169,8 @@ services:
       - LAST_NAME_FIRST=${LAST_NAME_FIRST:-false}
       - QUEUE_CONFIG=redpanda:9092
       - MAIL_URL=http://mail:8097
+      - PULSE_URL=http://hulypulse:8099
+      - WEB_PUSH_URL=http://notification:8091
     restart: unless-stopped
     networks:
       - huly_net
@@ -223,6 +240,8 @@ services:
       - GMAIL_URL=${GMAIL_URL:-}
       - TELEGRAM_URL=${TELEGRAM_URL:-}
       - STATS_URL=http${SECURE:+s}://${HOST_ADDRESS}/_stats
+      - PULSE_URL=http${SECURE:+s}://${HOST_ADDRESS}/_pulse
+      - PUSH_PUBLIC_KEY=${PUSH_PUBLIC_KEY}
       - UPLOAD_URL=/files
       - ELASTIC_URL=http://elastic:9200
       - COLLABORATOR_URL=ws${SECURE:+s}://${HOST_ADDRESS}/_collaborator
