@@ -169,6 +169,8 @@ services:
       - LAST_NAME_FIRST=${LAST_NAME_FIRST:-false}
       - QUEUE_CONFIG=redpanda:9092
       - MAIL_URL=http://mail:8097
+      - PULSE_URL=http://hulypulse:8099
+      - WEB_PUSH_URL=http://notification:8091
     restart: unless-stopped
     networks:
       - huly_net
