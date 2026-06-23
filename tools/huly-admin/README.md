@@ -83,6 +83,7 @@ ověřena jen shoda struktury s funkčním pilotem (dumpem).
 | `praut-tracker-templates.cjs` | Vytvoří/obnoví 6 šablon issues (Feature, Bug, Client request, Sales follow-up, Review/QA, Ops/Admin) v projektu Default. Idempotentní. `--apply` provede. |
 | `praut-build-processes.cjs` | Vytvoří/obnoví 3 automatizační procesy (Lead 7 dní, SLA 1 den, Zakázka v riziku) dle vzoru ručního pilotu. Idempotentní, pilot nedotčen. `--apply` provede. |
 | `praut-hide-types.cjs` | Skryje 14 nadbytečných typů karet (`removed=true`) — zůstane 8 workflow typů. Vratné `--restore`. Nemaže karty. `--apply` provede. |
+| `praut-account-reset.cjs` | Reset hesla + vrácení uživatele do workspace `praut` (zapomenuté heslo). DRY-RUN bez `--apply`. Přes `restorePassword` (nastaví heslo + znovu ověří e-mail) + `assignWorkspace`. Pozor: zamčený účet (5+ neúspěšných loginů) jde odemknout jen DB UPDATE `global_account.account SET failed_login_attempts=0` na serveru — skript vypíše přesný příkaz. |
 
 ## Důležitý detail formátu filtru
 
