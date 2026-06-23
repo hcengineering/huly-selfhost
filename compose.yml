@@ -153,6 +153,7 @@ services:
       - STATS_URL=http://stats:4900
       - LAST_NAME_FIRST=${LAST_NAME_FIRST:-false}
       - QUEUE_CONFIG=redpanda:9092
+      - MAIL_URL=http://mail:8097
     restart: unless-stopped
     networks:
       - huly_net
@@ -185,6 +186,7 @@ services:
       - ACCOUNT_PORT=3000
       - QUEUE_CONFIG=redpanda:9092
       - DISABLE_SIGNUP=${DISABLE_SIGNUP:-}
+      - MAIL_URL=http://mail:8097
     restart: unless-stopped
     networks:
       - huly_net
@@ -297,6 +299,24 @@ services:
       - WEBHOOK_SECRET=${GITHUB_WEBHOOK_SECRET:-}
       - FRONT_URL=http${SECURE:+s}://${HOST_ADDRESS}
       - BOT_NAME=${GITHUB_APP_SLUG:-}[bot]
+    restart: unless-stopped
+    networks:
+      - huly_net
+
+  # Mail service — sends outbound system emails (invites, password reset,
+  # confirmations, notifications) via SMTP. Requires SMTP_* + EMAIL_FROM in
+  # huly_v7.conf (NOT committed). See "Mail Service" in README.md.
+  # account + transactor reach it internally via MAIL_URL=http://mail:8097.
+  mail:
+    image: ${HULY_IMAGE_REGISTRY:-hardcoreeng}/mail:${HULY_VERSION}
+    environment:
+      - PORT=8097
+      - SOURCE=${EMAIL_FROM}
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - SMTP_USERNAME=${SMTP_USERNAME}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
+      - SMTP_TLS_MODE=${SMTP_TLS_MODE:-upgrade}
     restart: unless-stopped
     networks:
       - huly_net
