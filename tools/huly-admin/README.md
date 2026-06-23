@@ -71,6 +71,7 @@ ověřena jen shoda struktury s funkčním pilotem (dumpem).
 |---|---|
 | `praut-typemap.cjs` | **Spusť jako první.** Generuje `/tmp/typemap.json` — runtime cache metadat všech 22 card typů (atributy, enum hodnoty, viewlety). Spusť znovu po každé změně datového modelu. |
 | `praut-spaces-list.cjs` | READ-ONLY výpis všech prostorů (název, třída, archived, _id). |
+| `praut-github-check.cjs` | READ-ONLY diagnostika GitHub integrace: instalace App (GithubIntegration), propojené účty (GithubAuthentication), viditelná repa a napojené Tracker projekty. Závěr říká, jestli sync běží. Nic nemění. |
 | `praut-archive-junk.cjs` | Archivuje/odarchivuje testovací junk prostory (cílí přesně podle _id). `--apply` provede, `--unarchive` vrátí. |
 | `praut-tune.cjs` | Drobné úpravy obsahu (např. přejmenování prázdného dokumentu). `--apply` provede. |
 | `praut-build-views.cjs` | Vytvoří 5 uložených pohledů (`FilteredView`) s emoji. Idempotentní (tag `praut-ops`). Vyžaduje `/tmp/typemap.json`. |
