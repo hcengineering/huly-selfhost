@@ -1,7 +1,16 @@
-# PRAUT Huly scheduled backup.
-# Runs daily at 02:30 Europe/Prague time and keeps scheduled backups for 14 days.
+# PRAUT Huly scheduled backup + health monitoring.
+# Backup runs daily at 02:30 Europe/Prague and keeps scheduled backups for 14 days.
+# Health check runs every 15 min (alert e-mail only on problem) + a daily 08:00 "all OK" summary.
+# ALERT_EMAIL_TO: set to the address that should receive alerts (edit below).
 SHELL=/bin/bash
 PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 TZ=Europe/Prague
+ALERT_EMAIL_TO=admin@praut.cz
 
 30 2 * * * cd /root/huly-selfhost && PRAUT_BACKUP_RETENTION_DAYS=14 scripts/praut-scheduled-backup.sh >/dev/null 2>&1
+
+# Health check: silent unless something is wrong.
+*/15 * * * * cd /root/huly-selfhost && scripts/praut-healthcheck.sh >/dev/null 2>&1
+
+# Daily heartbeat: one "all OK" e-mail in the morning (or a problem report).
+0 8 * * * cd /root/huly-selfhost && scripts/praut-healthcheck.sh --daily >/dev/null 2>&1
