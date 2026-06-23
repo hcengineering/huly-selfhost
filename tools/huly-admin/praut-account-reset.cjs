@@ -120,26 +120,43 @@ async function main () {
   if (!newPassword) {
     newPassword = 'Huly-' + crypto.randomBytes(6).toString('hex') + '-' + crypto.randomBytes(2).toString('hex').toUpperCase()
   }
-
   console.log('\n--- Provádím ---')
+  console.log('Nové heslo (zapiš si!) :', newPassword)
+
+  // restorePassword: setPassword + re-verify e-mailu proběhnou PŘED interním zkušebním loginem.
+  // Pokud je účet zamčený (failedLoginAttempts >= 5), ten interní login hodí PasswordLoginLocked,
+  // ALE heslo už je v tu chvíli nastavené. Chybu tedy odchytíme a jen označíme, že je třeba odemknout.
+  let locked = false
   const restoreToken = signToken({ extra: { restoreEmail: email }, account: accountUuid }, secret)
-  await getAccountClient(restoreToken).restorePassword(newPassword)
-  console.log('1) restorePassword ✅ — nastaveno nové heslo + znovu ověřen e-mail')
+  try {
+    await getAccountClient(restoreToken).restorePassword(newPassword)
+    console.log('1) restorePassword ✅ — nastaveno nové heslo + znovu ověřen e-mail')
+  } catch (e) {
+    if (/PasswordLoginLocked/.test(e && e.message ? e.message : String(e))) {
+      locked = true
+      console.log('1) restorePassword ⚠️ — heslo NASTAVENO, ale účet je ZAMČENÝ (moc neúspěšných loginů). Odemknout přes DB (viz níže).')
+    } else { throw e }
+  }
 
-  await toolClient.assignWorkspace(email, workspaceUuid, core.AccountRole.User)
-  console.log('2) assignWorkspace ✅ — uživatel přidán do workspace', WORKSPACE_URL, 'jako USER')
-
-  // --- Ověření ---
-  const verify = await toolClient.findPersonBySocialKey(socialKey, true)
-  console.log('\n--- Ověření ---')
-  console.log('účet existuje :', verify ? 'ANO ✅' : 'NE ❌')
+  try {
+    await toolClient.assignWorkspace(email, workspaceUuid, core.AccountRole.User)
+    console.log('2) assignWorkspace ✅ — uživatel ve workspace', WORKSPACE_URL, 'jako USER')
+  } catch (e) {
+    console.log('2) assignWorkspace ⚠️ —', e && e.message ? e.message : e)
+  }
 
   console.log('\n========================================')
-  console.log('HOTOVO. Předej uživateli:')
+  console.log('HOTOVO (heslo nastaveno). Předej uživateli:')
   console.log('  Login (e-mail):', email)
   console.log('  Dočasné heslo :', newPassword)
   console.log('  URL           :', FRONT_URL)
   console.log('Doporuč mu po přihlášení změnit heslo: Settings → Change password.')
+  if (locked) {
+    console.log('\n⚠️  ÚČET JE ZAMČENÝ — než se Martin přihlásí, ODEMKNI ho na serveru tímto příkazem:')
+    console.log('  docker compose exec cockroach ./cockroach sql --certs-dir=certs --host=127.0.0.1:26257 \\')
+    console.log("    --database=defaultdb -e \"UPDATE global_account.account SET failed_login_attempts = 0 WHERE uuid = '" + accountUuid + "';\"")
+    console.log('  (resetuje počítadlo neúspěšných pokusů; jiný způsob odemčení bez SMTP/OTP není)')
+  }
   console.log('========================================')
   process.exit(0)
 }
