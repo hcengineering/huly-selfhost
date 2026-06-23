@@ -186,6 +186,7 @@ services:
       - ACCOUNT_PORT=3000
       - QUEUE_CONFIG=redpanda:9092
       - DISABLE_SIGNUP=${DISABLE_SIGNUP:-}
+      - MAIL_URL=http://mail:8097
     restart: unless-stopped
     networks:
       - huly_net
