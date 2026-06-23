@@ -139,7 +139,7 @@ async function main () {
   }
 
   try {
-    await toolClient.assignWorkspace(email, workspaceUuid, core.AccountRole.User)
+    await toolClient.assignWorkspace(email, workspaceUuid, AccountRole.User)
     console.log('2) assignWorkspace ✅ — uživatel ve workspace', WORKSPACE_URL, 'jako USER')
   } catch (e) {
     console.log('2) assignWorkspace ⚠️ —', e && e.message ? e.message : e)
