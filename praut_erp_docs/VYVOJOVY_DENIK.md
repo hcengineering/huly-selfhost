@@ -237,3 +237,72 @@ Prakticky dalsi krok:
 3. Overit cron nebo zavest pravidelny backup schedule.
 4. Projit Huly UI podle `PRAUT_OWNER_ADMIN_KURZ.md`.
 5. Doplnit Cards pohledy, povinna pole a owner-ready kontrolni scenare.
+
+## Aktualizace 2026-06-23 - slouceni kontaktu a typy vztahu
+
+Co se delo dnes:
+
+- Opravili jsme chybu "Nelze sloucit globalni osoby" pri slucovani dvou kontaktu jednoho cloveka.
+  Priciny byly dve: (1) slucovany (zdrojovy) kontakt nesmi mit overene prihlaseni; (2) v okne slouceni
+  nelze jako zdroj vybrat zamestnance/ucet. Slucovat jde proto jen smerem "duplicitni kontakt -> hlavni
+  kontakt (zamestnanec)". Reseni je prohozeni smeru v okne slouceni. Pro pripad, kdy by oba kontakty mely
+  overene prihlaseni, vznikl pomocny nastroj `tools/huly-admin/praut-merge-persons.cjs`.
+- Vytvorili jsme 15 typu vztahu (relations), aby slo v Huly propojovat osoby, firmy a byznys karty
+  (napr. "pracuje pro / zamestnava", "kontaktni osoba", "dodavatel / odberatel", "materska / dcerina firma").
+  Drive bylo okno "Pridat vztah" prazdne, protoze zadne typy vztahu jeste neexistovaly. Nastroj
+  `tools/huly-admin/praut-create-relations.cjs` (idempotentni, DRY-RUN first).
+- Vznikl audit dokumentace `praut_erp_docs/AUDIT_DOKUMENTACE_2026-06-23.md`: co je zdokumentovane, co chybi
+  a jak v dokumentaci pokracovat.
+
+Co to znamena pro vas:
+
+- Slucovani duplicitnich kontaktu uz funguje - vzdy smerujte duplikat DO hlavniho kontaktu.
+- U kontaktu, firem, leadu, prilezitosti, nabidek, zakazek a projektu lze ted pridavat vztahy
+  (kontakt -> "Pridat vztah" -> vyber typ -> vyber druhou stranu).
+
+## 2026-06-25 - Shrnuti vlny vylepseni (23. az 25. 6. 2026)
+
+Tato sekce shrnuje praci za poslednich par dni, aby cely tym vedel, co se v systemu zmenilo.
+
+GitHub a e-maily:
+- Propojeni GitHub <-> Huly je zprovoznene (webhook uz odpovida spravne). Kodova prace na GitHubu
+  (issues, PR) se da navazat na Huly.
+- Zapnuli jsme odchozi firemni e-maily (sluzba SMTP): Huly uz umi posilat pozvanky, reset hesla a
+  notifikace. Vlastni schranky (cteni posty primo v Huly) resime az pozdeji.
+- Obnovili jsme pristup uzivateli, ktery zapomnel heslo. (Pozn.: "smazani uzivatele" v UI ucet
+  nesmaze, jen odebere clenstvi - proto vznikl rizeny offboarding nize.)
+
+Obchodni pipeline (Lead):
+- Lead funnel jsme pocestili na nase faze: Zajemce -> Kvalifikace -> Vyjednavani -> Priprava nabidky
+  -> Rozhodovani -> Uzavreni -> Vyhrano -> Prohrano. Existujici leady zustaly na svych mistech.
+- Rozhodnuti: obchodni pipeline vedeme v modulu Lead (prehledny funnel se sloupci podle faze).
+  Nabidky, zakazky, faktury a reporting zustavaji na kartach.
+
+Vizualni uklid:
+- Opravili jsme chybove ikonky (cervene "!") u nekterych vztahu - vznikaly u symetrickych vztahu se
+  stejnym nazvem na obou stranach ("kolega", "partner"). Prejmenovali jsme druhou stranu
+  (kolega/kolegove, partner/partneri). Vztahy ani propojeni se neztratily.
+- Ocistili jsme nazvy 8 hlavnich sekci dokumentace (doplnena diakritika, odstranene skryte znaky).
+
+Provoz a bezpecnost:
+- Nasadili jsme jednoducheho hlidace (monitoring): kazdych 15 minut kontroluje, ze sluzby bezi, web
+  odpovida, je misto na disku a zalohy jsou cerstve. Pri problemu posle e-mail; rano chodi souhrn.
+- Vznikl nastroj na rizeny offboarding zamestnance (viz nize "Co to znamena pro vas").
+- Zprovoznili jsme bezpecny SSH pristup na server.
+
+Priprava na migraci:
+- Sepsali jsme postupy (runbooky): jak prestehovat cely system na vlastni server bez ztraty dat a jak
+  nasazovat vlastni upravy kodu Huly. Najdes je v `docs/MIGRATION-RUNBOOK.md` a `docs/CUSTOM-BUILD.md`.
+
+Co to znamena pro vas:
+- Obchod: pouzivejte modul Lead jako hlavni prehled prilezitosti (funnel podle faze).
+- Kde co patri: ukoly a kdo co dela -> Tracker; obchodni pipeline -> Lead; firmy a lide -> Contacts;
+  evidence, rizika a faktury -> Cards (karty).
+- Odchod zamestnance neresime mazanim v UI - reknete spravci, provede se rizeny offboarding
+  (clovek hned ztrati pristup, 2 mesice je vratny, pak se ucet smaze, ale jeho prace zustane s
+  oznacenim "byvaly zamestnanec").
+
+Co bude nasledovat:
+- Stehovani na vlastni firemni server (chysta se). Tam pribude lokalni AI asistent, video hovory
+  (vlastni LiveKit) a dalsi prvky "mozku firmy".
+- Dorovnani diakritiky u zbyvajicich dokumentu pri re-importu behem migrace.

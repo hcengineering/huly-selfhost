@@ -12,6 +12,28 @@ Aktualni seznam nedodelku po full rollout importu 2026-06-12.
 - `VELYOS` a `sudety` zustaly mimo import PRAUT obsahu.
 - Finalni backup `/root/huly-selfhost/backup-praut/20260612-124435` ma PASS restore smoke.
 
+## Hotovo 2026-06-23 az 25 (vlna vylepseni)
+
+- GitHub <-> Huly propojeni zprovoznene (webhook 200). PR #10.
+- Odchozi firemni e-maily pres SMTP (Postmark): pozvanky, reset hesla, notifikace. PR #13.
+- Obnova pristupu uzivatele po zapomenutem hesle (`praut-account-reset.cjs`). PR #12.
+- Lead funnel pocestil na nase faze; Lead = obchodni pipeline. PR #18.
+- Opravene chybove ikonky u symetrickych vztahu (kolega, partner). PR #17.
+- Ocistene nazvy 8 hlavnich sekci dokumentace (diakritika, odstranene skryte znaky) + archiv prazdneho funnelu. PR #19.
+- Nasazeny lehky monitoring (hlidac sluzeb/webu/disku/zaloh + e-mail alert). PR #15, nasazeno na serveru 2026-06-25.
+- Nastroj na rizeny offboarding zamestnance (deaktivace + 2 mesice grace + priprava trvaleho vymazu). PR #21.
+- Runbooky na migraci a vlastni build kodu: `docs/MIGRATION-RUNBOOK.md`, `docs/CUSTOM-BUILD.md`. PR #20.
+- Zprovoznen SSH pristup na server (`ssh huly`).
+
+## Zbyva (vetsi kroky, vetsinou az na novem serveru)
+
+- Migrace na vlastni firemni server dle `docs/MIGRATION-RUNBOOK.md`.
+- Lokalni AI asistent (aibot + lokalni LLM), video hovory (Love + self-hosted LiveKit), push notifikace - nasadit po migraci. Pripravene PR #14, #16.
+- Mesicni hlidac trvaleho vymazu offboardovanych (cron) - zapnout na novem serveru.
+- Bezpecnostni uklid: rotace Postmark tokenu, GitHub client secret, smazat `gh.pem`.
+- Vycistit duplicitni osoby (Svanda Martin 2x, Hoyer Rene 2x) pres `praut-merge-persons.cjs`.
+- Dorovnat diakritiku u zbyvajicich ~80 dokumentu (nejcisteji pri re-importu behem migrace).
+
 ## Zbyva bez externich udaju
 
 1. Projit hotove prostredi v Huly UI s vlastnikem PRAUT.
