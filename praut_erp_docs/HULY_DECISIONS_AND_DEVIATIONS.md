@@ -292,16 +292,111 @@ Source/evidence:
 Supersedes:
 - None.
 
+## 2026-06-23 - Curated set of relation types (Associations)
+
+Decision:
+- Create a curated set of 15 relation types (`core:class:Association`) instead of an exhaustive all-classes-by-all-classes matrix: contact relations (Person<->Person, Person<->Organization, Organization<->Organization) plus Person/Organization links to business card types (Lead, Obchodni prilezitost, Nabidka, Zakazka, Projekt).
+
+Rationale:
+- The UI "Add relation" dialog was empty because no Association types existed.
+- An exhaustive matrix would flood the relation picker and confuse users; a curated business-meaningful set covers real CRM/delivery needs.
+- Existing card-to-card business-flow associations (7 found) are left untouched; the new types are additive.
+
+Impact:
+- Users can now link people, companies, and business cards via "Add relation".
+- New types are created idempotently (by classA+classB+nameA) via `tools/huly-admin/praut-create-relations.cjs`.
+
+Owner:
+- PRAUT owner (Stepan Manda) / admin.
+
+Source/evidence:
+- `tools/huly-admin/praut-create-relations.cjs`
+- `praut_erp_docs/VYVOJOVY_DENIK.md` (2026-06-23)
+
+Supersedes:
+- None.
+
+## 2026-06-23 - Outbound email via SMTP (Postmark); mailboxes deferred
+
+Decision:
+- Zapnout odchozi systemove e-maily (pozvanky, reset hesla, notifikace) pres mail sluzbu (Postmark, SMTP).
+- Vlastni schranky / cteni posty v Huly (mailboxes, Gmail integrace) odlozit.
+
+Rationale:
+- Odchozi e-maily odemykaji pozvanky a samoobsluzny reset hesla; plne schranky jsou samostatny vetsi krok.
+
+Source/evidence:
+- `compose.yml` (sluzba `mail`), `docs` (Mail Service), PR #13.
+
+## 2026-06-25 - Lead modul je obchodni pipeline
+
+Decision:
+- Obchodni pipeline vedeme v modulu Lead (funnel), nikoli pres kartu "Obchodni prilezitost".
+- Lead stupne pocestene (Zajemce, Kvalifikace, Vyjednavani, Priprava nabidky, Rozhodovani, Uzavreni, Vyhrano, Prohrano).
+- Nabidky, zakazky, faktury, reporting a rizika zustavaji na kartach.
+
+Rationale:
+- Vlastnik preferuje prehledny funnel; zaroven chceme zachovat navaznost na evidenci a fakturaci na kartach.
+
+Source/evidence:
+- `tools/huly-admin/praut-lead-setup.cjs`, PR #18; `OPERATIVNI_MODEL_HULY_TRACKER_GITHUB.md`.
+
+## 2026-06-25 - Video hovory: self-hosted LiveKit na vlastnim serveru
+
+Decision:
+- Audio/video (Love) pojede na vlastnim self-hosted LiveKit na novem firemnim serveru, ne na LiveKit Cloud.
+
+Rationale:
+- Pozadavek "vse u nas" - video neopusti firemni infrastrukturu.
+
+Source/evidence:
+- `compose.yml` (sluzba `love`), PR #16; `docs/CUSTOM-BUILD.md`.
+
+## 2026-06-25 - Rizeny offboarding zamestnance
+
+Decision:
+- "Smazani" zamestnance = okamzita deaktivace (ztrata pristupu), 2 mesice vratne, pak trvaly vymaz uctu.
+- Obsah, ktery vytvoril, zustava s jeho jmenem a oznacenim "byvaly zamestnanec".
+
+Rationale:
+- Bezpecny offboarding bez ztraty firemni prace; soucasne ciste odebrani pristupu a moznost navratu.
+
+Source/evidence:
+- `tools/huly-admin/praut-offboard-user.cjs`, PR #21.
+
+## 2026-06-25 - Lehky monitoring (bez Prometheus stacku)
+
+Decision:
+- Monitoring resime jednim skriptem v cronu (kontrola sluzeb/webu/disku/zaloh) + e-mail alert, ne Prometheus/Grafana.
+
+Rationale:
+- Pro jeden server a netechnickeho vlastnika je to dostatecne a bezudrzbove.
+
+Source/evidence:
+- `scripts/praut-healthcheck.sh`, `ops/praut-root.crontab`, PR #15 (nasazeno 2026-06-25).
+
+## 2026-06-25 - Migrace na vlastni server + vlastni build kodu
+
+Decision:
+- Tezke sluzby (lokalni AI, video, push) a vlastni upravy kodu se nasadi az na vlastnim firemnim serveru (chysta se).
+- Vlastni kod pres fork -> GitHub Actions -> vlastni registr -> deploy (prepnuti `HULY_IMAGE_REGISTRY`/`HULY_VERSION`).
+
+Rationale:
+- Stavajici VPS brzy opoustime; tezke a kodove veci ma smysl stavet rovnou na cilovem serveru.
+
+Source/evidence:
+- `docs/MIGRATION-RUNBOOK.md`, `docs/CUSTOM-BUILD.md`.
+
 ## Open Decisions
 
-These are unresolved and must be decided before production deployment:
+Tyto zustavaji k rozhodnuti:
 
-- Final Huly domain.
-- Test VPS IP and SSH user.
-- Public HTTPS vs VPN-only.
-- Admin email and backup admin email.
-- SMTP/SES provider for full invite and notification validation.
-- SSO/OIDC provider.
-- Hosting provider/server sizing.
-- Backup RPO/RTO.
-- Initial integration scope: GitHub, AI, Love/video, Gmail/Calendar.
+- SSO/OIDC provider (zatim neresime).
+- Backup RPO/RTO (cilove hodnoty).
+- Vlastni firemni schranky (mailboxes) - kdy a jak (zatim jen odchozi e-maily).
+- Specifikace noveho serveru (sizing, OS, IP, subdomena pro LiveKit) a lokalni AI engine.
+
+Vyreseno (drive otevrene):
+- SMTP/SES provider -> Postmark (odchozi e-maily). Domena zustava `huly.praut.cz`.
+- Hosting -> migrace na vlastni firemni server. Pristup -> SSH zprovoznen.
+- Rozsah integraci -> GitHub (hotovo), AI (lokalni, novy server), Love/video (self-hosted), Gmail/Calendar (pozdeji).
