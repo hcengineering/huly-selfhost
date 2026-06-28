@@ -24,8 +24,11 @@ else
     fi
 fi
 
+# Strip port from HOST_ADDRESS for server_name (nginx server_name doesn't include port)
+HOST_DOMAIN=$(echo "${HOST_ADDRESS}" | sed 's/:[0-9]*$//')
+
 # Update server_name and proxy_pass using sed
-sed -i.bak "s|server_name .*;|server_name ${HOST_ADDRESS};|" ./nginx.conf
+sed -i.bak "s|server_name .*;|server_name ${HOST_DOMAIN};|" ./nginx.conf
 sed -i.bak "s|proxy_pass .*;|proxy_pass http://${HTTP_BIND:-127.0.0.1}:${HTTP_PORT};|" ./nginx.conf
 
 # Update listen directive to either port 80 or 443, while preserving IP address
