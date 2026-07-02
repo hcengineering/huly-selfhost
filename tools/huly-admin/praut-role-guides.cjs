@@ -119,8 +119,7 @@ const GUIDES = [
 <h2>Co hlídám</h2>
 <ul>
   <li>Každý otevřený úkol má <strong>vlastníka</strong> a termín. Úkol bez vlastníka = přiřadím.</li>
-  <li>Leady/zakázky bez aktivity — řeším s obchodem.</li>
-  <li>Alerty z procesů (nabídka ke schválení, SLA, zakázka v riziku).</li>
+  <li>Leady bez aktivity přes týden — řeším s obchodem (vidím je v týdenním přehledu).</li>
 </ul>
 <h2>Moje povinnosti</h2>
 <ul>
