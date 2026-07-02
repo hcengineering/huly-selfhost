@@ -91,6 +91,11 @@ ověřena jen shoda struktury s funkčním pilotem (dumpem).
 | `praut-mgmt-docs.cjs` | **(T07/T08/T11)** Vytvoří/obnoví 3 dokumenty do privátních prostorů: „🏠 Přehled firmy" + „✅ Onboarding nováčka" (Řízení a reporting), „📈 Jak vedeme obchod" (Obchodní dokumenty). Idempotentní. `--apply` provede. |
 | `praut-merge-persons.cjs` | Sloučí duplicitní osoby (account-merge). `--search <jméno>` = read-only výpis kandidátů; `--primary <uuid\|jméno> --secondary <uuid\|jméno>` = DRY-RUN; `--apply` provede. Volí `mergeSpecifiedAccounts`/`mergeSpecifiedPersons` dle stavu. **Pozor:** account-merge NEpřepojí workspace `SocialIdentity.attachedTo` — po merge může zbýt chyba „Confirmed social identity is attached to the wrong person" (nutno přepojit identity na cílovou osobu). Nejdřív ZÁLOHA DB. |
 | `praut-create-relations.cjs` | Hromadně vytvoří typy vztahů (Association) mezi kartami/kontakty — řeší prázdné „Přidat vztah". DRY-RUN bez `--apply`. |
+| `praut-configure-apps.cjs` | **Zjednodušení menu:** vypne nepoužívané moduly per workspace (`core:class:PluginConfiguration.enabled=false`) — bez buildu, vratné (`--restore <pluginId>`), data zůstávají. DRY-RUN vypíše všechny pluginy + plán. Rozhodnutí 2026-07-08: obchod = Lead, karty/HR/drive/procesy… vypnuty. |
+
+> ⚠️ **Od 2026-07-08 jsou moduly Karty + Process vypnuté** (viz `praut-configure-apps.cjs` a DECISIONS).
+> Karty skripty (`praut-typemap`, `praut-build-views`, `praut-create-demo`, `praut-build-processes`,
+> `praut-hide-types`, `praut-create-spaces`) jsou dočasně irelevantní — před použitím moduly zapnout zpět.
 
 ## Důležitý detail formátu filtru
 
