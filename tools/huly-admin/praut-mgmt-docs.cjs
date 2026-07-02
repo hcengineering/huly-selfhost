@@ -55,23 +55,21 @@ const DOCS = [
   { space: 'Obchodní dokumenty', title: '📈 Jak vedeme obchod', html: `
 <h1>📈 Jak vedeme obchod</h1>
 <p>Závazný postup, aby obchodní pipeline žila a vedení vidělo reálný stav. Vše v privátních prostorech (vidí jen vedení/obchod).</p>
-<h2>Řetěz obchodního případu</h2>
-<p><strong>Lead → Nabídka → Zakázka → Faktura.</strong></p>
+<h2>Jedno místo: Lead</h2>
+<p><strong>Celý obchodní případ = jeden lead ve funnelu „Potencionální zákazník".</strong> Od prvního kontaktu po výhru/prohru. Žádné karty, žádné tabulky bokem — všechno (hodnota, nabídka, dohody, další krok) se píše přímo do leadu (popis + komentáře).</p>
 <ul>
-  <li><strong>Lead</strong> = nový zájemce ve funnelu „Potencionální zákazník". Zakládá obchodník hned, jak se ozve zájemce.</li>
-  <li><strong>Nabídka / Zakázka / Faktura</strong> = karty v prostoru <strong>Obchod</strong> (NE v obecném „Default"!).</li>
+  <li><strong>Nový zájemce</strong> → obchodník založí lead hned, jak se ozve. Lead odkazuje na firmu v Contacts.</li>
+  <li><strong>Nabídka</strong> → do leadu: klient, hodnota, termín, číslo nabídky (konvence <code>N-2026-001</code>); PDF nabídky jako příloha leadu.</li>
+  <li><strong>Výhra</strong> → fáze Vyhráno + založit realizační úkoly v Trackeru. <strong>Prohra</strong> → fáze Prohráno + 1 věta proč.</li>
 </ul>
 <h2>Fáze leadu</h2>
 <p>Zájemce → Kvalifikace → Vyjednávání → Příprava nabídky → Rozhodování → Uzavření → Vyhráno / Prohráno.</p>
 <h2>Pravidla</h2>
 <ul>
-  <li>Každý lead <strong>aktualizuj aspoň 1× týdně</strong>. Lead bez aktivity 7 dní spustí automatický alert.</li>
-  <li>U nabídky/zakázky vyplň: <strong>klient, hodnota, termín, vlastník</strong>.</li>
-  <li>Nová obchodní karta patří do prostoru <strong>Obchod</strong> — pokud vznikne v „Default", přesuň ji.</li>
-  <li>Číslování nabídek: doporučeně <code>N-2026-001</code> (konvence; automatické číslování přijde s novým serverem).</li>
+  <li>Každý lead <strong>aktualizuj aspoň 1× týdně</strong> (fáze + poznámka co se stalo). Leady bez aktivity vidí vedení v týdenním přehledu.</li>
+  <li>Každý lead má <strong>vlastníka a další krok</strong> — lead bez dalšího kroku je mrtvý lead.</li>
+  <li>Fakturace se zatím eviduje mimo Huly (účetnictví); po migraci na nový server zvážíme napojení.</li>
 </ul>
-<h2>Šablony (TODO vytvořit karty)</h2>
-<p>V prostoru Obchod vytvoř vzorové karty <strong>„ŠABLONA — Nabídka"</strong> a <strong>„ŠABLONA — Zakázka"</strong> s vyplněnými povinnými poli — nový obchodník je pak jen zkopíruje. (Zakládá vedení ručně; do budoucna lze skriptem.)</p>
 ` },
   { space: 'Řízení a reporting', title: '✅ Onboarding nováčka — checklist', html: `
 <h1>✅ Onboarding nováčka — checklist</h1>
