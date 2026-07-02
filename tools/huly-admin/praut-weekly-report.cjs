@@ -37,9 +37,11 @@ async function main () {
   const projects = await c.findAll('tracker:class:Project', {})
   const issues = await c.findAll('tracker:class:Issue', {})
   const statuses = await c.findAll('tracker:class:IssueStatus', {})
+  // Kategorie stavů (task:statusCategory:*): Won=Done, Lost=Cancelled/zrušeno, Active=In Progress,
+  // ToDo/UnStarted=nezačato. „Uzavřené" = Won|Lost; „rozpracované" = Active.
   const stCat = {}; for (const st of statuses) stCat[st._id] = String(st.category || '')
-  const isDone = (id) => /Completed|Cancelled/i.test(stCat[id] || '')
-  const isStarted = (id) => /Started/i.test(stCat[id] || '') && !/Unstarted/i.test(stCat[id] || '')
+  const isDone = (id) => /:(Won|Lost)$/i.test(stCat[id] || '')
+  const isStarted = (id) => /:Active$/i.test(stCat[id] || '')
   const projById = {}; for (const p of projects) projById[p._id] = p
   const projRows = []
   for (const p of projects) {
