@@ -54,13 +54,12 @@ async function main () {
     projRows.push({ name: clean(p.name), total: list.length, open: open.length, noOwner: noOwner.length, started: started.length, closedWeek: closedWeek.length, newWeek: newWeek.length })
   }
 
-  // --- Obchod: leady + karty ---
+  // --- Obchod: leady (Karty modul je vypnutý — obchod = jen Lead, rozhodnutí 2026-07-08) ---
   const leads = await c.findAll('lead:class:Lead', {})
   const leadStatuses = await c.findAll('core:class:Status', { ofAttribute: 'lead:attribute:State' })
   const lsName = {}; for (const st of leadStatuses) lsName[st._id] = clean(st.name)
   const leadByStage = {}; for (const l of leads) { const k = lsName[l.status] || '—'; leadByStage[k] = (leadByStage[k] || 0) + 1 }
-  const cards = await c.findAll('card:class:Card', {})
-  const newCardsWeek = cards.filter((cd) => (cd.createdOn || 0) >= weekAgo).length
+  const newLeadsWeek = leads.filter((l) => (l.createdOn || 0) >= weekAgo).length
 
   // --- Lidé ---
   const persons = await c.findAll('contact:class:Person', {})
