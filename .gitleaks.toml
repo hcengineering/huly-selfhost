@@ -19,6 +19,5 @@ paths = [
 # Huly interni _id (24 hex znaku, napr. matchKey v praut-build-processes.cjs) nejsou tajemstvi.
 # Nase realna tajemstvi maji jiny format (Postmark UUID, SMTP hesla) -> tento pattern je nezachyti.
 regexes = [
-  '''^[0-9a-f]{24}$''',
+  '''[0-9a-f]{24}''',
 ]
-regexTarget = "match"
