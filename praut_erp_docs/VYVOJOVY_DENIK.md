@@ -4,11 +4,18 @@ Tento denik je psany pro majitele firmy, vedeni a bezne cleny tymu. Ma jednoduse
 
 Denik neobsahuje hesla, tokeny, API klice, tajne odkazy ani hodnoty nastaveni.
 
-## Kde jsme ted
+## Kde jsme ted (aktualizovano 2026-07-02)
 
-Jsme ve fazi pripravy kontrolovaneho testu. Projektova dokumentace PRAUT existuje a byl vybrany smer: Huly Self-Hosted jako uzavrene interni prostredi pro firmu.
+**Huly bezi produkcne** na https://huly.praut.cz (workspace `praut`) a firma v nem denne pracuje.
+Smer: Huly Self-Hosted jako uzavrene interni prostredi pro PRAUT. Provozni zaklad je hotovy —
+16 sluzeb, naplneny workspace (projekty, dokumenty, kontakty, obchodni pipeline), denni zalohy,
+GitHub integrace, odchozi e-maily (Postmark), lehky monitoring.
 
-Nejde jeste o produkcni provoz. Dalsi doporuceny krok je pripravit bezpecne testovaci hriste na testovacim VPS serveru, kde se overi zakladni chod systemu bez realnych klientskych dat.
+Aktualni prehled zmen je v `CHANGELOG.md`, seznam nedodelku v `PRAUT_REMAINING_WORK.md`,
+roadmapa vylepseni v `../docs/improvements/ROADMAP-2026-07.md`.
+
+> Poznamka: starsi zaznamy nize popisuji fazi pripravy a testu — jsou ponechany jako historie.
+> Aktualni stav je „produkcni provoz", ne „priprava testu".
 
 ## Co budujeme
 
