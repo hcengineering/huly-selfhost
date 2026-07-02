@@ -83,7 +83,7 @@ const DOCS = [
   <li>☐ <strong>Ověřit přístupy</strong> — vidí jen to, co má (viz <code>--list-roles</code>).</li>
   <li>☐ <strong>Poslat odkazy</strong>: Rychlý start + jeho role návod (👨‍💻/💼/📣/👔).</li>
   <li>☐ <strong>Přidat do kanálu</strong> #praut-denni-prehled (má autoJoin — mělo by se stát samo).</li>
-  <li>☐ <strong>Zařadit do HR oddělení</strong> (Vývoj / Obchod / Marketing / Vedení).</li>
+  <li>☐ <strong>Přidat do týmu v role návodu</strong> — poslat mu odkaz na jeho tým (HR modul je vypnutý, tým = role + prostory).</li>
   <li>☐ <strong>První úkol v Trackeru</strong> — vlastník = nováček (ať si systém osahá).</li>
 </ul>
 <h2>Odchod zaměstnance</h2>
