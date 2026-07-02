@@ -3,8 +3,9 @@
 // Klient (plugins/client-resources) odfiltruje model txy vypnutých pluginů → aplikace zmizí z menu
 // všem uživatelům (UI se jim samo přenačte). Data se NEmažou; zpětné zapnutí = --restore.
 //
-// Rozhodnutí Štěpána 2026-07-08: nechat jen Tracker · Lead · Dokumenty · Chat · Contacts · Kalendář · GitHub.
-// Vypnout: karty, process, HR, drive, board, training, survey, QMS docs, inventory, recruit, products,
+// Rozhodnutí Štěpána 2026-07-08: nechat Tracker · Lead · Dokumenty · QMS · Drive · Chat · Contacts ·
+// Kalendář · GitHub. (QMS a Drive vráceny na jeho žádost tentýž den.)
+// Vypnout: karty, process, HR, board, training, survey, inventory, recruit, products,
 // questions, test management, telegram, gmail, bitrix, beta chat, love (Love až na novém serveru).
 //
 //   node praut-configure-apps.cjs                 DRY-RUN: vypíše všechny PluginConfiguration + co by vypnul
