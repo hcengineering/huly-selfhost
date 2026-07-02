@@ -31,11 +31,9 @@ const DISABLE = [
   'card',            // Karty — nepoužívané, duplicita s Lead/Tracker (rozhodnutí 2026-07-08)
   'process',         // alert procesy jedou na kartách → bez karet mrtvé (vrátí se na novém serveru)
   'hr',              // oddělení/dovolené — nepoužívané
-  'drive',           // úložiště — nepoužívané (hidden, v UI Konfigurovat není)
   'board',           // kanban Board — nepoužívaný
   'training',        // školení modul — nepoužívaný
   'survey',          // ankety — nepoužívané
-  'documents',       // QMS Controlled Documents — nepoužívané (POZOR: 'document' = teamspaces ZŮSTÁVÁ)
   'inventory',       // sklad — nepoužívaný
   'recruit',         // nábor — nepoužívaný
   'products',        // produkty — nepoužívané
