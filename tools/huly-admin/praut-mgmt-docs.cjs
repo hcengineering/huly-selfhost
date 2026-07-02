@@ -27,8 +27,7 @@ const DOCS = [
 <p>Rozcestník pro vedení — odsud se doklikáš na vše podstatné. (Odkazy otevírej v Huly; některé moduly najdeš v levém panelu.)</p>
 <h2>Obchod</h2>
 <ul>
-  <li><strong>Lead</strong> — obchodní pipeline (funnel „Potencionální zákazník"), fáze Zájemce → … → Vyhráno/Prohráno.</li>
-  <li><strong>Karty → Obchod</strong> — příležitosti, nabídky, zakázky, faktury (privátní, jen vedení/obchod).</li>
+  <li><strong>Lead</strong> — CELÝ obchod na jednom místě (funnel „Potencionální zákazník"), fáze Zájemce → … → Vyhráno/Prohráno. Hodnoty a dohody přímo v leadu.</li>
   <li>Návod: <em>📈 Jak vedeme obchod</em> (v „Obchodní dokumenty").</li>
 </ul>
 <h2>Práce a projekty</h2>
