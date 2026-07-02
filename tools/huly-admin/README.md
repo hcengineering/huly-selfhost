@@ -85,6 +85,9 @@ ověřena jen shoda struktury s funkčním pilotem (dumpem).
 | `praut-build-processes.cjs` | Vytvoří/obnoví 3 automatizační procesy (Lead 7 dní, SLA 1 den, Zakázka v riziku) dle vzoru ručního pilotu. Idempotentní, pilot nedotčen. `--apply` provede. |
 | `praut-hide-types.cjs` | Skryje 14 nadbytečných typů karet (`removed=true`) — zůstane 8 workflow typů. Vratné `--restore`. Nemaže karty. `--apply` provede. |
 | `praut-account-reset.cjs` | Reset hesla + vrácení uživatele do workspace `praut` (zapomenuté heslo). DRY-RUN bez `--apply`. Přes `restorePassword` (nastaví heslo + znovu ověří e-mail) + `assignWorkspace`. Pozor: zamčený účet (5+ neúspěšných loginů) jde odemknout jen DB UPDATE `global_account.account SET failed_login_attempts=0` na serveru — skript vypíše přesný příkaz. |
+| `praut-weekly-report.cjs` | **(T06)** Vygeneruje dokument „📊 Týdenní přehled — DATUM" do teamspace „Řízení a reporting" (jen vedení): stav projektů, obchod, lidé, red flags za 7 dní. DRY-RUN vytiskne do konzole. Cron: `praut-weekly-report.sh` (pondělí 07:00). |
+| `praut-role-guides.cjs` | **(T09)** Vytvoří/obnoví 4 návody „můj den v Huly" per role (vývojář→sdílené, obchodník→Obchodní dokumenty, markeťák→Marketing, vedoucí→Řízení a reporting). Idempotentní. `--apply` provede. |
+| `praut-daily-channel.cjs` | **(T10)** Oživí kanál #praut-denni-prehled: přidá všechny aktivní zaměstnance, zapne autoJoin, nastaví topic s denním ritualem. Jen přidává členy. `--apply` provede. |
 
 ## Důležitý detail formátu filtru
 
