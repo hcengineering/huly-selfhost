@@ -101,7 +101,7 @@ ${flagsHtml}
 
   console.log(`Mode: ${APPLY ? 'APPLY' : 'DRY-RUN'} | ${today}`)
   console.log('--- projekty ---'); projRows.forEach((r) => console.log(`  ${r.name}: open=${r.open} inProgress=${r.started} bezVlastnika=${r.noOwner} zavreno7d=${r.closedWeek} nove7d=${r.newWeek}`))
-  console.log('--- obchod ---', JSON.stringify(leadByStage), 'noveKarty7d=' + newCardsWeek)
+  console.log('--- obchod ---', JSON.stringify(leadByStage), 'noveLeady7d=' + newLeadsWeek)
   console.log('--- lidé --- aktivní=' + active, newPeople.length ? 'noví=' + newPeople.join(',') : '')
   console.log('--- red flags ---'); flags.forEach((f) => console.log('  ⚠️ ' + f)); if (!flags.length) console.log('  (žádné)')
 
