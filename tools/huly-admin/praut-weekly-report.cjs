@@ -94,7 +94,7 @@ ${flagsHtml}
 <h2>📈 Obchod</h2>
 <p>Leady podle fáze:</p>
 <table><thead><tr><th>Fáze</th><th>Počet</th></tr></thead><tbody>${leadTable}</tbody></table>
-<p>Nové obchodní karty za týden: <strong>${newCardsWeek}</strong> · leadů celkem: <strong>${leads.length}</strong></p>
+<p>Nové leady za týden: <strong>${newLeadsWeek}</strong> · leadů celkem: <strong>${leads.length}</strong></p>
 <h2>👥 Lidé</h2>
 <p>Aktivních zaměstnanců: <strong>${active}</strong>${newPeople.length ? ' · noví za týden: ' + esc(newPeople.join(', ')) : ''}</p>
 `.trim()
