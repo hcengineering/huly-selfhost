@@ -63,18 +63,18 @@ const GUIDES = [
 <h2>Kam píšu co</h2>
 <ul>
   <li><strong>Nový zájemce</strong> → nový <strong>lead</strong> ve funnelu, fáze <em>Zájemce/Kvalifikace</em>.</li>
-  <li><strong>Nabídka / zakázka / faktura</strong> → <strong>karta</strong> v prostoru <strong>Obchod</strong> (ne v Default!).</li>
-  <li><strong>Firmy a kontakty</strong> → <strong>Contacts</strong>.</li>
+  <li><strong>Nabídka, hodnota, termín, dohody</strong> → přímo do leadu (popis + komentáře). <strong>Celý obchodní případ žije v jednom leadu</strong> — žádná jiná evidence.</li>
+  <li><strong>Firmy a kontakty</strong> → <strong>Contacts</strong> (lead na firmu odkazuje).</li>
 </ul>
 <h2>Moje povinnosti</h2>
 <ul>
   <li>Každý lead posouvám fázemi: <em>Zájemce → Kvalifikace → Vyjednávání → Příprava nabídky → Rozhodování → Uzavření → Vyhráno/Prohráno</em>.</li>
-  <li><strong>Aktualizuji aspoň 1× týdně.</strong> Lead bez aktivity 7 dní spustí alert.</li>
-  <li>U nabídky/zakázky vyplním klienta, hodnotu, termín a vlastníka.</li>
+  <li><strong>Aktualizuji aspoň 1× týdně</strong> (fáze + poznámka co se stalo).</li>
+  <li>U nabídky do leadu vyplním: klient, hodnota, termín, další krok.</li>
 </ul>
 <h2>Co nesmím</h2>
 <ul>
-  <li>Nechávat obchodní data v obecném prostoru „Default" — patří do <strong>Obchod</strong> (vidí jen vedení/obchod).</li>
+  <li>Vést obchodní případy mimo Lead (tabulky, e-mail, hlava) — vedení pak nevidí stav.</li>
   <li>Slibovat klientovi bez schválení vedení.</li>
 </ul>
 <h2>Potřebuju pomoc</h2>
