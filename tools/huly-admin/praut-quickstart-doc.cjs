@@ -52,7 +52,7 @@ const CONTENT = `
 </ul>
 
 <h2>Kdo co vidí</h2>
-<p>Dokumentaci, kontakty a své projekty vidí všichni. <strong>Ceny, nabídky, faktury a obchodní pipeline vidí jen vedení a obchod.</strong></p>
+<p>Dokumentaci, kontakty a své projekty vidí všichni. <strong>Obchodní pipeline (Lead) vidí jen vedení a obchod.</strong></p>
 
 <h2>Potřebuju pomoc</h2>
 <p>Napiš správci (Štěpán / Martin) v chatu, nebo do kanálu <strong>#praut-denni-prehled</strong>.</p>
