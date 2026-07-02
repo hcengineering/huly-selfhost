@@ -16,7 +16,9 @@ paths = [
   '''docs/GITHUB-INTEGRATION-SETUP\.md''',
   '''guides/smtp-troubleshooting\.md''',
 ]
-# Huly interni _id (24-hex) v admin skriptech nejsou tajemstvi (napr. matchKey v praut-build-processes.cjs).
+# Huly interni _id (24 hex znaku, napr. matchKey v praut-build-processes.cjs) nejsou tajemstvi.
+# Nase realna tajemstvi maji jiny format (Postmark UUID, SMTP hesla) -> tento pattern je nezachyti.
 regexes = [
-  '''matchKey: '[0-9a-f]{24}[0-9a-f]*'?''',
+  '''^[0-9a-f]{24}$''',
 ]
+regexTarget = "match"
