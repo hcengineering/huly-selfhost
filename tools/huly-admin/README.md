@@ -88,6 +88,8 @@ ověřena jen shoda struktury s funkčním pilotem (dumpem).
 | `praut-weekly-report.cjs` | **(T06)** Vygeneruje dokument „📊 Týdenní přehled — DATUM" do teamspace „Řízení a reporting" (jen vedení): stav projektů, obchod, lidé, red flags za 7 dní. DRY-RUN vytiskne do konzole. Cron: `praut-weekly-report.sh` (pondělí 07:00). |
 | `praut-role-guides.cjs` | **(T09)** Vytvoří/obnoví 4 návody „můj den v Huly" per role (vývojář→sdílené, obchodník→Obchodní dokumenty, markeťák→Marketing, vedoucí→Řízení a reporting). Idempotentní. `--apply` provede. |
 | `praut-daily-channel.cjs` | **(T10)** Oživí kanál #praut-denni-prehled: přidá všechny aktivní zaměstnance, zapne autoJoin, nastaví topic s denním ritualem. Jen přidává členy. `--apply` provede. |
+| `praut-merge-persons.cjs` | Sloučí duplicitní osoby (account-merge). `--search <jméno>` = read-only výpis kandidátů; `--primary <uuid\|jméno> --secondary <uuid\|jméno>` = DRY-RUN; `--apply` provede. Volí `mergeSpecifiedAccounts`/`mergeSpecifiedPersons` dle stavu. **Pozor:** account-merge NEpřepojí workspace `SocialIdentity.attachedTo` — po merge může zbýt chyba „Confirmed social identity is attached to the wrong person" (nutno přepojit identity na cílovou osobu). Nejdřív ZÁLOHA DB. |
+| `praut-create-relations.cjs` | Hromadně vytvoří typy vztahů (Association) mezi kartami/kontakty — řeší prázdné „Přidat vztah". DRY-RUN bez `--apply`. |
 
 ## Důležitý detail formátu filtru
 
