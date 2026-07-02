@@ -49,8 +49,8 @@ const DOCS = [
   <li><strong>Firemní dokumentace HULY</strong> — sdílené návody, pravidla, rychlý start.</li>
   <li>Návody per role (vývojář/obchodník/markeťák/vedoucí).</li>
 </ul>
-<h2>Co zatím nejde (přijde s novým serverem)</h2>
-<p>Pokročilé uložené pohledy „Bez vlastníka"/„Moje"/„Obnovy do 60 dní" a AI funkce — vyžadují úpravu kódu, plánováno po migraci na vlastní server.</p>
+<h2>Zjednodušení systému (2026-07-08)</h2>
+<p>Vypnuli jsme nepoužívané moduly (Karty, HR, Drive, Boards, procesy…) — <strong>obchod = Lead, práce = Tracker, znalosti = Dokumenty, komunikace = Chat</strong>. Data vypnutých modulů zůstávají v DB; moduly jde kdykoliv zapnout zpět (Nastavení → Konfigurovat). Automatické alerty a AI funkce přijdou po migraci na vlastní server.</p>
 ` },
   { space: 'Obchodní dokumenty', title: '📈 Jak vedeme obchod', html: `
 <h1>📈 Jak vedeme obchod</h1>
