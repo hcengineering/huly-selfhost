@@ -28,6 +28,37 @@ Supersedes:
 - <previous decision or none>
 ```
 
+## 2026-07-08 - Zjednoduseni: vypnout nepouzivane moduly, obchod = Lead
+
+Decision:
+- Vypnout per-workspace moduly (core:class:PluginConfiguration.enabled=false, vratne, bez buildu):
+  card, process, hr, drive, board, training, survey, documents (QMS), inventory, recruit, products,
+  questions, testManagement, telegram, gmail, bitrix, chat (beta), love (zapne se na novem serveru).
+- Ponechat: tracker, lead, document (teamspaces), chunter, contact (system), calendar, github.
+- Obchod se vede VYHRADNE v modulu Lead (cely pripad = jeden lead; hodnota/nabidka/dohody do leadu).
+  Karty se prestavaji pouzivat; alert procesy (bezely na kartach) pozastaveny do noveho serveru.
+
+Rationale:
+- Tym realne pouziva jen Tracker, Lead, Dokumenty, Chat. Duplicita Karty vs Lead vs Tracker matla
+  (stejna vec sla delat na 3 mistech); 20+ modulu v menu je pro startup neprehlednych.
+
+Impact:
+- Leve menu ma ~7 polozek. Data vypnutych modulu zustavaji v DB; toggle je vratny
+  (Nastaveni -> Konfigurovat, nebo tools/huly-admin/praut-configure-apps.cjs --restore <id>).
+- praut-weekly-report.cjs pocita obchod jen z leadu. Karty skripty (typemap/build-views/create-demo/
+  build-processes/hide-types) jsou docasne irelevantni.
+- Navody (Rychly start, role, Jak vedeme obchod, Prehled firmy) prepsany na jeden-domov-per-vec.
+
+Owner:
+- Stepan Manda (rozhodnuti), Claude (provedeni).
+
+Source/evidence:
+- tools/huly-admin/praut-configure-apps.cjs; mechanismus: plugins/setting-resources Configure.svelte,
+  plugins/client-resources returnUITxes (filtruje model txy vypnutych pluginu).
+
+Supersedes:
+- Cast rozhodnuti "Cards = evidence/reporting/fakturace" z OPERATIVNI_MODEL (obchod nyni Lead-only).
+
 ## 2026-06-10 - Bind `kvs` port to localhost only
 
 Decision:
