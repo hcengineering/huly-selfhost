@@ -64,3 +64,10 @@ pipeline** (account↔transactor cesta + render dropdownu).
 - Re-merge upstream — držet zásahy malé a komentované.
 - Per-workspace ID prostorů → konfigurace.
 - Bez build loopu netestovatelné → kód psát až s pipeline.
+- **Sloučené/duplicitní osoby (poznatek 2026-07-02):** `doJoinByInvite` na workspace straně volá
+  `ensureEmployee` → `ensureEmployeeForPerson`, které vyhodí „Confirmed social identity is attached
+  to the wrong person", pokud má účet ověřenou social identitu připojenou k jiné (staré) osobě.
+  Auto-přiřazení při joinu proto musí počítat s tím, že account-merge **NEpřepojuje** workspace
+  `contact:class:SocialIdentity.attachedTo` — před spoléháním na `personUuid`→prostory je nutné mít
+  identity srovnané (viz `praut-merge-persons.cjs` + přepojení identit). Jinak nový člen po přijetí
+  pozvánky spadne na error screen místo přiřazení do prostorů.
