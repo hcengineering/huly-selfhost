@@ -4,10 +4,19 @@
 useDefault = true
 
 [allowlist]
-description = "Upstream example hodnoty (ne PRAUT tajemství)"
-# nginx/docker-compose.yml je upstream ukazkovy soubor (hcengineering/huly-selfhost,
-# autor egavrilov@ebay.com, 2024) s example SERVER_SECRET hodnotami. Na main uz neexistuje,
-# zustava jen v git historii a je verejne dostupny v upstream repu -> neni to unik PRAUT tajemstvi.
+description = "Upstream example a dokumentacni placeholdery (ne PRAUT tajemstvi)"
+# Overeno 2026-07-02 (ukol T20): zadny z techto nalezu neni skutecne PRAUT tajemstvi.
+# - nginx/docker-compose.yml, nginx/setup.sh = upstream ukazky (egavrilov@ebay.com, 2024),
+#   verejne v hcengineering/huly-selfhost.
+# - docs/GITHUB-INTEGRATION-SETUP.md, guides/smtp-troubleshooting.md = dokumentacni priklady
+#   s placeholdery (123456, xxxx, your-smtp-server.com), ne realne hodnoty.
 paths = [
   '''nginx/docker-compose\.yml''',
+  '''nginx/setup\.sh''',
+  '''docs/GITHUB-INTEGRATION-SETUP\.md''',
+  '''guides/smtp-troubleshooting\.md''',
+]
+# Huly interni _id (24-hex) v admin skriptech nejsou tajemstvi (napr. matchKey v praut-build-processes.cjs).
+regexes = [
+  '''matchKey: '[0-9a-f]{24}[0-9a-f]*'?''',
 ]
