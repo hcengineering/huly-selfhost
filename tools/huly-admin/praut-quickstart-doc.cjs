@@ -24,25 +24,25 @@ const CONTENT = `
 <h1>🚀 Rychlý start — jak pracovat v Huly</h1>
 <p>Huly je náš firemní systém. Všechno o úkolech, obchodu, klientech a zakázkách je <strong>tady</strong>, ne v e-mailu. Tahle stránka tě nastartuje za 5 minut.</p>
 
-<h2>Kde co dělám</h2>
+<h2>Začni den (3 kroky, 2 minuty)</h2>
+<ol>
+  <li><strong>Inbox</strong> (zvoneček nahoře) — co mi přišlo, kdo mě zmínil.</li>
+  <li><strong>Tracker → Moje</strong> — co mám rozdělané a do kdy. Hotovo? Posuň stav: <em>Todo → In Progress → Done</em>.</li>
+  <li>Do <strong>#praut-denni-prehled</strong> napiš 1 větu: co dnes dělám / co mě blokuje.</li>
+</ol>
+
+<h2>Kde co dělám (každá věc má jeden domov)</h2>
 <ul>
   <li><strong>Úkoly (co mám udělat)</strong> → <strong>Tracker</strong>, projekt <strong>PULS</strong>. Každá práce = jeden úkol.</li>
-  <li><strong>Obchodní pipeline</strong> → <strong>Lead</strong> (funnel podle fází). <em>(vidí vedení / obchod)</em></li>
+  <li><strong>Obchod (celý — zájemci, nabídky, dohody)</strong> → <strong>Lead</strong> (funnel podle fází). <em>(vidí vedení / obchod)</em></li>
   <li><strong>Firmy a lidé</strong> → <strong>Contacts</strong> (adresář klientů a kontaktů).</li>
-  <li><strong>Příležitosti, nabídky, zakázky, faktury</strong> → <strong>Karty</strong>. <em>(citlivé vidí vedení / obchod)</em></li>
   <li><strong>Pravidla, návody, znalosti</strong> → <strong>Dokumenty</strong> (jsi tu).</li>
-  <li><strong>Komunikace</strong> → <strong>Chat</strong> a <strong>Schůzky</strong>.</li>
+  <li><strong>Komunikace</strong> → <strong>Chat</strong>; schůzky → <strong>Kalendář</strong>.</li>
 </ul>
+<p><em>Nic víc nehledej — nepoužívané moduly jsme vypnuli, ať je menu přehledné. Kdyby ti i tak něco překáželo, v přepínači aplikací si můžeš appky skrýt jen pro sebe.</em></p>
 
 <h2>Zlaté pravidlo</h2>
-<p><strong>Cokoliv má někdo udělat, je úkol v Trackeru.</strong> Chat, dokument ani karta úkol nenahrazují. Když z porady nebo zprávy plyne práce → založ úkol s vlastníkem a termínem.</p>
-
-<h2>Můj denní rytmus</h2>
-<ul>
-  <li><strong>Inbox</strong> (zvoneček nahoře) — co je nového a co mi přišlo.</li>
-  <li><strong>Tracker → Moje</strong> — co mám rozdělané a do kdy.</li>
-  <li>Hotovo? Posuň úkol do dalšího stavu: <em>Todo → In Progress → Done</em>.</li>
-</ul>
+<p><strong>Cokoliv má někdo udělat, je úkol v Trackeru.</strong> Chat ani dokument úkol nenahrazují. Když z porady nebo zprávy plyne práce → založ úkol s vlastníkem a termínem.</p>
 
 <h2>Jak na základní věci</h2>
 <ul>
