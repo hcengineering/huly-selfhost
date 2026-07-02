@@ -1,0 +1,23 @@
+# gitleaks konfigurace pro PRAUT huly-selfhost.
+# Rozšiřuje výchozí pravidla a přidává allowlist pro známé NEPRAVDIVÉ nálezy.
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Upstream example a dokumentacni placeholdery (ne PRAUT tajemstvi)"
+# Overeno 2026-07-02 (ukol T20): zadny z techto nalezu neni skutecne PRAUT tajemstvi.
+# - nginx/docker-compose.yml, nginx/setup.sh = upstream ukazky (egavrilov@ebay.com, 2024),
+#   verejne v hcengineering/huly-selfhost.
+# - docs/GITHUB-INTEGRATION-SETUP.md, guides/smtp-troubleshooting.md = dokumentacni priklady
+#   s placeholdery (123456, xxxx, your-smtp-server.com), ne realne hodnoty.
+paths = [
+  '''nginx/docker-compose\.yml''',
+  '''nginx/setup\.sh''',
+  '''docs/GITHUB-INTEGRATION-SETUP\.md''',
+  '''guides/smtp-troubleshooting\.md''',
+]
+# Huly interni _id (24 hex znaku, napr. matchKey v praut-build-processes.cjs) nejsou tajemstvi.
+# Nase realna tajemstvi maji jiny format (Postmark UUID, SMTP hesla) -> tento pattern je nezachyti.
+regexes = [
+  '''[0-9a-f]{24}''',
+]
