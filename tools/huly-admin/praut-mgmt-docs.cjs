@@ -41,7 +41,7 @@ const DOCS = [
 </ul>
 <h2>Lidé</h2>
 <ul>
-  <li><strong>Contacts</strong> — firmy a kontakty. <strong>HR</strong> — oddělení a lidé.</li>
+  <li><strong>Contacts</strong> — firmy, kontakty i zaměstnanci (HR modul je vypnutý — nepoužíváme).</li>
   <li>Onboarding nováčka: <em>✅ Onboarding nováčka — checklist</em> (tento prostor).</li>
 </ul>
 <h2>Znalosti</h2>
