@@ -85,6 +85,8 @@ ověřena jen shoda struktury s funkčním pilotem (dumpem).
 | `praut-build-processes.cjs` | Vytvoří/obnoví 3 automatizační procesy (Lead 7 dní, SLA 1 den, Zakázka v riziku) dle vzoru ručního pilotu. Idempotentní, pilot nedotčen. `--apply` provede. |
 | `praut-hide-types.cjs` | Skryje 14 nadbytečných typů karet (`removed=true`) — zůstane 8 workflow typů. Vratné `--restore`. Nemaže karty. `--apply` provede. |
 | `praut-account-reset.cjs` | Reset hesla + vrácení uživatele do workspace `praut` (zapomenuté heslo). DRY-RUN bez `--apply`. Přes `restorePassword` (nastaví heslo + znovu ověří e-mail) + `assignWorkspace`. Pozor: zamčený účet (5+ neúspěšných loginů) jde odemknout jen DB UPDATE `global_account.account SET failed_login_attempts=0` na serveru — skript vypíše přesný příkaz. |
+| `praut-merge-persons.cjs` | Sloučí duplicitní osoby (account-merge). `--search <jméno>` = read-only výpis kandidátů; `--primary <uuid\|jméno> --secondary <uuid\|jméno>` = DRY-RUN; `--apply` provede. Volí `mergeSpecifiedAccounts`/`mergeSpecifiedPersons` dle stavu. **Pozor:** account-merge NEpřepojí workspace `SocialIdentity.attachedTo` — po merge může zbýt chyba „Confirmed social identity is attached to the wrong person" (nutno přepojit identity na cílovou osobu). Nejdřív ZÁLOHA DB. |
+| `praut-create-relations.cjs` | Hromadně vytvoří typy vztahů (Association) mezi kartami/kontakty — řeší prázdné „Přidat vztah". DRY-RUN bez `--apply`. |
 
 ## Důležitý detail formátu filtru
 
