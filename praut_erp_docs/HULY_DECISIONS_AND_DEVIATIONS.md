@@ -32,9 +32,10 @@ Supersedes:
 
 Decision:
 - Vypnout per-workspace moduly (core:class:PluginConfiguration.enabled=false, vratne, bez buildu):
-  card, process, hr, drive, board, training, survey, documents (QMS), inventory, recruit, products,
+  card, process, hr, board, training, survey, inventory, recruit, products,
   questions, testManagement, telegram, gmail, bitrix, chat (beta), love (zapne se na novem serveru).
-- Ponechat: tracker, lead, document (teamspaces), chunter, contact (system), calendar, github.
+- Ponechat: tracker, lead, document (teamspaces), documents (QMS), drive, chunter, contact (system),
+  calendar, github. (QMS a drive puvodne vypnuty, jeste tyz den vraceny na zadost Stepana.)
 - Obchod se vede VYHRADNE v modulu Lead (cely pripad = jeden lead; hodnota/nabidka/dohody do leadu).
   Karty se prestavaji pouzivat; alert procesy (bezely na kartach) pozastaveny do noveho serveru.
 
