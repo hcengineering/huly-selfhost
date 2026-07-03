@@ -254,7 +254,7 @@ const PRIRUCKA_CONTENT = `
 </ul>
 `
 
-async function createOrReplaceDoc (client, spaceId, spaceName, title, content, apply) {
+async function createOrReplaceDoc (client, spaceId, spaceName, title, content, apply, wsToken) {
   const existing = await client.findAll('document:class:Document', { space: spaceId })
   const found = existing.find(d => d.title === title)
   if (found) {
