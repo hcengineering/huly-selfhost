@@ -1,5 +1,6 @@
 // Vytvoří/obnoví dokument "🚀 Rychlý start" ve sdílené dokumentaci (vidí celý tým).
-// Obsah = HTML v poli `content` (ověřený způsob, viz praut-create-guide.cjs).
+// Obsah se nahrává jako kolaborativní blob přes praut-doc-content.cjs — do pole
+// `content` patří blob ref, NE HTML (HTML v content = věčně se načítající dokument).
 // Idempotentní: dokument se stejným názvem se přepíše.
 //   node praut-quickstart-doc.cjs           DRY-RUN
 //   node praut-quickstart-doc.cjs --apply    vytvoří/obnoví
