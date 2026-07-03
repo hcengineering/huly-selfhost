@@ -270,16 +270,18 @@ async function createOrReplaceDoc (client, spaceId, spaceName, title, content, a
     console.log(`  DRY-RUN: "${title}" by byl vytvořen v "${spaceName}"`)
     return null
   }
-  const docId = await client.createDoc('document:class:Document', spaceId, {
+  const docId = coreMod.generateId()
+  const blobId = await uploadDocContent(wsToken, docId, content)
+  await client.createDoc('document:class:Document', spaceId, {
     title,
-    content,
+    content: blobId,
     category: null,
     attachments: 0,
     comments: 0,
     labels: [],
     members: [],
     relations: []
-  })
+  }, docId)
   console.log(`  Vytvořen: "${title}" (${docId})`)
   return docId
 }
