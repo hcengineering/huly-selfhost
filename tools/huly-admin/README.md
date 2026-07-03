@@ -18,6 +18,27 @@ jen ručním klikáním v UI. Tyto skripty to dělají programově a opakovateln
 - Admin přihlášení čtou z `/Users/stepan/praut/huly-poc-secrets.env`
   (`ADMIN_EMAIL`, `ADMIN_PASSWORD`) — soubor je mimo git.
 
+## ⚠️ Obsah dokumentů — POVINNÝ vzor (od 2026-07-03)
+
+Pole `content` u `document:class:Document` je **blob ref** (odkaz na kolaborativní
+obsah v úložišti), **NE HTML**. HTML v `content` = dokument se v UI donekonečna
+načítá (collaborator: `InvalidObjectNameError`). Incident 2026-07-03: takhle bylo
+rozbitých 18 dokumentů, opraveno in-place.
+
+Správně (viz `praut-doc-content.cjs` a použití v `praut-quickstart-doc.cjs`):
+
+```js
+const { uploadDocContent } = require(require('path').join(__dirname, 'praut-doc-content.cjs'))
+const docId = coreMod.generateId()
+const blobId = await uploadDocContent(sel.token, docId, HTML)   // workspace token!
+await client.createDoc('document:class:Document', space._id, { ..., content: blobId }, docId)
+```
+
+Diagnostika/oprava:
+- `praut-scan-broken-docs.cjs` — READ-ONLY, najde dokumenty s HTML v `content`
+- `praut-fix-broken-docs.cjs` — in-place oprava (HTML → blob, ID dokumentu zůstává)
+- `praut-clean-doc-whitespace.cjs` — dočistí whitespace artefakty po konverzi
+
 ## Aktuální stav workspace (2026-06-22)
 
 ### Živé v huly.praut.cz
