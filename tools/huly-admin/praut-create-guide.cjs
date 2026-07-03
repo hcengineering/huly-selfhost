@@ -325,8 +325,8 @@ async function main () {
   console.log(`Mode: ${APPLY ? 'APPLY' : 'DRY-RUN'}\n`)
 
   console.log('Sloučené dokumenty:')
-  await createOrReplaceDoc(client, zakladSpace._id, zakladSpace.name, HOME_TITLE, HOME_CONTENT, APPLY)
-  await createOrReplaceDoc(client, zakladSpace._id, zakladSpace.name, PRIRUCKA_TITLE, PRIRUCKA_CONTENT, APPLY)
+  await createOrReplaceDoc(client, zakladSpace._id, zakladSpace.name, HOME_TITLE, HOME_CONTENT, APPLY, selected.token)
+  await createOrReplaceDoc(client, zakladSpace._id, zakladSpace.name, PRIRUCKA_TITLE, PRIRUCKA_CONTENT, APPLY, selected.token)
 
   console.log('\nZastaralé dokumenty (mažeme po sloučení 6 → 2):')
   await deleteStaleDocs(client, zakladSpace._id, APPLY)
