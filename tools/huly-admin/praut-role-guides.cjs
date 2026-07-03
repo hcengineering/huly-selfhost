@@ -3,7 +3,8 @@
 //   💼 Obchodník            → "Obchodní dokumenty" (privátní, vedení/obchod)
 //   📣 Markeťák             → "Marketing" (privátní)
 //   👔 Vedoucí              → "Řízení a reporting" (privátní)
-// Idempotentní: dokument se stejným názvem se přepíše. Obsah = HTML v poli `content`.
+// Idempotentní: dokument se stejným názvem se přepíše. Obsah se nahrává jako
+// kolaborativní blob (praut-doc-content.cjs) — do `content` patří blob ref, NE HTML.
 //
 //   node praut-role-guides.cjs           DRY-RUN
 //   node praut-role-guides.cjs --apply    vytvoří/obnoví
