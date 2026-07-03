@@ -16,6 +16,7 @@ const coreMod = require('@hcengineering/core'); const { TxOperations } = coreMod
 const { setMetadata } = require('@hcengineering/platform')
 const scp = require('@hcengineering/server-client').default
 const { createClient, getAccountClient } = require('@hcengineering/server-client')
+const { uploadDocContent } = require(require('path').join(__dirname, 'praut-doc-content.cjs'))
 
 const APPLY = process.argv.includes('--apply')
 const REPORT_SPACE = 'Řízení a reporting'
