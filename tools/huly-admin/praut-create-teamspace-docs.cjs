@@ -16,6 +16,7 @@ const { TxOperations } = coreMod
 const { setMetadata } = require('@hcengineering/platform')
 const serverClientPlugin = require('@hcengineering/server-client').default
 const { createClient, getAccountClient } = require('@hcengineering/server-client')
+const { uploadDocContent } = require(require('path').join(__dirname, 'praut-doc-content.cjs'))
 
 const APPLY = process.argv.includes('--apply')
 const DOC_TITLE = 'Co sem patří — přehled'
