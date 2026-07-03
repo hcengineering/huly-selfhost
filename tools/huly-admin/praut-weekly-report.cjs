@@ -110,11 +110,13 @@ ${flagsHtml}
   const space = teamspaces.find((t) => clean(t.name) === REPORT_SPACE)
   if (!space) { console.log('\nCHYBA: teamspace nenalezen:', REPORT_SPACE); await conn.close(); process.exit(1) }
   if (APPLY) {
-    const id = await c.createDoc('document:class:Document', space._id, {
-      title: `📊 Týdenní přehled — ${today}`, content: CONTENT, parent: 'document:ids:NoParent',
+    const docId = coreMod.generateId()
+    const blobId = await uploadDocContent(sel.token, docId, CONTENT)
+    await c.createDoc('document:class:Document', space._id, {
+      title: `📊 Týdenní přehled — ${today}`, content: blobId, parent: 'document:ids:NoParent',
       category: null, attachments: 0, comments: 0, labels: [], members: [], relations: [], rank: '0|hzzzzz:'
-    })
-    console.log('\n✅ Vytvořeno:', id, '| do:', REPORT_SPACE, '| znaků:', CONTENT.length)
+    }, docId)
+    console.log('\n✅ Vytvořeno:', docId, '| do:', REPORT_SPACE, '| znaků:', CONTENT.length)
   } else {
     console.log(`\nDRY-RUN: vytvořil bych dokument v "${REPORT_SPACE}" (${CONTENT.length} znaků HTML). Spusť s --apply.`)
   }
