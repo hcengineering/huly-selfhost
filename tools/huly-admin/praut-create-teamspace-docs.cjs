@@ -227,16 +227,18 @@ async function main () {
     }
 
     if (APPLY) {
+      const docId = coreMod.generateId()
+      const blobId = await uploadDocContent(selected.token, docId, docSpec.content)
       await client.createDoc('document:class:Document', sp._id, {
         title: DOC_TITLE,
-        content: docSpec.content,
+        content: blobId,
         category: null,
         attachments: 0,
         comments: 0,
         labels: [],
         members: [],
         relations: []
-      })
+      }, docId)
       created++
       console.log(`  Vytvořen: "${sp.name}" → "${DOC_TITLE}"`)
     } else {
