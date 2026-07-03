@@ -82,11 +82,13 @@ async function main () {
     if (APPLY) await client.removeDoc(existing._class, existing.space, existing._id)
   }
   if (APPLY) {
-    const id = await client.createDoc('document:class:Document', space._id, {
-      title: TITLE, content: CONTENT, parent: 'document:ids:NoParent',
+    const docId = coreMod.generateId()
+    const blobId = await uploadDocContent(selected.token, docId, CONTENT)
+    await client.createDoc('document:class:Document', space._id, {
+      title: TITLE, content: blobId, parent: 'document:ids:NoParent',
       category: null, attachments: 0, comments: 0, labels: [], members: [], relations: [], rank: '0|h00000:'
-    })
-    console.log('Vytvořeno:', id, '| obsah znaků:', CONTENT.length)
+    }, docId)
+    console.log('Vytvořeno:', docId, '| obsah znaků:', CONTENT.length, '| blob:', blobId)
   } else {
     console.log(`DRY-RUN: vytvořil bych "${TITLE}" v "${SHARED_TEAMSPACE}" (${CONTENT.length} znaků HTML)`)
   }
