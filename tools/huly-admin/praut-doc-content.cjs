@@ -21,7 +21,10 @@ const { makeCollabId, makeCollabJsonId } = require('@hcengineering/core')
 const FRONT_URL = 'https://huly.praut.cz'
 
 async function uploadDocContent (workspaceToken, docId, html, frontUrl = FRONT_URL) {
-  const markup = jsonToMarkup(htmlToJSON(html))
+  // Minifikace: bílé znaky mezi tagy by se v konverzi staly prázdnými
+  // odstavci / položkami seznamu (artefakty v UI).
+  const minified = html.replace(/>\s+</g, '><').trim()
+  const markup = jsonToMarkup(htmlToJSON(minified))
   const collabId = makeCollabId('document:class:Document', docId, 'content')
   const blobId = makeCollabJsonId(collabId)
 
