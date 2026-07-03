@@ -109,10 +109,12 @@ async function main () {
     console.log(`  ${existing ? '↻' : '+'} "${d.title}" → ${d.space} (${content.length} znaků)${existing ? ' [přepíšu]' : ''}`)
     if (APPLY) {
       if (existing) await c.removeDoc(existing._class, existing.space, existing._id)
+      const docId = coreMod.generateId()
+      const blobId = await uploadDocContent(sel.token, docId, content)
       await c.createDoc('document:class:Document', space._id, {
-        title: d.title, content, parent: 'document:ids:NoParent',
+        title: d.title, content: blobId, parent: 'document:ids:NoParent',
         category: null, attachments: 0, comments: 0, labels: [], members: [], relations: [], rank: '0|hzzzzx:'
-      })
+      }, docId)
     }
   }
   console.log(`\nRežim: ${APPLY ? 'APPLIED' : 'DRY-RUN → pro zápis přidej --apply'}`)
