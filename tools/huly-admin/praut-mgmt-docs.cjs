@@ -2,7 +2,8 @@
 //   🏠 Přehled firmy (rozcestník)        → "Řízení a reporting"  [T07]
 //   📈 Jak vedeme obchod                 → "Obchodní dokumenty"  [T08]
 //   ✅ Onboarding nováčka — checklist    → "Řízení a reporting"  [T11]
-// Vše do PRIVÁTNÍCH prostorů (jen vedení). Obsah = HTML v poli `content`.
+// Vše do PRIVÁTNÍCH prostorů (jen vedení). Obsah se nahrává jako kolaborativní
+// blob (praut-doc-content.cjs) — do pole `content` patří blob ref, NE HTML.
 //
 //   node praut-mgmt-docs.cjs           DRY-RUN
 //   node praut-mgmt-docs.cjs --apply    vytvoří/obnoví
