@@ -63,4 +63,4 @@ function isBrokenContent (content) {
   return content.includes('<') || content.includes('\n') || content.length > 120
 }
 
-module.exports = { uploadDocContent, isBrokenContent, FRONT_URL }
+module.exports = { uploadDocContent, uploadMarkdownContent, isBrokenContent, FRONT_URL }
