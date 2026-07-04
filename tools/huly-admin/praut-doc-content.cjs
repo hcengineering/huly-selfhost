@@ -25,6 +25,19 @@ async function uploadDocContent (workspaceToken, docId, html, frontUrl = FRONT_U
   // odstavci / položkami seznamu (artefakty v UI).
   const minified = html.replace(/>\s+</g, '><').trim()
   const markup = jsonToMarkup(htmlToJSON(minified))
+  return await uploadMarkupBlob(workspaceToken, docId, markup, frontUrl)
+}
+
+// Varianta pro zdrojový Markdown (.md soubory): markdownToMarkup zachová nadpisy,
+// seznamy, tabulky a kód líp než cesta přes HTML. Vrací blob ref pro `content`.
+async function uploadMarkdownContent (workspaceToken, docId, markdown, frontUrl = FRONT_URL) {
+  const { markdownToMarkup } = require('@hcengineering/text-markdown')
+  const markup = jsonToMarkup(markdownToMarkup(markdown))
+  return await uploadMarkupBlob(workspaceToken, docId, markup, frontUrl)
+}
+
+// Nahraje hotový Huly markup (JSON string) jako kolaborativní blob a vrátí jeho ref.
+async function uploadMarkupBlob (workspaceToken, docId, markup, frontUrl = FRONT_URL) {
   const collabId = makeCollabId('document:class:Document', docId, 'content')
   const blobId = makeCollabJsonId(collabId)
 
