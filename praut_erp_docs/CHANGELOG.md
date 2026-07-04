@@ -6,6 +6,7 @@ Přehled produkčních změn. Novější nahoře. Detaily v PR (číslo v závor
 > Pravidlo: každá produkční změna = nový řádek sem (viz `../AGENTS.md`).
 
 ## 2026-07 — Roadmapa vylepšení (audit + vlna 1)
+- 2026-07-04 — **Podklady k tierům z chatu → Dokumenty:** 12 `.md` souborů (produktové karty a návody k tierům) naimportováno jako nativní Huly Dokumenty do nového privátního teamspace „Podklady k tierům" (formátovaný render, fulltext, verze). Nový nástroj `praut-import-md-docs.cjs` (markdownToMarkup → dokument); originály v chatu ponechány. `.excalidraw` kresby Huly neumí zobrazit (žádný prohlížeč) — mimo rozsah.
 - 2026-07-08 — **Zjednodušení systému:** vypnuto 12+ nepoužívaných modulů (Karty, HR, Drive, procesy…) přes PluginConfiguration (vratné); obchod = jen Lead; návody přepsány na „jeden domov per věc" + sekce „Začni den". Nový nástroj `praut-configure-apps.cjs`.
 - 2026-07-02 — Kompletní audit ERP + roadmapa 22 úkolů pro agenty: `docs/improvements/ROADMAP-2026-07.md` (#27, otevřený).
 - 2026-07-02 — Záchrana admin skriptů `praut-merge-persons` + `praut-create-relations` na main (#28).
