@@ -48,14 +48,24 @@ EOF
   exit 0
 fi
 
-say "5) APPLY: VAPID klíče (pokud chybí, vygeneruji na serveru; hodnoty se NETISKNOU)"
+say "5) APPLY: VAPID klíče (generují se LOKÁLNĚ, hodnoty se NETISKNOU)"
 if [ "$HAS_PUB" = 0 ]; then
-  ssh "$SSH" "cd $SRV_DIR && docker run --rm node:20-alpine sh -c 'npm i -g web-push >/dev/null 2>&1 && web-push generate-vapid-keys --json' > /tmp/vapid.json && \
-    PUB=\$(node -e 'console.log(require(\"/tmp/vapid.json\").publicKey)') && \
-    PRIV=\$(node -e 'console.log(require(\"/tmp/vapid.json\").privateKey)') && \
-    grep -q '^PUSH_PUBLIC_KEY=' huly_v7.conf && sed -i 's|^PUSH_PUBLIC_KEY=.*|PUSH_PUBLIC_KEY='\$PUB'|' huly_v7.conf || echo 'PUSH_PUBLIC_KEY='\$PUB >> huly_v7.conf && \
-    grep -q '^PUSH_PRIVATE_KEY=' huly_v7.conf && sed -i 's|^PUSH_PRIVATE_KEY=.*|PUSH_PRIVATE_KEY='\$PRIV'|' huly_v7.conf || echo 'PUSH_PRIVATE_KEY='\$PRIV >> huly_v7.conf && \
-    rm -f /tmp/vapid.json && echo '  VAPID klice doplneny do huly_v7.conf'"
+  # Vygenerovat P-256 VAPID pár lokálně přes node crypto (bez závislostí, bez sítě).
+  read -r PUB PRIV < <(node -e '
+    const c=require("crypto");
+    const {publicKey,privateKey}=c.generateKeyPairSync("ec",{namedCurve:"prime256v1"});
+    const pubRaw=publicKey.export({type:"spki",format:"der"}).subarray(-65);      // 0x04||X||Y
+    const jwk=privateKey.export({format:"jwk"});
+    const b64u=b=>Buffer.from(b).toString("base64").replace(/=+$/,"").replace(/\+/g,"-").replace(/\//g,"_");
+    const d=Buffer.from(jwk.d.replace(/-/g,"+").replace(/_/g,"/"),"base64");
+    process.stdout.write(b64u(pubRaw)+" "+b64u(d));
+  ') || { echo "  ❌ generování VAPID selhalo (node?)"; exit 1; }
+  if [ -z "$PUB" ] || [ -z "$PRIV" ]; then echo "  ❌ prázdné VAPID klíče"; exit 1; fi
+  # Zapsat do serverové huly_v7.conf (hodnoty přes stdin, ne v ps).
+  ssh "$SSH" "cd $SRV_DIR && \
+    { grep -q '^PUSH_PUBLIC_KEY=' huly_v7.conf && sed -i 's|^PUSH_PUBLIC_KEY=.*|PUSH_PUBLIC_KEY=$PUB|' huly_v7.conf || echo 'PUSH_PUBLIC_KEY=$PUB' >> huly_v7.conf; } && \
+    { grep -q '^PUSH_PRIVATE_KEY=' huly_v7.conf && sed -i 's|^PUSH_PRIVATE_KEY=.*|PUSH_PRIVATE_KEY=$PRIV|' huly_v7.conf || echo 'PUSH_PRIVATE_KEY=$PRIV' >> huly_v7.conf; } && \
+    echo '  VAPID klíče doplněny do huly_v7.conf'"
 else
   echo "  VAPID klíče už existují — přeskočeno."
 fi
