@@ -86,7 +86,9 @@ fi
 # Generate a password if none was provided
 GENERATED_PASSWORD=false
 if [ -z "$PASSWORD" ] && [ "$SKIP_ACCOUNT" != true ]; then
+    set +o pipefail
     PASSWORD="$(LC_ALL=C tr -dc 'A-Za-z0-9' </dev/urandom | head -c 16)"
+    set -o pipefail
     GENERATED_PASSWORD=true
 fi
 
