@@ -3,8 +3,14 @@
 # Restore a downloaded backup into this local Huly deployment.
 # Connection parameters are read from huly_v7.conf (same file docker compose uses).
 #
+# By default this restores in MERGE mode: only new/changed documents from the
+# backup are uploaded, and any data already present in the workspace but not
+# in the backup is left untouched (nothing is deleted). Use --no-merge to
+# restore the destructive way (server is made to match the backup exactly,
+# i.e. anything not in the backup gets removed).
+#
 # Usage:
-#   ./backup-restore.sh <backup-dir> <workspace> [date] [--no-accounts] [--no-upgrade] [-- <extra tool args>]
+#   ./backup-restore.sh <backup-dir> <workspace> [date] [--no-accounts] [--no-upgrade] [--no-merge] [-y] [-- <extra tool args>]
 #
 # Example:
 #   ./backup-restore.sh ./backups/myws myws
@@ -29,6 +35,14 @@ RESTORE_ACCOUNTS=true
 # Upgrade the workspace to the current model version after restore. On by default -
 # the backup is usually from an older version. Disable with --no-upgrade.
 UPGRADE=true
+# Merge mode: only add/update documents from the backup, never delete anything
+# already present in the workspace. On by default so restores are safe to
+# re-run and only bring in what's missing. Disable with --no-merge to make
+# the workspace match the backup exactly (deletes data not in the backup).
+MERGE=true
+# Skip the interactive confirmation prompt that --no-merge triggers (useful
+# for CI/automation). Has no effect when merge is on.
+ASSUME_YES=false
 
 shift $(( $# >= 2 ? 2 : $# )) || true
 
@@ -39,6 +53,9 @@ while [ $# -gt 0 ] && [ "${1:-}" != "--" ]; do
         --no-accounts) RESTORE_ACCOUNTS=false; shift ;;
         --upgrade)     UPGRADE=true;  shift ;;
         --no-upgrade)  UPGRADE=false; shift ;;
+        --merge)       MERGE=true;    shift ;;
+        --no-merge)    MERGE=false;   shift ;;
+        -y|--yes)      ASSUME_YES=true; shift ;;
         *) DATE="$1"; shift ;;
     esac
 done
@@ -48,14 +65,16 @@ if [ "${1:-}" == "--" ]; then
 fi
 
 if [ -z "$BACKUP_DIR" ] || [ -z "$WORKSPACE" ]; then
-    echo "Usage: $0 <backup-dir> <workspace> [date] [--no-accounts] [--no-upgrade] [-- <extra tool args>]"
+    echo "Usage: $0 <backup-dir> <workspace> [date] [--no-accounts] [--no-upgrade] [--no-merge] [-y] [-- <extra tool args>]"
     echo ""
     echo "  <backup-dir>   Local directory with downloaded backup files"
     echo "  <workspace>    Target workspace id/url to restore into"
     echo "  [date]         Optional snapshot timestamp (ms). Default: latest"
     echo "  --no-accounts  Do not restore person/socialId accounts (default: restore them)"
     echo "  --no-upgrade   Do not upgrade the workspace after restore (default: upgrade)"
-    echo "  -- <args>      Extra args passed to 'tool backup-restore' (e.g. --merge)"
+    echo "  --no-merge     Delete data not present in the backup (default: merge, nothing is deleted)"
+    echo "  -y, --yes      Skip the confirmation prompt triggered by --no-merge"
+    echo "  -- <args>      Extra args passed to 'tool backup-restore' (e.g. --recheck)"
     exit 1
 fi
 
@@ -81,6 +100,7 @@ echo "  Workspace: $WORKSPACE"
 echo "  Date:      ${DATE:-latest}"
 echo "  Accounts:  ${RESTORE_ACCOUNTS}"
 echo "  Upgrade:   ${UPGRADE}"
+echo "  Merge:     ${MERGE} $([ "$MERGE" == true ] && echo '(existing data preserved, only new/changed restored)' || echo '(destructive, matches backup exactly)')"
 echo "  Network:   $NETWORK"
 echo "  Version:   $HULY_VERSION"
 echo ""
@@ -91,9 +111,25 @@ if ! docker network inspect "$NETWORK" >/dev/null 2>&1; then
     exit 1
 fi
 
+# --no-merge deletes any data in the workspace that isn't present in the
+# backup and cannot be undone - require explicit confirmation unless -y/--yes
+# was passed (e.g. for scripted/CI use).
+if [ "$MERGE" != true ] && [ "$ASSUME_YES" != true ]; then
+    echo -e "\033[1;31mWARNING: --no-merge will DELETE any data in workspace '$WORKSPACE'\033[0m"
+    echo -e "\033[1;31mthat is not present in the backup. This cannot be undone.\033[0m"
+    echo ""
+    read -r -p "Type the workspace name (${WORKSPACE}) to confirm, anything else to abort: " CONFIRM
+    if [ "$CONFIRM" != "$WORKSPACE" ]; then
+        echo "Aborted."
+        exit 1
+    fi
+    echo ""
+fi
+
 CMD=(backup-restore /backup "$WORKSPACE")
 [ -n "$DATE" ] && CMD+=("$DATE")
 [ "$RESTORE_ACCOUNTS" == true ] && CMD+=(--accounts)
+[ "$MERGE" == true ] && CMD+=(--merge)
 [ ${#EXTRA_ARGS[@]} -gt 0 ] && CMD+=("${EXTRA_ARGS[@]}")
 
 RUN_TOOL_DOCKER_ARGS="-v ${BACKUP_ABS}:/backup" ./run-tool.sh "${CMD[@]}"
