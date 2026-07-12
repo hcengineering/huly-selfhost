@@ -136,6 +136,11 @@ if [ "$SKIP_WORKSPACE" != true ]; then
     if ! ./run-tool.sh assign-workspace "$EMAIL" "$WS_ID"; then
         echo -e "\033[1;33massign-workspace failed - the owner may already be assigned. Continuing.\033[0m"
     fi
+
+    echo -e "\n\033[1;34m[3/4] Setting $EMAIL role to OWNER for $WS_ID...\033[0m"
+    if ! /run-tool.sh set-user-role "$EMAIL" "$WS_ID" OWNER; then
+        echo -e "\033[1;33mset-user-role failed - the owner may already have the role. Continuing.\033[0m"
+    fi
 else
     echo -e "\n\033[1;34m[2/4] [3/4] Skipping workspace creation/assignment.\033[0m"
 fi
