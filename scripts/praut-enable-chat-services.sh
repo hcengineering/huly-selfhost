@@ -51,16 +51,19 @@ fi
 say "5) APPLY: VAPID klíče (generují se LOKÁLNĚ, hodnoty se NETISKNOU)"
 if [ "$HAS_PUB" = 0 ]; then
   # Vygenerovat P-256 VAPID pár lokálně přes node crypto (bez závislostí, bez sítě).
-  read -r PUB PRIV < <(node -e '
+  VAPID_PAIR="$(node -e '
     const c=require("crypto");
     const {publicKey,privateKey}=c.generateKeyPairSync("ec",{namedCurve:"prime256v1"});
     const pubRaw=publicKey.export({type:"spki",format:"der"}).subarray(-65);      // 0x04||X||Y
     const jwk=privateKey.export({format:"jwk"});
     const b64u=b=>Buffer.from(b).toString("base64").replace(/=+$/,"").replace(/\+/g,"-").replace(/\//g,"_");
     const d=Buffer.from(jwk.d.replace(/-/g,"+").replace(/_/g,"/"),"base64");
-    process.stdout.write(b64u(pubRaw)+" "+b64u(d));
-  ') || { echo "  ❌ generování VAPID selhalo (node?)"; exit 1; }
-  if [ -z "$PUB" ] || [ -z "$PRIV" ]; then echo "  ❌ prázdné VAPID klíče"; exit 1; fi
+    console.log(b64u(pubRaw)+" "+b64u(d));
+  ')" || { echo "  ❌ generování VAPID selhalo (node?)"; exit 1; }
+  PUB="${VAPID_PAIR%% *}"
+  PRIV="${VAPID_PAIR##* }"
+  if [ -z "$PUB" ] || [ -z "$PRIV" ] || [ "$PUB" = "$PRIV" ]; then echo "  ❌ prázdné/neplatné VAPID klíče"; exit 1; fi
+  echo "  VAPID vygenerován (public ${#PUB} zn., private ${#PRIV} zn.)"
   # Zapsat do serverové huly_v7.conf (hodnoty přes stdin, ne v ps).
   ssh "$SSH" "cd $SRV_DIR && \
     { grep -q '^PUSH_PUBLIC_KEY=' huly_v7.conf && sed -i 's|^PUSH_PUBLIC_KEY=.*|PUSH_PUBLIC_KEY=$PUB|' huly_v7.conf || echo 'PUSH_PUBLIC_KEY=$PUB' >> huly_v7.conf; } && \

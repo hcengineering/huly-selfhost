@@ -1,8 +1,9 @@
-# Handover: Diagnostika chatu Huly — „Simon nevidí přímé zprávy"
+# Handover: Zprovoznění chatu v Huly — „Simon nevidí přímé zprávy"
 
-**Datum:** 2026-07-08
-**Autor:** Claude (Fable 5) na zadání @stepanmanda
-**Stav:** Diagnostika hotová (read-only). Oprava připravena, **čeká na souhlas** + jednu reprodukci.
+**Datum diagnostiky:** 2026-07-08
+**Datum nasazení + ověření:** 2026-07-13
+**Autor:** Claude na zadání @stepanmanda
+**Stav:** ✅ **VYŘEŠENO A OVĚŘENO V PRODUKCI** (Štěpán 2026-07-13: „Už to funguje, zprávu mojí vidí Simon i já.")
 **Workspace:** `praut` (huly.praut.cz), verze 0.7.423
 
 ---
@@ -10,63 +11,74 @@
 ## Zadání
 Štěpán: „Simonovi posílám přímé zprávy (DM) a on je nevidí. Zjisti proč a oprav chat."
 
-## Co bylo naměřeno (read-only, produkce)
+## Root cause (potvrzeno)
 
-| Fakt | Hodnota | Zdroj |
-|---|---|---|
-| Simonova identita | 1 Person karta, ověřený účet `simon.brumla@gmail.com`, personUuid `2aa34004…` | `praut-diagnose-messaging.cjs` |
-| Simon člen kanálů | ANO (je v #random, #general…) | dump Channel.members |
-| Přímé zprávy (DM) v celém workspace | **0** | findAll `chunter:class:DirectMessage` |
-| Chatové zprávy ve všech 4 kanálech | **0** (general, random, vedení, praut-denni-prehled) | findAll ChatMessage per space |
-| Celkem `chunter:class:ChatMessage` | 20 — **všechny jsou komentáře u karet / PR**, ne chat | attachedToClass = card/github |
-| Aktivita workspace | 646 ActivityMessage, 24 karet, tracker/lead aktivní | probe |
-| Workspaců na účtu | jen 1 (`praut`) | getUserWorkspaces |
-| Chyby transactoru (odmítnuté tx, permission) | **žádné** (1500 řádků logu) | ssh huly docker logs |
+V produkčním `compose.yml` **chyběly dvě služby**, které chatový modul potřebuje k tomu, aby
+se zpráva u příjemce projevila (doručení do Inboxu, upozornění, real-time signalizace):
 
-## Co je skutečně špatně (potvrzeno)
+| Chybělo | Důsledek |
+|---|---|
+| služba **`notification`** (kontejner vůbec neběžel) | žádné web-push / e-mail upozornění na zprávy; `PUSH_PUBLIC_KEY` v `config.json` prázdný |
+| **VAPID klíče** (`PUSH_PUBLIC_KEY` / `PUSH_PRIVATE_KEY` v `huly_v7.conf`) | bez nich se `notification` nedá nastartovat (známý bod #9 v `TROUBLESHOOTING_MATRIX.md`) |
+| služba **`hulypulse`** (v compose zakomentovaná, nginx `location /_pulse` zakomentovaný) | žádná real-time presence („online" / „píše…") |
+| propojení: transactor `PULSE_URL` + `WEB_PUSH_URL`, front `PULSE_URL` + `PUSH_PUBLIC_KEY` | i po nasazení služeb by je nikdo nevolal |
 
-1. **Chat se fakticky nepoužívá / neodesílá.** V celém workspace není ani jedna zpráva v kanálu ani jedna DM. Není to Simonem — jeho účet je v pořádku a je členem kanálů.
-2. **Odeslání zprávy NENÍ blokováno serverem.** Podle zdrojového kódu forku (`plugins/chunter-resources/.../ChatMessageInput.svelte`) je odeslání čistý zápis do transactoru (`addCollection` → `commit`), nezávislý na presence/push. Komentáře u karet tímto stejným mechanismem fungují (20 jich existuje). Transactor nic neodmítá.
-3. **Chybí dvě služby — ale ty odeslání neblokují, jen komfort:**
-   - `notification` (kontejner neběží) → **žádné web-push / e-mail upozornění** na zprávy. `PUSH_PUBLIC_KEY` v config.json prázdný, VAPID klíče chybí (známý bod #9 v `TROUBLESHOOTING_MATRIX.md`).
-   - `hulypulse` (v compose zakomentovaný, `PRESENCE_URL` prázdný) → **žádný indikátor „online / píše"**. Kód `setTyping` je bez presence bezpečně no-op (nespadne).
+**Simonův účet ani server nebyly vadné.** Simon má 1 Person kartu, ověřený účet
+`simon.brumla@gmail.com`, je členem kanálů, transactor nic neodmítal (0 chyb v logu).
 
-## Závěr příčiny
+## ⚠️ Oprava chybné mezi-diagnózy (důležité pro příště)
 
-„0 zpráv v celém workspace" jde vysvětlit jen tím, že **se přes Chat reálně neodesílá** — buď se modul Chat u uživatelů v prohlížeči nenačte/spadne při otevření, nebo ho tým vůbec nepoužívá (chat je v Huly zastrčený, tým jede přes karty a Tracker). Server ani Simonův účet vadné nejsou.
+Během diagnostiky jsem naměřil „**0 DirectMessage v celém workspace**" a vyvodil z toho, že se
+chat vůbec nepoužívá. **Bylo to špatně.** `chunter:class:DirectMessage` je v Huly **privátní
+prostor viditelný jen svým členům** — admin účet, kterým se skript ptá, není členem cizích DM,
+takže mu dotaz vrátí 0 bez ohledu na to, kolik jich reálně existuje.
 
-Přesné rozlišení („Chat spadne v prohlížeči" × „nikdo tam nepíše") **vyžaduje živou reprodukci** — tu se nepodařilo udělat:
-- Chrome rozšíření Claude není připojené (nesedící claude.ai účet).
-- Testovací zápis do produkce (poslat 1 test zprávu) zablokoval bezpečnostní klasifikátor.
+**Poučení:** počty DM/zpráv se z admin session dotazovat nedá. Autoritativní zdroj je
+**log transactoru** (`chunter:ids:DMNotification`), ne `findAll` přes admin klienta.
 
-## Připravená oprava (čeká na souhlas Štěpána — jde o zásah do produkce)
+## Co bylo nasazeno (2026-07-13)
 
-**A) Reprodukce (10 s, bez rizika):** Štěpán otevře Huly → levý panel ikona **Chat** → napíše Simonovi „test". Sledovat: objeví se zpráva v okně? Jde Chat vůbec otevřít? → tím se určí, jestli je to klientská chyba nebo jen nepoužívání.
+Skriptem `scripts/praut-enable-chat-services.sh --apply` (zálohy `*.bak-2026-07-13` na serveru):
 
-**B) Dodělat chybějící služby (zvýší komfort chatu — upozornění + presence):**
-1. Záloha: `cp huly_v7.conf huly_v7.conf.bak-2026-07-08` na serveru.
-2. Vygenerovat VAPID: `npx web-push generate-vapid-keys` → `PUSH_PUBLIC_KEY` / `PUSH_PRIVATE_KEY` do `huly_v7.conf`.
-3. V serverovém `compose.yml` odkomentovat `hulypulse`, nastavit `PRESENCE_URL` (front) + `WEB_PUSH_URL=http://notification:8091` (transactor), přidat službu `notification`.
-4. `docker compose up -d notification hulypulse front transactor` → **`docker compose restart nginx`** (jinak 502).
-5. Ověřit: `config.json` má neprázdné `PUSH_PUBLIC_KEY` a `PRESENCE_URL`; `docker ps` ukáže běžící notification + hulypulse.
+1. Vygenerovány **VAPID klíče** (P-256, lokálně přes `node crypto`) → doplněny do `huly_v7.conf`
+   (mimo git; hodnoty se netisknou do logu).
+2. Nahrán `compose.yml` — přidány služby **`hulypulse`** (`:8099`, backend `memory`) a
+   **`notification`** (`:8091`); transactoru přidáno `PULSE_URL` + `WEB_PUSH_URL`,
+   frontu `PULSE_URL` + `PUSH_PUBLIC_KEY`.
+3. Nahrán `.huly.nginx` — odkomentován `location /_pulse` (WebSocket proxy na `hulypulse:8099`).
+4. `docker compose up -d hulypulse notification transactor front` → **`docker compose restart nginx`**.
 
-**Pozn.:** Krok B sám o sobě NEvyřeší „0 zpráv", pokud je příčina klientská — proto A jde první.
+## Ověření (důkazy)
 
-### Přesný, OVĚŘENÝ rozsah změny (read-only diff server → cíl, 2026-07-08)
-Diff je čistý — mění **jen** chat, nic jiného:
-- `compose.yml`: nová služba **`hulypulse`** (presence) + **`notification`** (web-push); do **transactoru** přidat `PULSE_URL=http://hulypulse:8099` a `WEB_PUSH_URL=http://notification:8091`; do **frontu** `PULSE_URL=…/_pulse` a `PUSH_PUBLIC_KEY`.
-- `.huly.nginx`: odkomentovat `location /_pulse` (→ `hulypulse:8099`).
-- `huly_v7.conf`: doplnit `PUSH_PUBLIC_KEY` + `PUSH_PRIVATE_KEY` (VAPID). Ověřeno: **VAPID chybí**, `EMAIL_FROM` už nastaven.
+| Kontrola | Výsledek |
+|---|---|
+| `docker ps` | `huly_v7-notification-1` Up, `huly_v7-hulypulse-1` Up |
+| log `notification` | `Setting VAPID details` (publicKeyLen 87 / privateKeyLen 43), `Notification service listening port 8091` |
+| log `hulypulse` | obsluhuje živé WS klienty, ukládá presence klíče (`contact:class:Person`) → nginx `/_pulse` proxuje správně |
+| `config.json` | `PUSH_PUBLIC_KEY` neprázdný, `PULSE_URL=https://huly.praut.cz/_pulse` |
+| log `transactor` (06:33–06:34) | `NotificationsHandler: processing inbox notifications … "chunter:ids:DMNotification"` → **DM zprávy i inbox notifikace se reálně vytvářejí** |
+| uživatelský test | Štěpán poslal Simonovi zprávu — **vidí ji Simon i Štěpán** ✅ |
 
-### Automatizace: `scripts/praut-enable-chat-services.sh`
-- Bez argumentu = **dry-run** (záloha `*.bak-YYYY-MM-DD` + diff + kontrola VAPID).
-- `--apply` = vygeneruje VAPID, nahraje `compose.yml` + `.huly.nginx`, `docker compose up -d hulypulse notification transactor front`, `docker compose restart nginx`, ověří `config.json`. Rollback = obnovit `*.bak-*` + `up -d` + restart nginx.
+## Poznámky / co zůstává
 
-### ⚠️ Blokace prostředí (2026-07-08)
-Nasazení nebylo možné provést z agentního sandboxu — bezpečnostní klasifikátor odmítl **jakýkoli prod-zápis** (test zpráva i zálohovací/deploy krok) a instruoval předat rozhodnutí uživateli. Skript proto musí spustit **Štěpán** (`! bash scripts/praut-enable-chat-services.sh` → po kontrole `--apply`), nebo udělit odpovídající Bash permission. Read-only diagnostika a diff proběhly.
+- **`PRESENCE_URL` je prázdný — a je to správně.** Samostatná služba `presence` v této verzi Huly
+  už neexistuje, presence převzal HulyPulse (potvrzeno: v jeho logu chodí přesně ty presence klíče).
+  Legacy `PresenceClient` bez `PRESENCE_URL` jen tiše nic nedělá, nic to nerozbíjí.
+- **E-mailová upozornění na DM jsou vypnutá** — transactor loguje
+  `email provider not enabled for notification type: chunter:ids:DMNotification`.
+  Web-push funguje. Pokud bude Štěpán chtít i e-maily, je to samostatná změna konfigurace.
+- **Rollback:** na serveru v `/root/huly-selfhost` obnovit `*.bak-2026-07-13`, pak
+  `docker compose up -d && docker compose restart nginx`.
 
-## Nástroje vytvořené při diagnostice
-- `tools/huly-admin/praut-diagnose-messaging.cjs` — read-only diagnostika identit / DM / notifikací, `--all` plošný sken duplicit. (Bonus: sken našel 3 duplicitní identity — Švanda, Hoyer, Huf — samostatný, menší úkol na `praut-merge-persons.cjs`.)
+## Vedlejší nález (samostatný, menší úkol)
 
-## Další krok
-Čeká se na: (1) Štěpánovu reprodukci dle A, nebo připojení Chrome rozšíření pro živý test; (2) souhlas s krokem B.
+Plošný sken našel **3 duplicitní identity**: `Švanda,Martin`, `Hoyer,René Samuel` (jedna karta bez účtu),
+`Huf,Tomas`. Nesouvisí s chatem, ale stojí za úklid přes `tools/huly-admin/praut-merge-persons.cjs`
+(nejdřív DRY-RUN, pak `--apply` po souhlasu).
+
+## Nástroje vytvořené při řešení
+
+- `tools/huly-admin/praut-diagnose-messaging.cjs` — read-only diagnostika identit / DM / notifikací,
+  `--all` plošný sken duplicit. **Pozor na omezení popsané výše** (DM počty z admin session jsou nespolehlivé).
+- `scripts/praut-enable-chat-services.sh` — bez argumentu = dry-run (záloha + diff + kontrola VAPID),
+  `--apply` = plné nasazení + ověření.
