@@ -14,11 +14,15 @@
 #       --skip-account        Don't create the account (it already exists)
 #       --skip-workspace      Don't create/assign the workspace (it already exists)
 #       --date <ms>           Backup snapshot timestamp, passed to backup-restore.sh
+#       --merge                Merge mode: keep existing data, only add/update from backup (default)
+#       --no-merge             Destructive mode: make the workspace match the backup exactly
+#                              (prompts for confirmation unless -y/--yes is also given)
+#   -y, --yes                  Skip the confirmation prompt triggered by --no-merge
 #
 # Examples:
 #   ./restore-workspace.sh ./backups/myws myws
 #   ./restore-workspace.sh ./backups/myws myws -e me@example.com -p secret
-#   ./restore-workspace.sh ./backups/myws myws --skip-account -- --merge
+#   ./restore-workspace.sh ./backups/myws myws --skip-account --no-merge
 set -euo pipefail
 
 CONFIG_FILE="huly_v7.conf"
@@ -41,6 +45,13 @@ SKIP_ACCOUNT=false
 SKIP_WORKSPACE=false
 DATE=""
 EXTRA_ARGS=()
+# Merge mode: only add/update documents from the backup, never delete anything
+# already present in the workspace. On by default. Disable with --no-merge to
+# make the workspace match the backup exactly (deletes data not in the backup).
+MERGE=true
+# Skip the interactive confirmation prompt that --no-merge triggers in
+# backup-restore.sh (useful for CI/automation).
+ASSUME_YES=false
 
 while [ $# -gt 0 ] && [ "${1:-}" != "--" ]; do
     case "$1" in
@@ -51,6 +62,9 @@ while [ $# -gt 0 ] && [ "${1:-}" != "--" ]; do
         --skip-account)   SKIP_ACCOUNT=true;   shift ;;
         --skip-workspace) SKIP_WORKSPACE=true; shift ;;
         --date)           DATE="$2";     shift 2 ;;
+        --merge)          MERGE=true;    shift ;;
+        --no-merge)       MERGE=false;   shift ;;
+        -y|--yes)         ASSUME_YES=true; shift ;;
         *)
             echo -e "\033[1;31mUnknown option: $1\033[0m"
             exit 1
@@ -74,7 +88,10 @@ if [ -z "$BACKUP_DIR" ] || [ -z "$WORKSPACE" ]; then
     echo "      --skip-account    Account already exists, don't create it"
     echo "      --skip-workspace  Workspace already exists, don't create/assign it"
     echo "      --date <ms>       Backup snapshot timestamp (default: latest)"
-    echo "  -- <args>           Extra args passed to backup-restore.sh tool call (e.g. --merge)"
+    echo "      --merge           Keep existing data, only add/update from backup (default)"
+    echo "      --no-merge        Destructive: make the workspace match the backup exactly"
+    echo "  -y, --yes           Skip the confirmation prompt triggered by --no-merge"
+    echo "  -- <args>           Extra args passed to backup-restore.sh tool call (e.g. --recheck)"
     exit 1
 fi
 
@@ -98,6 +115,7 @@ echo "  Workspace: $WORKSPACE"
 echo "  Admin:     $EMAIL ($FIRST $LAST)"
 echo "  Account:   $([ "$SKIP_ACCOUNT" == true ] && echo 'skip (exists)' || echo 'create')"
 echo "  Workspace: $([ "$SKIP_WORKSPACE" == true ] && echo 'skip (exists)' || echo 'create + assign')"
+echo "  Merge:     $([ "$MERGE" == true ] && echo 'yes (existing data preserved)' || echo 'no (destructive, matches backup exactly)')"
 echo ""
 
 # 1. Create the admin account (tolerate "already exists")
@@ -132,6 +150,8 @@ fi
 echo -e "\n\033[1;34m[4/4] Restoring backup into $WORKSPACE...\033[0m"
 RESTORE_CMD=(./backup-restore.sh "$BACKUP_DIR" "$WORKSPACE")
 [ -n "$DATE" ] && RESTORE_CMD+=("$DATE")
+[ "$MERGE" == true ] && RESTORE_CMD+=(--merge) || RESTORE_CMD+=(--no-merge)
+[ "$ASSUME_YES" == true ] && RESTORE_CMD+=(-y)
 [ ${#EXTRA_ARGS[@]} -gt 0 ] && RESTORE_CMD+=(-- "${EXTRA_ARGS[@]}")
 "${RESTORE_CMD[@]}"
 
