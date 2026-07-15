@@ -102,20 +102,20 @@ echo ""
 
 # 1. Create the admin account (tolerate "already exists")
 if [ "$SKIP_ACCOUNT" != true ]; then
-    echo -e "\033[1;34m[1/4] Creating account $EMAIL...\033[0m"
+    echo -e "\033[1;34m[1/5] Creating account $EMAIL...\033[0m"
     if ! ./run-tool.sh create-account "$EMAIL" -p "$PASSWORD" -f "$FIRST" -l "$LAST"; then
         echo -e "\033[1;33mcreate-account failed - account may already exist. Continuing.\033[0m"
         echo -e "\033[1;33m(Use --skip-account to silence this, or -p to match the existing password.)\033[0m"
         GENERATED_PASSWORD=false
     fi
 else
-    echo -e "\033[1;34m[1/4] Skipping account creation.\033[0m"
+    echo -e "\033[1;34m[1/5] Skipping account creation.\033[0m"
 fi
 
 # 2 + 3. Create the workspace and assign the admin to it
 WS_ID="$WORKSPACE"
 if [ "$SKIP_WORKSPACE" != true ]; then
-    echo -e "\n\033[1;34m[2/4] Creating workspace $WORKSPACE...\033[0m"
+    echo -e "\n\033[1;34m[2/5] Creating workspace $WORKSPACE...\033[0m"
     if ! CREATE_OUT=$(./run-tool.sh create-workspace "$WORKSPACE" "email:$EMAIL" 2>&1); then
         echo "$CREATE_OUT"
         echo -e "\033[1;31mcreate-workspace failed. If it already exists, rerun with --skip-workspace.\033[0m"
@@ -132,21 +132,21 @@ if [ "$SKIP_WORKSPACE" != true ]; then
         echo -e "\033[1;33mWarning: Could not extract workspace UUID. Falling back to $WORKSPACE.\033[0m"
     fi
 
-    echo -e "\n\033[1;34m[3/4] Assigning $EMAIL to $WS_ID...\033[0m"
+    echo -e "\n\033[1;34m[3/5] Assigning $EMAIL to $WS_ID...\033[0m"
     if ! ./run-tool.sh assign-workspace "$EMAIL" "$WS_ID"; then
         echo -e "\033[1;33massign-workspace failed - the owner may already be assigned. Continuing.\033[0m"
     fi
 
-    echo -e "\n\033[1;34m[3/4] Setting $EMAIL role to OWNER for $WS_ID...\033[0m"
+    echo -e "\n\033[1;34m[4/5] Setting $EMAIL role to OWNER for $WS_ID...\033[0m"
     if ! ./run-tool.sh set-user-role "$EMAIL" "$WS_ID" OWNER; then
         echo -e "\033[1;33mset-user-role failed - the owner may already have the role. Continuing.\033[0m"
     fi
 else
-    echo -e "\n\033[1;34m[2/4] [3/4] Skipping workspace creation/assignment.\033[0m"
+    echo -e "\n\033[1;34m[2/5] [3/5] [4/5] Skipping workspace creation and owner assignment.\033[0m"
 fi
 
 # 4. Restore the backup
-echo -e "\n\033[1;34m[4/4] Restoring backup into $WS_ID...\033[0m"
+echo -e "\n\033[1;34m[5/5] Restoring backup into $WS_ID...\033[0m"
 RESTORE_CMD=(./backup-restore.sh "$BACKUP_DIR" "$WS_ID")
 [ -n "$DATE" ] && RESTORE_CMD+=("$DATE")
 [ ${#EXTRA_ARGS[@]} -gt 0 ] && RESTORE_CMD+=(-- "${EXTRA_ARGS[@]}")
