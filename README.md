@@ -120,7 +120,7 @@ cd huly-selfhost
 ./setup.sh
 ```
 
-This will generate a [huly_v7.conf](./huly_v7.conf) file with your chosen values and create your nginx config.
+This will generate a `huly_v7.conf` file with your chosen values and create your nginx config.
 
 To add the generated configuration to your Nginx setup, run the following:
 
