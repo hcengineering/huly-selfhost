@@ -742,10 +742,10 @@ You can configure a Huly instance to authorize users (sign-in/sign-up) using an 
 
 ### On the IdP side
 1. Create a new OpenID application.
-   * Use `{huly_account_svc}/auth/openid/callback` as the sign-in redirect URI. The `huly_account_svc` is the hostname for the account service of the deployment, which should be accessible externally from the client/browser side. In the provided example setup, the account service runs on port 3000.
+   * Use `{huly_account_svc}/_accounts/auth/openid/callback` as the sign-in redirect URI. The `huly_account_svc` is the hostname for the account service of the deployment, which should be accessible externally from the client/browser side. In the provided example setup, the account service runs on port 3000.
 
    **URI Example:**
-   - `http://huly.mydomain.com:3000/auth/openid/callback`
+   - `http://huly.mydomain.com:3000/_accounts/auth/openid/callback`
 
 2. Configure user access to the application as needed.
 
