@@ -1,0 +1,97 @@
+name: release
+
+on:
+  push:
+    tags:
+      - 'huly-setup-v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Tag suffix (e.g. v0.1.0 → creates tag huly-setup-v0.1.0)'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+          cache: true
+      - name: go test ./...
+        run: go test ./...
+
+  build:
+    needs: test
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: linux_amd64
+            goos: linux
+            goarch: amd64
+          - target: linux_arm64
+            goos: linux
+            goarch: arm64
+          - target: darwin_amd64
+            goos: darwin
+            goarch: amd64
+          - target: darwin_arm64
+            goos: darwin
+            goarch: arm64
+          - target: windows_amd64
+            goos: windows
+            goarch: amd64
+            ext: .exe
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+          cache: true
+
+      - name: Build
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+          VERSION: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          ext="${EXT:-}"
+          mkdir -p dist
+          go build -trimpath -ldflags "-s -w -X main.version=${VERSION}" \
+            -o "dist/huly-setup${ext}" ./cmd/huly-setup
+          cd dist
+          tar -czf "../huly-setup_${VERSION}_${{ matrix.target }}.tar.gz" \
+            "huly-setup${ext}" ../scripts/install.sh
+          if [ "${RUNNER_OS}" = "Windows" ] || [ "${{ matrix.goos }}" = "windows" ]; then
+            zip -q "../huly-setup_${VERSION}_${{ matrix.target }}.zip" "huly-setup${ext}"
+          fi
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: huly-setup-${{ matrix.target }}
+          path: huly-setup_${{ github.ref_name }}_${{ matrix.target }}.*
+
+  release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/*
+          generate_release_notes: true
+          draft: true
