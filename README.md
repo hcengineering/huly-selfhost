@@ -770,22 +770,36 @@ sign-in/sign-up pages.
 
 You can also configure a Huly instance to use GitHub OAuth for user authorization (sign-in/sign-up).
 
-### On the GitHub side
-1. Create a new GitHub OAuth application.
-   * Use `{huly_account_svc}/_accounts/auth/github/callback` as the sign-in redirect URI. The `huly_account_svc` is the hostname for the account service of the deployment, which should be accessible externally from the client/browser side.
+> [!NOTE]
+> GitHub OAuth (sign-in/sign-up) uses a **GitHub OAuth App**, which is separate from the **GitHub App** used by the
+> [GitHub Service](#github-service) below. Each requires its own credentials. Do not mix up the two.
 
+### On the GitHub side
+1. Create a new [GitHub OAuth application](https://github.com/settings/applications/new).
+   * Use `{huly_account_svc}/_accounts/auth/github/callback` as the **Authorization callback URL**. The
+     `huly_account_svc` is the hostname for the account service of the deployment, which should be accessible
+     externally from the client/browser side.
 
    **URI Example:**
    - `http://huly.mydomain.com/_accounts/auth/github/callback`
 
+2. After creating the app, go to its settings and enable **Expire user authorization tokens** (recommended for
+   security).
+
+3. Note the **Client ID** and generate a **Client secret** — you will need both in the next step.
+
 ### On the Huly side
 
-Specify the following environment variables for the account service:
+Add the following environment variables to the `account` service in `compose.yml`:
 
-* `GITHUB_CLIENT_ID`
-* `GITHUB_CLIENT_SECRET`
+```yaml
+  account:
+    environment:
+      - GITHUB_CLIENT_ID=<your OAuth App Client ID>
+      - GITHUB_CLIENT_SECRET=<your OAuth App Client secret>
+```
 
-Ensure you have configured or add the following environment variable to the front service:
+Ensure the `front` service has the following environment variable configured:
 
 * `ACCOUNTS_URL` (The URL of the account service, accessible from the client side.)
 
@@ -822,12 +836,31 @@ development tool to create the first account._
 
 Huly provides GitHub integration for bi-directional synchronization of issues, pull requests, comments, and reviews.
 
+> [!NOTE]
+> The GitHub Service uses a **GitHub App**, not a GitHub OAuth App. If you also want GitHub OAuth sign-in, set that
+> up separately under [Configure GitHub OAuth](#configure-github-oauth) using a different app and different environment
+> variable names (`GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` for the `account` service).
+
 ### Prerequisites
 
 Set up a GitHub Application for your deployment.
 Please refer to [GitHub Apps documentation](https://docs.github.com/en/apps/creating-github-apps/registering-a-github-app/registering-a-github-app) for full instructions on how to register your app.
 
-During registration of the GitHub app, the following secrets should be obtained:
+#### Required GitHub App settings
+
+During app creation, make sure the following options are enabled:
+
+- **Expire user authorization tokens** — required for security
+- **Request user authorization (OAuth) during installation** — required so Huly can act on behalf of users
+- **Redirect on update** — required so re-installations redirect correctly
+
+> [!IMPORTANT]
+> If you created the app without these settings, you can enable them in the app's **General** settings and then
+> **uninstall and reinstall** the app via the Huly **Integrations** menu.
+
+#### Credentials to collect
+
+During registration the following values are needed:
 
 - `GITHUB_APPID` - The application ID number (e.g., `123456`), found under **General → About** in the GitHub App settings.
 - `GITHUB_APP_SLUG` - The app slug from its public URL: `github.com/apps/<slug>`. For example, if the URL is `github.com/apps/my-huly-dev`, the slug is `my-huly-dev`.
