@@ -82,6 +82,15 @@ storage:
     bucketPrefix: ""   # e.g. huly-
 
 # ──────────────────────────────────────────────────────────────
+# TLS — controls https/wss URLs in the ConfigMap
+# Set tls.enabled=true when TLS is terminated at an external gateway
+# (Gateway API, LoadBalancer, etc.) even if ingress.enabled=false.
+# Defaults to ingress.tls.enabled for backward compatibility.
+# ──────────────────────────────────────────────────────────────
+tls:
+  enabled: ""
+
+# ──────────────────────────────────────────────────────────────
 # Ingress
 # ──────────────────────────────────────────────────────────────
 ingress:
