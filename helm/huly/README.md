@@ -341,6 +341,9 @@ All app services share these overridable keys: `<svc>.replicas`, `<svc>.resource
 | `secrets.openaiApiKey` | OpenAI API key (required when enabled) | `""` |
 | `secrets.openaiBaseUrl` | OpenAI API base URL override | `""` |
 
+> [!TIP]
+> The AI bot uses the standard OpenAI-compatible chat completions API. To route it through [OrcaRouter](https://www.orcarouter.ai), an OpenAI-compatible gateway with a single API key, set `secrets.openaiApiKey` to your OrcaRouter key (starts with `sk-orca-`) and `secrets.openaiBaseUrl` to `https://api.orcarouter.ai/v1`. You can optionally set `aibot.openaiModel` to `orcarouter/auto` to let the gateway pick the best model automatically.
+
 ### Global Pod Settings
 
 | Key | Description | Default |

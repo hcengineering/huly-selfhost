@@ -703,6 +703,24 @@ Huly provides AI-powered chatbot that provides several services:
 > [!NOTE]
 > You can also add the `AI_OPENAI_MODEL`, `AI_OPENAI_TRANSLATE_MODEL`, `AI_OPENAI_SUMMARY_MODEL` environment variables to the aibot service to use a different model, by default it uses `gpt-4o-mini` for all of them
 
+### Use OrcaRouter as your AI provider
+
+If you don't have an OpenAI account, you can route the AI service through [OrcaRouter](https://www.orcarouter.ai), an OpenAI-compatible gateway that exposes many models through a single API key. Follow the steps above, but configure the `aibot` container with your OrcaRouter key and base URL:
+
+```yaml
+  aibot:
+    ...
+    environment:
+      # your OrcaRouter API key (starts with sk-orca-)
+      - OPENAI_API_KEY=<ORCAROUTER_API_KEY>
+      - OPENAI_BASE_URL=https://api.orcarouter.ai/v1
+      # optional — `orcarouter/auto` picks the best model automatically
+      - AI_OPENAI_MODEL=orcarouter/auto
+    ...
+```
+
+No other changes are required: the AI service uses the standard OpenAI-compatible chat completions API, which OrcaRouter implements.
+
 ## Configure Google Calendar Service
 
 To integrate Google Calendar with Huly, follow these steps:
