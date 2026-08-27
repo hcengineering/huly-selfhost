@@ -167,6 +167,30 @@ services:
     networks:
       - huly_net
 
+  github:
+    profiles:
+      - github
+    image: hardcoreeng/github:${HULY_VERSION}
+    environment:
+      - PORT=3500
+      - STORAGE_CONFIG=minio|minio?accessKey=minioadmin&secretKey=minioadmin
+      - SERVER_SECRET=${SECRET}
+      - ACCOUNTS_URL=http://account:3000
+      - STATS_URL=http://stats:4900
+      - APP_ID=${GITHUB_APP_ID:-}
+      - CLIENT_ID=${GITHUB_APP_CLIENT_ID:-}
+      - CLIENT_SECRET=${GITHUB_APP_CLIENT_SECRET:-}
+      - PRIVATE_KEY=${GITHUB_APP_PRIVATE_KEY:-}
+      - COLLABORATOR_URL=ws://collaborator:3078
+      - WEBHOOK_SECRET=${GITHUB_APP_WEBHOOK_SECRET:-}
+      - FRONT_URL=http${SECURE:+s}://${HOST_ADDRESS}
+      - BOT_NAME=${GITHUB_APP_SLUG:-}[bot]
+      - QUEUE_CONFIG=redpanda:9092
+      - SERVICE_ID=github-service
+    restart: unless-stopped
+    networks:
+      - huly_net
+
   account:
     image: hardcoreeng/account:${HULY_VERSION}
     environment:
@@ -213,6 +237,9 @@ services:
       - REKONI_URL=http${SECURE:+s}://${HOST_ADDRESS}/_rekoni
       - CALENDAR_URL=http${SECURE:+s}://${HOST_ADDRESS}/_calendar
       - GMAIL_URL=http${SECURE:+s}://${HOST_ADDRESS}/_gmail
+      - GITHUB_URL=${GITHUB_URL:-}
+      - GITHUB_APP=${GITHUB_APP_SLUG:-}
+      - GITHUB_CLIENTID=${GITHUB_APP_CLIENT_ID:-}
       - TELEGRAM_URL=http${SECURE:+s}://${HOST_ADDRESS}/_telegram
       - STATS_URL=http${SECURE:+s}://${HOST_ADDRESS}/_stats
       - UPLOAD_URL=/files

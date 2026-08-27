@@ -829,12 +829,15 @@ Please refer to [GitHub Apps documentation](https://docs.github.com/en/apps/crea
 
 During registration of the GitHub app, the following secrets should be obtained:
 
-- `GITHUB_APPID` - The application ID number (e.g., `123456`), found under **General → About** in the GitHub App settings.
+- `GITHUB_APP_ID` - The application ID number (e.g., `123456`), found under **General → About** in the GitHub App settings.
 - `GITHUB_APP_SLUG` - The app slug from its public URL: `github.com/apps/<slug>`. For example, if the URL is `github.com/apps/my-huly-dev`, the slug is `my-huly-dev`.
-- `GITHUB_CLIENTID` - The client ID shown on the same page (e.g., `Iv1.11a1aaa11aa11111`).
-- `GITHUB_CLIENT_SECRET` - A client secret generated in the **Client secrets** section of the General page.
-- `GITHUB_PRIVATE_KEY` - A private key for authentication. GitHub will generate and download a `.pem` file. This is an RSA key containing multiple lines — copy the entire content into the environment variable as-is.
-- `GITHUB_WEBHOOK_SECRET` - The webhook secret you set when configuring the webhook URL (see step 5 below).
+- `GITHUB_APP_CLIENT_ID` - The client ID shown on the same page (e.g., `Iv1.11a1aaa11aa11111`).
+- `GITHUB_APP_CLIENT_SECRET` - A client secret generated in the **Client secrets** section of the General page.
+- `GITHUB_APP_PRIVATE_KEY` - A private key for authentication. GitHub will generate and download a `.pem` file. This is an RSA key containing multiple lines — copy the entire content into the environment variable as-is.
+- `GITHUB_APP_WEBHOOK_SECRET` - The webhook secret you set when configuring the webhook URL (see step 4 below).
+
+The `GITHUB_APP_*` names intentionally differ from the `GITHUB_CLIENT_ID` and
+`GITHUB_CLIENT_SECRET` variables used by the optional GitHub OAuth login.
 
 ### Configure Permissions
 
@@ -863,50 +866,33 @@ Enable the following event subscriptions:
 
 ### Docker Configuration
 
-1. Add the `github` container to the `compose.yml`:
+1. Add the GitHub App settings to `huly_v7.conf`. Keep the private key inside
+   single quotes so its PEM line breaks are preserved:
 
-```yaml
-github:
-  image: hardcoreeng/github:${HULY_VERSION}
-  ports:
-    - 3500:3500
-  environment:
-    - PORT=3500
-    - STORAGE_CONFIG=minio|minio?accessKey=minioadmin&secretKey=minioadmin
-    - SERVER_SECRET=${SECRET}
-    - ACCOUNTS_URL=http://account:3000
-    - STATS_URL=http://stats:4900
-    - APP_ID=${GITHUB_APPID}
-    - CLIENT_ID=${GITHUB_CLIENTID}
-    - CLIENT_SECRET=${GITHUB_CLIENT_SECRET}
-    - PRIVATE_KEY=${GITHUB_PRIVATE_KEY}
-    - COLLABORATOR_URL=ws${SECURE:+s}://${HOST_ADDRESS}/_collaborator
-    - WEBHOOK_SECRET=${GITHUB_WEBHOOK_SECRET}
-    - FRONT_URL=http${SECURE:+s}://${HOST_ADDRESS}
-    - BOT_NAME=${GITHUB_APP_SLUG}[bot]
-  restart: unless-stopped
-  networks:
-    - huly_net
+```dotenv
+COMPOSE_PROFILES=github
+GITHUB_URL=https://huly.example.com/_github
+GITHUB_APP_ID=123456
+GITHUB_APP_SLUG=my-huly-dev
+GITHUB_APP_CLIENT_ID=Iv1.11a1aaa11aa11111
+GITHUB_APP_CLIENT_SECRET='replace-with-client-secret'
+GITHUB_APP_PRIVATE_KEY='-----BEGIN RSA PRIVATE KEY-----
+replace-with-the-complete-private-key
+-----END RSA PRIVATE KEY-----'
+GITHUB_APP_WEBHOOK_SECRET='replace-with-webhook-secret'
 ```
 
-2. Configure the `front` service:
+2. Start or recreate the stack. `COMPOSE_PROFILES=github` enables the bundled
+   GitHub service while leaving it disabled for deployments that do not
+   configure the integration:
 
-```yaml
-  front:
-   ...
-   environment:
-    # this should be available outside of the cluster
-    - GITHUB_URL=http${SECURE:+s}://${HOST_ADDRESS}/_github
-    - GITHUB_APP=${GITHUB_APP_SLUG}
-    - GITHUB_CLIENTID=${GITHUB_CLIENTID}
-   ...
+```bash
+docker compose up -d
 ```
 
-3. Uncomment the github section in `.huly.nginx` file and reload nginx
+3. Configure Callback URL and Setup URL (with redirect on update set) to your host: `http${SECURE:+s}://${HOST_ADDRESS}/github`
 
-4. Configure Callback URL and Setup URL (with redirect on update set) to your host: `http${SECURE:+s}://${HOST_ADDRESS}/github`
-
-5. Configure Webhook URL to `http${SECURE:+s}://${HOST_ADDRESS}/_github/api/webhook` and set a webhook secret (use the same value as `GITHUB_WEBHOOK_SECRET` above)
+4. Configure Webhook URL to `http${SECURE:+s}://${HOST_ADDRESS}/_github/api/webhook` and set a webhook secret (use the same value as `GITHUB_APP_WEBHOOK_SECRET` above)
 
 ## Telegram Bot Service
 
