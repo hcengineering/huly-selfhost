@@ -858,6 +858,7 @@ Set the following permissions for the app:
 
 Enable the following event subscriptions:
 
+- Issue comment
 - Issues
 - Pull request
 - Pull request review
