@@ -8,6 +8,8 @@ metadata:
     app: redpanda
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: redpanda
