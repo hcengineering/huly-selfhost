@@ -297,7 +297,7 @@ Each infra service can be disabled to use an external instance. When disabled, p
 | `elastic.storageClassName` | PVC storage class | `""` |
 | `elastic.javaOpts` | JVM heap options | `-Xms1024m -Xmx1024m` |
 | `minio.enabled` | Deploy built-in MinIO | `true` |
-| `minio.image` | MinIO image | `minio/minio` |
+| `minio.image` | MinIO-compatible Silo image | `pgsty/silo` |
 | `minio.storage` | Data PVC size | `50Gi` |
 | `minio.storageClassName` | PVC storage class | `""` |
 

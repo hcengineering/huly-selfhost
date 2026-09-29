@@ -61,7 +61,7 @@ services:
       - internal-services
 
   minio:
-    image: minio/minio
+    image: pgsty/silo
     restart: unless-stopped
     command: server /data --address ":9000" --console-address ":9001"
     volumes:

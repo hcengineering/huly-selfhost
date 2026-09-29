@@ -287,7 +287,7 @@ sequenceDiagram
 | cockroach | cockroachdb/cockroach | 26257 | Distributed SQL database | - |
 | **Supporting Infrastructure** | | | | |
 | elastic | elasticsearch:7.14.2 | 9200 | Search engine | - |
-| minio | minio/minio | 9000/9001 | Object storage | - |
+| minio | pgsty/silo | 9000/9001 | Object storage | - |
 | redpanda | redpandadata/redpanda | 9092/19092 | Event streaming (Kafka) | - |
 
 ---

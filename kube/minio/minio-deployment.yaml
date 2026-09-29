@@ -24,7 +24,7 @@ spec:
             - :9000
             - --console-address
             - :9001
-          image: minio/minio
+          image: pgsty/silo
           name: minio
           ports:
             - containerPort: 9000
