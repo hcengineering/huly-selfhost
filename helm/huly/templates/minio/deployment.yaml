@@ -35,6 +35,17 @@ spec:
               containerPort: 9000
             - name: console
               containerPort: 9001
+          env:
+            - name: MINIO_ROOT_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "huly.secretName" . }}
+                  key: MINIO_ROOT_USER
+            - name: MINIO_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "huly.secretName" . }}
+                  key: MINIO_ROOT_PASSWORD
           readinessProbe:
             httpGet:
               path: /minio/health/ready
