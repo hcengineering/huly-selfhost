@@ -104,6 +104,50 @@ helm install huly ./helm/huly \
 --set external.elastic=https://es.example.com:9200
 ```
 
+## Externally Managed Secrets (GitOps)
+
+By default the chart generates its own Secret and preserves the values across `helm upgrade`
+by looking up the Secret already in the cluster.
+
+That lookup only works when Helm has a live cluster connection. Tools that render manifests
+without one — ArgoCD, Flux, `helm template`, `--dry-run` — always see an empty lookup, so every
+render regenerates `SERVER_SECRET`, `COCKROACH_PASSWORD` and the rest, which invalidates all
+sessions on each sync.
+
+Set `secrets.existingSecret` to a Secret you manage yourself. The chart then renders no Secret
+of its own and points every service at the named one, so it can be produced by External Secrets
+Operator, Sealed Secrets, Vault, or `kubectl create secret`.
+
+```bash
+kubectl create secret generic huly-secrets -n <namespace> \
+  --from-literal=SERVER_SECRET="$(openssl rand -hex 16)" \
+  --from-literal=COCKROACH_PASSWORD="$(openssl rand -hex 12)" \
+  --from-literal=REDPANDA_SUPERUSER_PASSWORD="$(openssl rand -hex 12)" \
+  --from-literal=AIBOT_PASSWORD="$(openssl rand -hex 12)" \
+  --from-literal=CR_DB_URL='postgres://selfhost:<password>@cockroach:26257/defaultdb' \
+  --from-literal=STORAGE_CONFIG='minio|minio?accessKey=<key>&secretKey=<secret>'
+
+helm install huly ./helm/huly \
+  --set domain=huly.mysite.com \
+  --set secrets.existingSecret=huly-secrets
+```
+
+| Key | Required when |
+|-----|---------------|
+| `SERVER_SECRET` | always |
+| `CR_DB_URL` | always |
+| `STORAGE_CONFIG` | always |
+| `COCKROACH_PASSWORD` | `cockroach.enabled=true` |
+| `REDPANDA_SUPERUSER_PASSWORD` | `redpanda.enabled=true` |
+| `AIBOT_PASSWORD`, `OPENAI_API_KEY` | `aibot.enabled=true` |
+| `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | `auth.google.clientId` is set |
+| `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET` | `auth.github.clientId` is set |
+| `OPENID_CLIENT_ID`, `OPENID_CLIENT_SECRET`, `OPENID_ISSUER` | `auth.oidc.clientId` is set |
+| `GITHUB_APP_ID`, `GITHUB_APP_CLIENT_ID`, `GITHUB_APP_CLIENT_SECRET`, `GITHUB_APP_PRIVATE_KEY`, `GITHUB_APP_WEBHOOK_SECRET` | `githubIntegration.enabled=true` |
+
+The `auth.*.clientId` values still gate whether a provider is wired into the account service, so
+keep setting them in values even though the credentials come from the external Secret.
+
 ## GitHub Integration
 
 Bidirectional sync of issues, PRs, and comments between Huly and GitHub. Requires a [GitHub App](https://docs.github.com/en/apps/creating-github-apps).
@@ -244,10 +288,13 @@ kubectl logs deployment/<service> -n <namespace> --tail=20
 
 ### Secrets
 
-All secrets are auto-generated if left empty. They persist across `helm upgrade` via Kubernetes secret lookup.
+All secrets are auto-generated if left empty. They persist across `helm upgrade` via Kubernetes
+secret lookup, which requires a live cluster connection — see
+[Externally Managed Secrets (GitOps)](#externally-managed-secrets-gitops) for ArgoCD and Flux.
 
 | Key | Description | Default |
 |-----|-------------|---------|
+| `secrets.existingSecret` | Use a Secret you manage; disables the chart-managed Secret | `""` |
 | `secrets.serverSecret` | Shared JWT signing secret | auto |
 | `secrets.storageConfig` | Full storage connection string override | auto |
 | `secrets.cockroachPassword` | CockroachDB password | auto |

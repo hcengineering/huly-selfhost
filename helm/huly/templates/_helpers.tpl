@@ -25,7 +25,11 @@ Create a default fully qualified app name.
 Secret resource name.
 */}}
 {{- define "huly.secretName" -}}
-{{- printf "%s-secret" (include "huly.fullname" .) }}
+{{- if .Values.secrets.existingSecret -}}
+{{- .Values.secrets.existingSecret -}}
+{{- else -}}
+{{- printf "%s-secret" (include "huly.fullname" .) -}}
+{{- end -}}
 {{- end }}
 
 {{/*

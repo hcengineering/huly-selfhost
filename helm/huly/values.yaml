@@ -21,6 +21,21 @@ hulyRegistry: hardcoreeng
 # Secrets — leave empty to auto-generate (persists across upgrades)
 # ──────────────────────────────────────────────────────────────
 secrets:
+  # Use a Secret you manage instead of the chart-managed one.
+  # When set, the chart renders no Secret of its own and every service reads
+  # from the named Secret — required for GitOps tools (ArgoCD, Flux) that
+  # render manifests without cluster access, and for External Secrets
+  # Operator / Sealed Secrets / Vault.
+  #
+  # Required keys: SERVER_SECRET, CR_DB_URL, STORAGE_CONFIG,
+  #   COCKROACH_PASSWORD (when cockroach.enabled=true),
+  #   REDPANDA_SUPERUSER_PASSWORD (when redpanda.enabled=true),
+  #   AIBOT_PASSWORD and OPENAI_API_KEY (when aibot.enabled=true),
+  #   GOOGLE_CLIENT_ID/GOOGLE_CLIENT_SECRET, GITHUB_CLIENT_ID/
+  #   GITHUB_CLIENT_SECRET, OPENID_CLIENT_ID/OPENID_CLIENT_SECRET/
+  #   OPENID_ISSUER (per configured auth provider),
+  #   GITHUB_APP_* (when githubIntegration.enabled=true)
+  existingSecret: ""
   # Shared JWT signing secret (auto-generated if empty)
   serverSecret: ""
   # Full storage config string override.
