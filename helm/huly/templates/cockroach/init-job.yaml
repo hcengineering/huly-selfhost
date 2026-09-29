@@ -1,0 +1,62 @@
+{{- if .Values.cockroach.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "huly.fullname" . }}-cockroach-init
+  labels:
+    {{- include "huly.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "0"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: 5
+  template:
+    metadata:
+      labels:
+        {{- include "huly.labels" . | nindent 8 }}
+    spec:
+      {{- include "huly.scheduling" . | nindent 6 }}
+      restartPolicy: OnFailure
+      initContainers:
+        {{- include "huly.waitForCockroach" . | nindent 8 }}
+      containers:
+        - name: cockroach-init
+          image: {{ .Values.cockroach.image }}
+          env:
+            - name: COCKROACH_DATABASE
+              value: {{ .Values.cockroach.database }}
+            - name: COCKROACH_USER
+              value: {{ .Values.cockroach.username }}
+            - name: COCKROACH_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "huly.secretName" . }}
+                  key: COCKROACH_PASSWORD
+          command:
+            - /bin/sh
+            - -c
+            - |
+              set -e
+              echo "Initializing CockroachDB: database=${COCKROACH_DATABASE}, user=${COCKROACH_USER}"
+              cockroach sql --insecure --host cockroach:26257 --execute "
+                CREATE DATABASE IF NOT EXISTS ${COCKROACH_DATABASE};
+                CREATE USER IF NOT EXISTS ${COCKROACH_USER};
+                ALTER USER ${COCKROACH_USER} WITH PASSWORD '${COCKROACH_PASSWORD}';
+                GRANT ALL ON DATABASE ${COCKROACH_DATABASE} TO ${COCKROACH_USER};
+              "
+              echo "Granting on all existing schemas in ${COCKROACH_DATABASE}..."
+              schemas=$(cockroach sql --insecure --host cockroach:26257 --database=${COCKROACH_DATABASE} --format=tsv --execute "SELECT schema_name FROM information_schema.schemata WHERE schema_name NOT IN ('information_schema', 'crdb_internal', 'pg_catalog', 'pg_extension')")
+              for schema in $schemas; do
+                echo "  GRANT ALL ON SCHEMA ${schema} TO ${COCKROACH_USER}"
+                cockroach sql --insecure --host cockroach:26257 --database=${COCKROACH_DATABASE} --execute "GRANT ALL ON SCHEMA ${schema} TO ${COCKROACH_USER}" || true
+              done
+              echo "Setting default privileges for future schemas..."
+              cockroach sql --insecure --host cockroach:26257 --database=${COCKROACH_DATABASE} --execute "
+                ALTER DEFAULT PRIVILEGES FOR ROLE root IN DATABASE ${COCKROACH_DATABASE} GRANT ALL ON TABLES TO ${COCKROACH_USER};
+                ALTER DEFAULT PRIVILEGES FOR ROLE root IN DATABASE ${COCKROACH_DATABASE} GRANT ALL ON SCHEMAS TO ${COCKROACH_USER};
+                ALTER DEFAULT PRIVILEGES FOR ROLE ${COCKROACH_USER} IN DATABASE ${COCKROACH_DATABASE} GRANT ALL ON TABLES TO ${COCKROACH_USER};
+                ALTER DEFAULT PRIVILEGES FOR ROLE ${COCKROACH_USER} IN DATABASE ${COCKROACH_DATABASE} GRANT ALL ON SCHEMAS TO ${COCKROACH_USER};
+              " || true
+              echo "CockroachDB initialized successfully"
+{{- end }}
