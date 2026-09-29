@@ -264,6 +264,23 @@ aibot:
       memory: 512Mi
 
 # ──────────────────────────────────────────────────────────────
+# HulyPulse — WebSocket push: presence, typing indicators,
+# video-call knock/invite. Versioned independently of hulyVersion.
+# ──────────────────────────────────────────────────────────────
+hulypulse:
+  enabled: false
+  replicas: 1
+  version: "0.1.29"
+  logLevel: info
+  # memory needs no extra services; redis suits multi-node setups
+  backend: memory
+  redisMode: direct
+  redisUrls: ""                    # e.g. redis://redis:6379
+  resources:
+    limits:
+      memory: 256Mi
+
+# ──────────────────────────────────────────────────────────────
 # Backup — nightly CronJobs to S3-compatible storage
 # ──────────────────────────────────────────────────────────────
 backup:

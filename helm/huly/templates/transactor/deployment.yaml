@@ -43,6 +43,9 @@ spec:
             {{- if .Values.aibot.enabled }}
             {{- include "huly.envConfig" (dict "name" "AI_BOT_URL" "key" "AI_BOT_URL" "root" .) | nindent 12 }}
             {{- end }}
+            {{- if .Values.hulypulse.enabled }}
+            {{- include "huly.envConfig" (dict "name" "PULSE_URL" "key" "PULSE_URL_INTERNAL" "root" .) | nindent 12 }}
+            {{- end }}
             - name: SERVER_CURSOR_MAXTIMEMS
               value: "30000"
           readinessProbe:

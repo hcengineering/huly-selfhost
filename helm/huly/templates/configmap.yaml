@@ -58,3 +58,8 @@ data:
   AI_BOT_URL: "http://aibot:4010"
   MONGO_URL: {{ ternary "mongodb://mongodb:27017" .Values.external.mongodb .Values.mongodb.enabled | quote }}
   {{- end }}
+
+  {{- if .Values.hulypulse.enabled }}
+  PULSE_URL: "{{ $proto }}://{{ .Values.domain }}/_pulse"
+  PULSE_URL_INTERNAL: "http://hulypulse:8099"
+  {{- end }}

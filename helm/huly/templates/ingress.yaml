@@ -20,6 +20,9 @@
 {{- if .Values.githubIntegration.enabled }}
 {{- $backends = append $backends (dict "name" "github" "svc" "github" "port" 3500 "ws" false) }}
 {{- end -}}
+{{- if .Values.hulypulse.enabled }}
+{{- $backends = append $backends (dict "name" "pulse" "svc" "hulypulse" "port" 8099 "ws" true) }}
+{{- end -}}
 
 {{- range $backends }}
 ---

@@ -1,0 +1,16 @@
+{{- if .Values.hulypulse.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: hulypulse
+  labels:
+    {{- include "huly.labels" . | nindent 4 }}
+    app: hulypulse
+spec:
+  selector:
+    app: hulypulse
+  ports:
+    - name: http
+      port: 8099
+      targetPort: 8099
+{{- end }}

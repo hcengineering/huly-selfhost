@@ -54,6 +54,9 @@ spec:
             {{- if .Values.aibot.enabled }}
             {{- include "huly.envConfig" (dict "name" "AI_URL" "key" "AI_URL" "root" .) | nindent 12 }}
             {{- end }}
+            {{- if .Values.hulypulse.enabled }}
+            {{- include "huly.envConfig" (dict "name" "PULSE_URL" "key" "PULSE_URL" "root" .) | nindent 12 }}
+            {{- end }}
             {{- if .Values.auth.disableSignup }}
             - name: DISABLE_SIGNUP
               value: "true"
