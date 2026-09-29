@@ -39,7 +39,8 @@ secrets:
   # Shared JWT signing secret (auto-generated if empty)
   serverSecret: ""
   # Full storage config string override.
-  # When empty, auto-derived from storage.type + storage.s3.* (or random MinIO creds).
+  # When empty, auto-derived from storage.type + storage.s3.* (or minio.rootUser /
+  # minio.rootPassword when using the built-in MinIO).
   # Format: s3|https://s3.example.com?accessKey=X&secretKey=Y&region=us-east-1&rootBucket=data
   #     or: minio|minio?accessKey=<key>&secretKey=<secret>
   storageConfig: ""
@@ -169,6 +170,12 @@ minio:
   # Automatically disabled when storage.type=s3
   enabled: true
   image: pgsty/silo
+  # Root credentials for the built-in MinIO. Passed to MinIO as
+  # MINIO_ROOT_USER/MINIO_ROOT_PASSWORD and used to build secrets.storageConfig,
+  # so the two always agree. The defaults are MinIO's own built-in credentials —
+  # change them for anything beyond a trial install.
+  rootUser: minioadmin
+  rootPassword: minioadmin
   storage: 50Gi
   storageClassName: ""
   resources: {}

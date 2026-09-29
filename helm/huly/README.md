@@ -73,6 +73,20 @@ helm install huly ./helm/huly \
 
 Setting `storage.type=s3` automatically disables the built-in MinIO deployment and PVC.
 
+### Built-in MinIO credentials
+
+The built-in MinIO runs with `minio.rootUser` / `minio.rootPassword`, and the generated
+`STORAGE_CONFIG` uses the same pair. They default to MinIO's own built-in credentials; override
+both to change them:
+
+```bash
+--set minio.rootUser=huly \
+--set minio.rootPassword=YOUR_PASSWORD
+```
+
+Changing them on an existing install rotates MinIO's root credentials — stored objects are
+unaffected, but any other client of that MinIO must be updated too.
+
 **Bucket modes:**
 - `rootBucket` — all workspaces share one bucket, isolated by workspace-ID prefix (recommended)
 - `bucketPrefix` — each workspace gets its own bucket, prefixed with this string
@@ -345,6 +359,8 @@ Each infra service can be disabled to use an external instance. When disabled, p
 | `elastic.javaOpts` | JVM heap options | `-Xms1024m -Xmx1024m` |
 | `minio.enabled` | Deploy built-in MinIO | `true` |
 | `minio.image` | MinIO-compatible Silo image | `pgsty/silo` |
+| `minio.rootUser` | Built-in MinIO root user (also used in `STORAGE_CONFIG`) | `minioadmin` |
+| `minio.rootPassword` | Built-in MinIO root password (also used in `STORAGE_CONFIG`) | `minioadmin` |
 | `minio.storage` | Data PVC size | `50Gi` |
 | `minio.storageClassName` | PVC storage class | `""` |
 
