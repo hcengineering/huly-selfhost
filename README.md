@@ -74,24 +74,39 @@ For detailed information about the Huly self-hosted architecture, services, and 
 
 ## Quick Start (Local Testing)
 
-For fast local verification without going through the full setup process:
+For fast local verification without going through the full setup process,
+the new Go `huly-setup` tool replaces the legacy `setup.sh`:
 
 ```bash
 git clone https://github.com/hcengineering/huly-selfhost.git
 cd huly-selfhost
-./setup.sh --quick
+./huly-setup --quick       # builds via `make build`, or just `go build -o huly-setup ./cmd/huly-setup`
+```
+
+Or install the prebuilt binary in one line:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/hcengineering/huly-selfhost/main/scripts/install.sh | bash
 ```
 
 This will:
 - Use `localhost:8087` as the host address
-- Skip all configuration prompts
-- Use default Docker volumes
+- Skip all configuration prompts (or drop into the Bubble Tea TUI for the
+  interactive flow — same defaults either way)
+- Apply the single-tenant memory profile
 - Automatically start all services
 
 Access Huly at **http://localhost:8087** (wait ~60 seconds for services to initialize). To stop all services, run `docker compose down` from the `huly-selfhost` folder.
 
+> [!TIP]
+> Run `./huly-setup --dry-run` first to preview the generated `compose.yml`,
+> `huly_v7.conf`, and nginx config without writing any files.
+
 > [!NOTE]
 > Quick start is intended for local testing only. For production deployments, follow the full setup instructions below.
+
+See `cmd/huly-setup/README.md` for the full flag reference and the
+`single-tenant` / `behind-reverse-proxy` modes.
 
 ## Installing `nginx` and `docker`
 
@@ -117,7 +132,15 @@ Next, let's clone the `huly-selfhost` repository and configure Huly.
 ```bash
 git clone https://github.com/hcengineering/huly-selfhost.git
 cd huly-selfhost
-./setup.sh
+./huly-setup
+```
+
+Or, if you don't have a Go toolchain handy, download a prebuilt binary
+(recommended for production hosts):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/hcengineering/huly-selfhost/main/scripts/install.sh | bash
+huly-setup
 ```
 
 This will generate a [huly_v7.conf](./huly_v7.conf) file with your chosen values and create your nginx config.
@@ -130,12 +153,11 @@ sudo ln -s $(pwd)/nginx.conf /etc/nginx/sites-enabled/huly.conf
 
 > [!NOTE]
 > If you change `HOST_ADDRESS`, `SECURE`, `HTTP_PORT` or `HTTP_BIND` be sure to update your [nginx.conf](./nginx.conf)
-> by running:
+> by re-running:
 > ```bash
-> ./nginx.sh
+> ./huly-setup
 > ```
->You can safely execute this script after adding your custom configurations like ssl. It will only overwrite the
-> necessary settings.
+> The tool reuses your existing config (load + save) so re-running only rewrites the fields you've changed.
 
 Finally, let's reload `nginx` and start Huly with `docker compose`.
 
@@ -175,7 +197,7 @@ By default, Huly uses Docker named volumes to store persistent data (database, E
 
 ### During Setup
 
-When running `./setup.sh`, you'll be prompted to specify custom paths for:
+When running `./huly-setup`, you'll be prompted to specify custom paths for:
 
 - **Elasticsearch volume**: Search index data storage  
 - **Files volume**: User-uploaded files and attachments
@@ -197,7 +219,7 @@ You can either:
 To quickly reset all volumes back to default Docker named volumes without prompts:
 
 ```bash
-./setup.sh --reset-volumes
+./huly-setup --reset-volumes
 ```
 
 ### Manual Configuration
