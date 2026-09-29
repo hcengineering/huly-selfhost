@@ -1,5 +1,7 @@
-{{- $proto := ternary "https" "http" (and .Values.ingress.enabled .Values.ingress.tls.enabled) -}}
-{{- $wsProto := ternary "wss" "ws" (and .Values.ingress.enabled .Values.ingress.tls.enabled) -}}
+{{- /* TLS is terminated at the ingress OR an external gateway (Gateway API, etc.) */ -}}
+{{- $tlsEnabled := .Values.tls.enabled | default (and .Values.ingress.enabled .Values.ingress.tls.enabled) -}}
+{{- $proto := ternary "https" "http" $tlsEnabled -}}
+{{- $wsProto := ternary "wss" "ws" $tlsEnabled -}}
 
 {{- /* Resolve infra endpoints: built-in pod name or external URL */ -}}
 {{- $elasticUrl := ternary "http://elastic:9200" .Values.external.elastic .Values.elastic.enabled -}}
